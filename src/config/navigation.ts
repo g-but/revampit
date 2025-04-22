@@ -3,13 +3,47 @@ export interface NavigationItem {
   href: string
   description?: string
   external?: boolean
+  subItems?: NavigationItem[]
+  highlight?: boolean
 }
 
 export const mainNavigation: NavigationItem[] = [
   {
+    name: 'About',
+    href: '/about',
+    description: 'Learn about our mission and impact'
+  },
+  {
     name: 'Services',
     href: '/services',
-    description: 'Our refurbishment and recycling services'
+    description: 'Our refurbishment and recycling services',
+    subItems: [
+      {
+        name: 'Computer Repair & Upgrades',
+        href: '/services/computer-repair-upgrades',
+        description: 'Expert repairs and upgrades for all devices'
+      },
+      {
+        name: 'Data Recovery & Transfer',
+        href: '/services/data-recovery-transfer',
+        description: 'Secure data recovery and transfer services'
+      },
+      {
+        name: 'Linux',
+        href: '/services/linux-open-source',
+        description: 'Professional Linux installation and support'
+      },
+      {
+        name: 'Open Source Solutions',
+        href: '/services/open-source-solutions',
+        description: 'Open source software implementation and support'
+      },
+      {
+        name: 'Hardware Recycling',
+        href: '/services/hardware-recycling',
+        description: 'Responsible recycling of IT equipment'
+      }
+    ]
   },
   {
     name: 'Shop',
@@ -20,7 +54,24 @@ export const mainNavigation: NavigationItem[] = [
   {
     name: 'Projects',
     href: '/projects',
-    description: 'Our current and past initiatives'
+    description: 'Our current and past initiatives',
+    subItems: [
+      {
+        name: 'Kivitendo',
+        href: '/projects/kivitendo',
+        description: 'Open source ERP system implementation'
+      },
+      {
+        name: 'Linuxola',
+        href: '/projects/linuxola',
+        description: 'Linux installation and support program'
+      },
+      {
+        name: 'FreieComputer',
+        href: '/projects/freiecomputer',
+        description: 'Computer donation and refurbishment program'
+      }
+    ]
   },
   {
     name: 'Workshops',
@@ -30,7 +81,30 @@ export const mainNavigation: NavigationItem[] = [
   {
     name: 'Get Involved',
     href: '/get-involved',
-    description: 'Volunteer and support our mission'
+    description: 'Volunteer and support our mission',
+    subItems: [
+      {
+        name: 'Volunteer',
+        href: '/get-involved/volunteer',
+        description: 'Join our team of volunteers'
+      },
+      {
+        name: 'Donate',
+        href: '/get-involved/donate',
+        description: 'Support our mission financially'
+      },
+      {
+        name: 'Partnerships',
+        href: '/get-involved/partnerships',
+        description: 'Become a corporate partner'
+      }
+    ]
+  },
+  {
+    name: 'Contact',
+    href: '/contact',
+    description: 'Get in touch with our team',
+    highlight: true
   }
 ]
 

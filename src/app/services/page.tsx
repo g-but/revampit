@@ -1,88 +1,251 @@
 import { Metadata } from 'next'
+import { 
+  Wrench, 
+  HardDrive, 
+  Server, 
+  Shield, 
+  ArrowRight,
+  CheckCircle2,
+  Zap,
+  Clock,
+  ShieldCheck,
+  Code
+} from 'lucide-react'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Our Services | RevampIT',
-  description: 'Discover our comprehensive range of refurbishment and recycling services. We help reduce electronic waste and make technology accessible to everyone.'
+  title: 'Computer Repair & Recycling Services | RevampIT',
+  description: 'Professional computer repair, data recovery, Linux support, and hardware recycling services. Affordable and eco-friendly solutions for your tech needs.',
+  openGraph: {
+    title: 'Computer Repair & Recycling Services | RevampIT',
+    description: 'Professional computer repair, data recovery, Linux support, and hardware recycling services. Affordable and eco-friendly solutions for your tech needs.',
+    type: 'website',
+    url: 'https://revampit.org/services',
+  },
 }
 
 const services = {
   hero: {
-    title: 'Refurbishment and Recycling Services',
-    description: 'We provide comprehensive solutions to reduce electronic waste and make technology accessible to everyone through our refurbishment and recycling services.'
+    title: 'Expert IT Services',
+    subtitle: 'Sustainable Solutions for Your Technology Needs',
+    description: 'We combine technical expertise with environmental responsibility to provide comprehensive IT solutions that save you money and reduce electronic waste.'
   },
-  services: [
+  coreServices: [
     {
-      title: 'Device Refurbishment',
-      description: 'Professional refurbishment of computers, laptops, and other electronic devices to extend their lifespan.'
+      title: 'Computer Repair & Upgrades',
+      description: 'Expert repairs for all types of computers and components. We specialize in fixing what others can\'t, including motherboard repairs and component-level fixes.',
+      icon: Wrench,
+      features: [
+        'Component-level repairs',
+        'Hardware upgrades',
+        'Diagnostic services',
+        'Professional assessment'
+      ],
+      pricing: 'CHF 70/hour + parts',
+      highlight: 'Professional assessment required'
     },
     {
-      title: 'Data Security',
-      description: 'Secure data wiping and destruction services to ensure your sensitive information is completely removed.'
+      title: 'Data Recovery & Transfer',
+      description: 'Secure and reliable data transfer services for all types of storage media. We can recover data from damaged devices and transfer it to modern storage solutions.',
+      icon: HardDrive,
+      features: [
+        'Secure data transfer',
+        'Data recovery from damaged devices',
+        'Legacy media support (Floppy disks, ZIP drives, MO drives, SCSI/IDE drives)',
+        'Complete data security'
+      ],
+      pricing: 'CHF 70/hour',
+      highlight: 'Evaluation required before recovery'
     },
     {
-      title: 'Component Recycling',
-      description: 'Environmentally responsible recycling of electronic components and materials.'
+      title: 'Linux & Open Source',
+      description: 'Professional Linux installation, support, and training. We help you transition to open-source software and provide ongoing support.',
+      icon: Server,
+      features: [
+        'Linux installation & setup',
+        'Open-source software migration',
+        'Technical support',
+        'Workshops & training'
+      ],
+      pricing: 'CHF 70/hour',
+      highlight: 'Professional assessment required'
     },
     {
-      title: 'Device Testing',
-      description: 'Comprehensive testing and quality assurance for all refurbished devices.'
+      title: 'Open Source Solutions',
+      description: 'Expert open source software implementation and support. We help you transition to and maintain open source solutions for your business.',
+      icon: Code,
+      features: [
+        'Open source consulting',
+        'Custom development',
+        'Community integration',
+        'Security & compliance'
+      ],
+      pricing: 'CHF 70/hour',
+      highlight: 'Free initial consultation'
     },
     {
-      title: 'Warranty Services',
-      description: 'Extended warranty options for refurbished devices to ensure peace of mind.'
+      title: 'Hardware Recycling',
+      description: 'Responsible recycling and refurbishment of IT equipment. We give your old devices a new life while ensuring secure data deletion.',
+      icon: Shield,
+      features: [
+        'Secure data deletion',
+        'Equipment refurbishment',
+        'Component recycling',
+        'Free pickup service'
+      ],
+      pricing: 'Free for most items',
+      highlight: 'Free pickup service available'
+    }
+  ],
+  additionalServices: [
+    {
+      title: 'Web Hosting & Development',
+      description: 'Reliable web hosting and development services using open-source solutions.',
+      pricing: 'From CHF 10/month'
     },
     {
-      title: 'Bulk Collection',
-      description: 'Convenient collection services for businesses and organizations with large quantities of electronic waste.'
+      title: 'VoIP Solutions',
+      description: 'Modern VoIP phone systems for businesses and individuals.',
+      pricing: 'Custom pricing'
     }
   ],
   cta: {
-    title: 'Ready to Make a Difference?',
-    description: 'Let\'s work together to reduce electronic waste and make technology accessible to everyone.',
+    title: 'Ready to Revamp Your Technology?',
+    description: 'Contact us today for a free consultation and discover how we can help you get the most out of your devices.',
     button: 'Get Started'
   }
 }
 
 export default function ServicesPage() {
   return (
-    <main className="min-h-screen">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-green-600 to-green-800 text-white py-20">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">{services.hero.title}</h1>
-          <p className="text-xl md:text-2xl mb-8 max-w-2xl">{services.hero.description}</p>
-        </div>
-      </section>
-
-      {/* Services Grid */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.services.map((service, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
-                <div className="text-green-600 mb-4">
-                  <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold mb-3">{service.title}</h3>
-                <p className="text-gray-600">{service.description}</p>
-              </div>
-            ))}
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            'name': 'Computer Repair & Recycling Services',
+            'description': 'Professional computer repair, data recovery, Linux support, and hardware recycling services.',
+            'provider': {
+              '@type': 'Organization',
+              'name': 'RevampIT',
+              'url': 'https://revampit.org',
+              'logo': 'https://revampit.org/logo.png'
+            },
+            'serviceType': [
+              'Computer Repair',
+              'Data Recovery',
+              'Linux Support',
+              'Hardware Recycling'
+            ],
+            'areaServed': {
+              '@type': 'City',
+              'name': 'Your City'
+            }
+          })
+        }}
+      />
+      <main className="min-h-screen bg-gray-50">
+        {/* Hero Section */}
+        <section className="relative bg-gradient-to-br from-green-700 via-green-800 to-green-900 text-white py-24 overflow-hidden">
+          <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
+          <div className="container mx-auto px-4 relative">
+            <div className="max-w-3xl">
+              <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">{services.hero.title}</h1>
+              <h2 className="text-2xl md:text-3xl font-semibold mb-8 text-green-200">{services.hero.subtitle}</h2>
+              <p className="text-xl text-green-100">{services.hero.description}</p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA Section */}
-      <section className="bg-gray-50 py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-6">{services.cta.title}</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">{services.cta.description}</p>
-          <button className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-300">
-            {services.cta.button}
-          </button>
-        </div>
-      </section>
-    </main>
+        {/* Core Services */}
+        <section className="py-20">
+          <div className="container mx-auto px-4">
+            <div className="mb-12 text-center max-w-3xl mx-auto">
+              <p className="text-gray-600">
+                Repair time varies based on parts availability, typically taking a few weeks.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {services.coreServices.map((service, index) => (
+                <div key={index} className="group bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col h-full">
+                  <div className="p-8 flex flex-col h-full">
+                    <div className="flex items-start mb-6">
+                      <div className="p-3 bg-green-100 rounded-lg text-green-600 mr-4 group-hover:bg-green-600 group-hover:text-white transition-colors duration-300">
+                        <service.icon className="w-8 h-8" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold mb-2">{service.title}</h3>
+                        <div className="flex items-center text-green-600 font-semibold mb-4">
+                          <Zap className="w-4 h-4 mr-2" />
+                          <span>{service.highlight}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-gray-600 mb-6 flex-grow">{service.description}</p>
+                    <div className="space-y-3 mb-6">
+                      {service.features.map((feature, i) => (
+                        <div key={i} className="flex items-center text-gray-600">
+                          <CheckCircle2 className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
+                          <span>{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-auto pt-6 border-t border-gray-200 flex items-center justify-between">
+                      <span className="text-lg font-semibold text-green-600">{service.pricing}</span>
+                      <Link
+                        href={`/services/${service.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`}
+                        className="inline-block text-green-600 hover:text-green-700 font-medium transition-colors duration-300"
+                      >
+                        View details →
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Additional Services */}
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold mb-12 text-center">Additional Services</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {services.additionalServices.map((service, index) => (
+                <div key={index} className="bg-gray-50 rounded-xl p-8 hover:shadow-lg transition-shadow duration-300">
+                  <h3 className="text-xl font-semibold mb-3">{service.title}</h3>
+                  <p className="text-gray-600 mb-4">{service.description}</p>
+                  <p className="text-green-600 font-semibold">{service.pricing}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-20 bg-gradient-to-r from-green-700 to-green-800 text-white">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-4xl font-bold mb-6">{services.cta.title}</h2>
+            <p className="text-xl mb-8 max-w-2xl mx-auto text-green-100">{services.cta.description}</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/contact"
+                className="inline-block bg-white text-green-800 px-8 py-4 rounded-lg font-semibold hover:bg-green-50 transition-colors duration-300 text-lg"
+              >
+                Contact Us
+              </Link>
+              <Link
+                href="/shop"
+                className="inline-block border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white/10 transition-colors duration-300 text-lg"
+              >
+                Browse Inventory
+              </Link>
+            </div>
+          </div>
+        </section>
+      </main>
+    </>
   )
 } 
