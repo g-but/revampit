@@ -1,4 +1,3 @@
-```markdown
 # Revamp-it Website Modernization
 
 > Modern, Sustainable IT for Everyone  
@@ -66,7 +65,7 @@ The website is designed with a modular, microservices-friendly architecture:
 - **Presentation Layer:** Next.js serves as the frontend framework that fetches data from APIs.
 - **Content Layer:** A headless CMS powers content dynamically (blog posts, project pages, news).
 - **API Layer:** Node.js/Express.js endpoints handle authentication, data processing, and third-party integrations.
-- **Deployment:** The entire application is containerized using Docker for consistent, scalable, and secure deployments via Vercel’s CD pipeline.
+- **Deployment:** The entire application is containerized using Docker for consistent, scalable, and secure deployments via Vercel's CD pipeline.
 
 ## Installation & Setup
 
@@ -130,7 +129,7 @@ The website is designed with a modular, microservices-friendly architecture:
   npm run build
   npm start
   ```
-- **Content Updates**: Manage your website’s content via the headless CMS dashboard (URL provided in `.env`).
+- **Content Updates**: Manage your website's content via the headless CMS dashboard (URL provided in `.env`).
 
 ## Development Workflow
 
@@ -142,7 +141,7 @@ We follow a Git-based branching strategy:
 
 ## Contributing
 
-Contributions are welcome! If you’d like to help develop this project:
+Contributions are welcome! If you'd like to help develop this project:
 1. Fork the repository.
 2. Create your feature branch: `git checkout -b feature/my-new-feature`
 3. Commit your changes: `git commit -m "Add my new feature"`
@@ -178,6 +177,3 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ---
 
 *Let's build a modern digital home for Revamp-it that not only stands out technically but also champions sustainable and accessible technology for all.*
-```
-
----
