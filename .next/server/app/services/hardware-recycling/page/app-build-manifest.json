@@ -1,0 +1,31 @@
+{
+  "pages": {
+    "/services/hardware-recycling/page": [
+      "static/chunks/[root of the server]__942825._.css",
+      "static/chunks/node_modules_next_dist_compiled_react_0bfca7._.js",
+      "static/chunks/node_modules_next_dist_compiled_react-dom_cjs_react-dom_development_c9a189.js",
+      "static/chunks/node_modules_next_dist_compiled_react-dom_index_99aff8.js",
+      "static/chunks/node_modules_next_dist_compiled_151a1f._.js",
+      "static/chunks/node_modules_next_dist_client_039ac0._.js",
+      "static/chunks/node_modules_next_dist_9e9f2a._.js",
+      "static/chunks/node_modules_next_link_d6a0d8.js",
+      "static/chunks/node_modules_tailwind-merge_dist_bundle-mjs_mjs_b854ac._.js",
+      "static/chunks/node_modules_b5f833._.js",
+      "static/chunks/src_a44c15._.js",
+      "static/chunks/[turbopack]_dev_client_hmr-client_ts_fb1f9a._.js",
+      "static/chunks/src_app_layout_tsx_6429ed._.js",
+      "static/chunks/src_app_services_hardware-recycling_page_tsx_a5189e._.js",
+      "static/chunks/src_app_services_hardware-recycling_page_tsx_f83f81._.js",
+      "static/chunks/node_modules_next_dist_compiled_react_a1d82d._.js",
+      "static/chunks/node_modules_next_dist_compiled_react-dom_cjs_react-dom_development_c9a189.js",
+      "static/chunks/node_modules_next_dist_compiled_react-dom_87a050._.js",
+      "static/chunks/node_modules_next_dist_compiled_e13b54._.js",
+      "static/chunks/node_modules_next_dist_client_93f294._.js",
+      "static/chunks/node_modules_next_dist_5313b6._.js",
+      "static/chunks/node_modules_3dc63e._.js",
+      "static/chunks/[turbopack]_dev_client_hmr-client_ts_3f24b7._.js",
+      "static/chunks/node_modules_next_dist_esm_build_templates_app-page_27f7a1.js",
+      "static/chunks/node_modules_next_dist_esm_build_templates_app-page_f656aa.js"
+    ]
+  }
+}
