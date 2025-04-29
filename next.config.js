@@ -22,9 +22,9 @@ const nextConfig = {
       displayName: true,
     },
   },
-  // Ensure CSS is properly handled in production
+  // Disable experimental CSS optimization
   experimental: {
-    optimizeCss: true,
+    optimizeCss: false,
   },
   // Enable static optimization
   output: 'standalone',
