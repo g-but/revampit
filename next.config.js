@@ -16,15 +16,20 @@ const nextConfig = {
     });
     return config;
   },
-  experimental: {
-    optimizeCss: false,
-  },
   compiler: {
     styledComponents: {
       ssr: true,
       displayName: true,
+      preprocess: false,
     },
   },
+  // Ensure CSS is properly handled in production
+  experimental: {
+    optimizeCss: true,
+  },
+  // Enable static optimization
+  output: 'standalone',
 }
 
+module.exports = nextConfig 
 module.exports = nextConfig 
