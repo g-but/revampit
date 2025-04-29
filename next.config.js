@@ -17,17 +17,14 @@ const nextConfig = {
     return config;
   },
   compiler: {
-    styledComponents: {
-      ssr: true,
-      displayName: true,
-    },
-  },
-  // Disable experimental CSS optimization
-  experimental: {
-    optimizeCss: false,
+    styledComponents: true
   },
   // Enable static optimization
   output: 'standalone',
+  // Ensure proper CSS handling
+  experimental: {
+    optimizeCss: true,
+  },
 }
 
 module.exports = nextConfig 
