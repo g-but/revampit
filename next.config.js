@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['cdn.sanity.io'], // For Sanity.io image hosting
+    unoptimized: false,
+    remotePatterns: [],
   },
   webpack: (config) => {
     config.module.rules.push({
@@ -24,6 +25,26 @@ const nextConfig = {
   // Ensure proper CSS handling
   experimental: {
     optimizeCss: true,
+    turbo: {
+      resolveAlias: {
+        // Ensure CSS modules are handled correctly
+        styles: './src/styles',
+      },
+    },
+  },
+  // Add specific CSS handling
+  sassOptions: {
+    includePaths: ['./src/styles'],
+  },
+  // Ensure CSS modules are processed
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      };
+    }
+    return config;
   },
 }
 

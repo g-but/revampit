@@ -53,7 +53,8 @@ const distributions = [
     icon: Laptop,
     useCases: ['Desktop computing', 'Development', 'Server deployment'],
     pros: ['Easy to use', 'Large community', 'Regular updates', 'Extensive documentation'],
-    cons: ['Some proprietary software', 'Heavier than some alternatives']
+    cons: ['Some proprietary software', 'Heavier than some alternatives'],
+    website: 'https://ubuntu.com'
   },
   {
     name: 'Linux Mint',
@@ -61,7 +62,8 @@ const distributions = [
     icon: Laptop,
     useCases: ['Desktop computing', 'Office work', 'Multimedia'],
     pros: ['Windows-like interface', 'Excellent hardware support', 'Stable and reliable', 'Great for beginners'],
-    cons: ['Less frequent updates', 'Limited enterprise features']
+    cons: ['Less frequent updates', 'Limited enterprise features'],
+    website: 'https://linuxmint.com'
   },
   {
     name: 'Fedora',
@@ -69,7 +71,8 @@ const distributions = [
     icon: Cpu,
     useCases: ['Development', 'Enterprise', 'Innovation'],
     pros: ['Latest software', 'Strong security', 'Enterprise-ready', 'Excellent development tools'],
-    cons: ['Frequent updates', 'Shorter support cycles']
+    cons: ['Frequent updates', 'Shorter support cycles'],
+    website: 'https://fedoraproject.org'
   },
   {
     name: 'Debian',
@@ -77,7 +80,8 @@ const distributions = [
     icon: Server,
     useCases: ['Servers', 'Enterprise', 'Stable systems'],
     pros: ['Extremely stable', 'Large package repository', 'Long support cycles', 'Strong security'],
-    cons: ['Older software versions', 'Less user-friendly']
+    cons: ['Older software versions', 'Less user-friendly'],
+    website: 'https://www.debian.org'
   },
   {
     name: 'MX Linux',
@@ -85,7 +89,8 @@ const distributions = [
     icon: HardDrive,
     useCases: ['Older hardware', 'Desktop computing', 'Resource efficiency'],
     pros: ['Lightweight', 'Fast performance', 'User-friendly', 'Stable base'],
-    cons: ['Smaller community', 'Limited enterprise features']
+    cons: ['Smaller community', 'Limited enterprise features'],
+    website: 'https://mxlinux.org'
   }
 ]
 
@@ -294,6 +299,14 @@ export default function LinuxPage() {
                   </div>
                   <div>
                     <h3 className="text-2xl font-bold mb-2">{distro.name}</h3>
+                    <a 
+                      href={distro.website} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-green-600 hover:text-green-700 text-sm mb-4 inline-flex items-center"
+                    >
+                      Visit Website <ArrowRight className="w-4 h-4 ml-1" />
+                    </a>
                     <p className="text-gray-600 mb-4">{distro.description}</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>

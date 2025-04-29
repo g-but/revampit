@@ -58,21 +58,21 @@ const services = {
       highlight: 'Evaluation required before recovery'
     },
     {
-      title: 'Linux & Open Source',
-      description: 'Professional Linux installation, support, and training. We help you transition to open-source software and provide ongoing support.',
+      title: 'Linux Support',
+      description: 'Professional Linux installation, configuration, and support services. We help you get the most out of your Linux system with expert guidance and maintenance.',
       icon: Server,
       features: [
-        'Linux installation & setup',
-        'Open-source software migration',
-        'Technical support',
-        'Workshops & training'
+        'Linux installation & configuration',
+        'System optimization & maintenance',
+        'Security hardening',
+        'Performance tuning'
       ],
       pricing: 'CHF 70/hour',
       highlight: 'Professional assessment required'
     },
     {
       title: 'Open Source Solutions',
-      description: 'Expert open source software implementation and support. We help you transition to and maintain open source solutions for your business.',
+      description: 'Expert implementation and support for open source software. We help you transition to and maintain open source solutions for your business needs.',
       icon: Code,
       features: [
         'Open source consulting',

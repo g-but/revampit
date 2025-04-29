@@ -35,13 +35,15 @@ export default function Home() {
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link
-                href="/get-involved"
+                href="https://www.revamp-it.ch/index.php/de/shop-de"
                 className="rounded-md bg-green-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                Get involved
+                Shop Now
               </Link>
               <Link href="/services" className="text-sm font-semibold leading-6 text-gray-900">
-                Learn more <span aria-hidden="true">→</span>
+                Explore Services <span aria-hidden="true">→</span>
               </Link>
             </div>
           </div>
@@ -90,13 +92,15 @@ export default function Home() {
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <Link
-              href="/get-involved"
+              href="https://www.revamp-it.ch/index.php/de/shop-de"
               className="rounded-md bg-green-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              Volunteer with us
+              Shop Now
             </Link>
             <Link href="/services" className="text-sm font-semibold leading-6 text-gray-900">
-              Learn more <ArrowRight className="inline h-4 w-4" />
+              Explore Services <ArrowRight className="inline h-4 w-4" />
             </Link>
           </div>
         </div>
