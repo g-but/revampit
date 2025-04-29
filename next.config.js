@@ -19,6 +19,9 @@ const nextConfig = {
   experimental: {
     optimizeCss: false,
   },
+  compiler: {
+    styledComponents: true,
+  },
 }
 
 module.exports = nextConfig 
