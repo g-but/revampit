@@ -3,9 +3,6 @@ const nextConfig = {
   images: {
     domains: ['cdn.sanity.io'], // For Sanity.io image hosting
   },
-  experimental: {
-    optimizeCss: true,
-  },
   webpack: (config) => {
     config.module.rules.push({
       test: /\.(woff|woff2|eot|ttf|otf)$/,
