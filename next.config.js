@@ -20,7 +20,6 @@ const nextConfig = {
     styledComponents: {
       ssr: true,
       displayName: true,
-      preprocess: false,
     },
   },
   // Ensure CSS is properly handled in production
@@ -31,5 +30,4 @@ const nextConfig = {
   output: 'standalone',
 }
 
-module.exports = nextConfig 
 module.exports = nextConfig 
