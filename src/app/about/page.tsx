@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import Image from 'next/image'
 
 export const metadata: Metadata = {
   title: 'About Us - RevampIT',
@@ -22,11 +23,21 @@ export default function AboutPage() {
       <section className="py-20 px-4 max-w-6xl mx-auto">
         <div className="space-y-8">
           <h2 className="text-3xl font-bold">Our Mission</h2>
-          <div className="space-y-6 text-lg">
-            <p>
+          <div className="space-y-6">
+            <p className="text-lg">
               At RevampIT, we believe in "Retirement Age 10 for Laptops!" We're a non-profit organization that has been transforming the way people think about technology since 2009. Our mission is simple but powerful: extend the life of IT devices and reduce electronic waste through repair, refurbishment, and sustainable practices.
             </p>
-            <p>
+            <div className="relative w-full h-[400px] rounded-lg overflow-hidden my-8">
+              <Image
+                src="/images/storefront.png"
+                alt="RevampIT storefront with large windows displaying computers and equipment"
+                fill
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 1024px"
+                priority
+              />
+            </div>
+            <p className="text-lg">
               Operating from our unique space in a former bank building, we've created a community hub where technology meets sustainability. Our approach combines hardware recycling with open-source software solutions, creating a holistic approach to sustainable computing that benefits both people and the planet.
             </p>
           </div>
