@@ -20,7 +20,10 @@ const nextConfig = {
     optimizeCss: false,
   },
   compiler: {
-    styledComponents: true,
+    styledComponents: {
+      ssr: true,
+      displayName: true,
+    },
   },
 }
 
