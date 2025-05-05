@@ -48,12 +48,15 @@ export default function ProjectsPage() {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">Our Projects</h1>
-          <p className="text-xl md:text-2xl mb-8 max-w-2xl">
-            Discover our diverse range of projects, from open-source contributions to community initiatives and hardware development.
-          </p>
+      <section className="relative bg-gradient-to-br from-green-700 via-green-800 to-green-900 text-white py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
+        <div className="container mx-auto px-4 relative">
+          <div className="max-w-3xl">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">Our Projects</h1>
+            <p className="text-xl text-green-100">
+              Discover our diverse range of projects, from open-source contributions to community initiatives and hardware development.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -62,13 +65,13 @@ export default function ProjectsPage() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {projects.map((project, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
+              <div key={index} className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                 <div className="text-4xl mb-4">{project.icon}</div>
                 <h3 className="text-xl font-semibold mb-3">{project.title}</h3>
                 <p className="text-gray-600 mb-4">{project.description}</p>
                 <a 
                   href={project.readMoreLink}
-                  className="text-blue-600 hover:text-blue-800 font-semibold inline-flex items-center"
+                  className="text-green-600 hover:text-green-800 font-semibold inline-flex items-center"
                 >
                   Read more
                   <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

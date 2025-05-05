@@ -91,14 +91,29 @@ export const mainNavigation: NavigationItem[] = [
         description: 'Join our team of volunteers'
       },
       {
-        name: 'Donate',
-        href: '/get-involved/donate',
-        description: 'Support our mission financially'
+        name: 'Technical Experts',
+        href: '/get-involved/technical-experts',
+        description: 'Share your expertise with us'
+      },
+      {
+        name: 'Internships',
+        href: '/get-involved/internships',
+        description: 'Gain valuable experience'
+      },
+      {
+        name: 'Work Reintegration',
+        href: '/get-involved/work-reintegration',
+        description: 'Rebuild your career with us'
       },
       {
         name: 'Partnerships',
         href: '/get-involved/partnerships',
         description: 'Become a corporate partner'
+      },
+      {
+        name: 'Donate',
+        href: '/get-involved/donate',
+        description: 'Support our mission financially'
       }
     ]
   },
