@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
 import { ContactLink } from '@/components/ui/contact-link'
+import { HeroBanner } from '@/components/ui/hero-banner'
 
 interface InvolvementPageLayoutProps {
   title: string
@@ -18,25 +19,14 @@ export function InvolvementPageLayout({
 }: InvolvementPageLayoutProps) {
   return (
     <main className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-green-700 via-green-800 to-green-900 text-white py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent"></div>
-        <div className="container mx-auto px-4 relative">
-          <div className="max-w-3xl">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">{title}</h1>
-            <p className="text-xl md:text-2xl mb-8 text-green-100">
-              {description}
-            </p>
-            <a
-              href={ctaHref}
-              className="inline-block bg-white text-green-800 px-8 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors duration-300"
-            >
-              {ctaText}
-            </a>
-          </div>
-        </div>
-      </section>
+      <HeroBanner title={title} description={description}>
+        <a
+          href={ctaHref}
+          className="inline-block bg-white text-green-800 px-8 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors duration-300"
+        >
+          {ctaText}
+        </a>
+      </HeroBanner>
 
       {/* Content Section */}
       <section className="py-20">

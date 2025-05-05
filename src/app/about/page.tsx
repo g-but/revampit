@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import Image from 'next/image'
+import { HeroBanner } from '@/components/ui/hero-banner'
 
 export const metadata: Metadata = {
   title: 'About Us - RevampIT',
@@ -9,15 +10,10 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <main className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative py-20 px-4 bg-gradient-to-r from-green-600 to-green-800 text-white">
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-5xl font-bold mb-6">Extending the Life of Technology</h1>
-          <p className="text-xl max-w-2xl mx-auto">
-            For 15 years, we've been fighting against the premature retirement of computers and promoting sustainable IT practices.
-          </p>
-        </div>
-      </section>
+      <HeroBanner
+        title="Extending the Life of Technology"
+        description="For 15 years, we've been fighting against the premature retirement of computers and promoting sustainable IT practices."
+      />
 
       {/* Mission Section */}
       <section className="py-20 px-4 max-w-6xl mx-auto">

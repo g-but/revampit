@@ -1,0 +1,45 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Deployment Workflow Rule
+
+## Rule Description
+This rule enforces the proper deployment workflow for the project.
+
+## Workflow Steps
+1. Create a feature branch:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+2. Make and test your changes locally
+
+3. Commit your changes:
+   ```bash
+   git add .
+   git commit -m "Descriptive commit message"
+   ```
+
+4. Push to remote:
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+5. Create a Pull Request on GitHub
+
+## Important Notes
+- Never commit directly to main
+- Always use feature branches
+- Write descriptive commit messages
+- Test changes before pushing
+- Create PRs for all changes
+
+## Apply to
+- All TypeScript/JavaScript files
+- All React components
+- All configuration files
+
+## Run
+This rule should be checked before any commit or push operation.

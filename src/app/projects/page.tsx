@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { HeroBanner } from '@/components/ui/hero-banner'
 
 export const metadata: Metadata = {
   title: 'Our Projects | RevampIT',
@@ -47,18 +48,10 @@ const projects = [
 export default function ProjectsPage() {
   return (
     <main className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-green-700 via-green-800 to-green-900 text-white py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
-        <div className="container mx-auto px-4 relative">
-          <div className="max-w-3xl">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">Our Projects</h1>
-            <p className="text-xl text-green-100">
-              Discover our diverse range of projects, from open-source contributions to community initiatives and hardware development.
-            </p>
-          </div>
-        </div>
-      </section>
+      <HeroBanner
+        title="Our Projects"
+        description="Discover our diverse range of projects, from open-source contributions to community initiatives and hardware development."
+      />
 
       {/* Projects Grid */}
       <section className="py-16">

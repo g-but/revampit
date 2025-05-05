@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { Users, Code, Building2, GraduationCap, Handshake, Heart, Globe, Recycle, Lightbulb, Gift } from 'lucide-react'
 import { siteConfig } from '@/config/site'
 import { ContactLink } from '@/components/ui/contact-link'
+import { HeroBanner } from '@/components/ui/hero-banner'
 
 export const metadata: Metadata = {
   title: 'Get Involved | RevampIT',
@@ -142,33 +143,25 @@ const partnerInstitutions = [
 export default function GetInvolvedPage() {
   return (
     <main className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-green-700 via-green-800 to-green-900 text-white py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent"></div>
-        <div className="container mx-auto px-4 relative">
-          <div className="max-w-3xl">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">Join Our Mission</h1>
-            <p className="text-xl md:text-2xl mb-8 text-green-100">
-              Be part of a community that's making technology sustainable and accessible for everyone.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <a
-                href="#get-started"
-                className="bg-white text-green-800 px-8 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors duration-300 text-center"
-              >
-                Get Started
-              </a>
-              <a
-                href="#learn-more"
-                className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/10 transition-colors duration-300 text-center"
-              >
-                Learn More
-              </a>
-            </div>
-          </div>
+      <HeroBanner
+        title="Join Our Mission"
+        description="Be part of a community that's making technology sustainable and accessible for everyone."
+      >
+        <div className="flex flex-col sm:flex-row gap-4">
+          <a
+            href="#get-started"
+            className="bg-white text-green-800 px-8 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors duration-300 text-center"
+          >
+            Get Started
+          </a>
+          <a
+            href="#learn-more"
+            className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/10 transition-colors duration-300 text-center"
+          >
+            Learn More
+          </a>
         </div>
-      </section>
+      </HeroBanner>
 
       {/* Core Values Section */}
       <section id="learn-more" className="py-20 bg-gray-50">

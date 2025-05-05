@@ -3,6 +3,12 @@
   "buildCommand": "next build",
   "outputDirectory": ".next",
   "framework": "nextjs",
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "preview": false
+    }
+  },
   "headers": [
     {
       "source": "/(.*)",
