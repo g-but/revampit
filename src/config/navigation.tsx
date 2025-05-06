@@ -64,14 +64,29 @@ export const mainNavigation: NavigationItem[] = [
         description: 'Open source ERP system implementation'
       },
       {
-        name: 'Linuxola',
-        href: '/projects/linuxola',
-        description: 'Linux installation and support program'
+        name: 'LTSP',
+        href: '/projects/ltsp',
+        description: 'Linux Terminal Server Project for efficient multi-user computing'
+      },
+      {
+        name: 'Hardware',
+        href: '/projects/hardware',
+        description: 'Sustainable hardware development and upcycling'
+      },
+      {
+        name: 'Compirat',
+        href: '/projects/compirat',
+        description: 'Digital inclusion and computer literacy for all'
       },
       {
         name: 'FreieComputer',
         href: '/projects/freiecomputer',
-        description: 'Computer donation and refurbishment program'
+        description: 'Swiss label for computers with free software'
+      },
+      {
+        name: 'Linuxola',
+        href: '/projects/linuxola',
+        description: 'Connecting Africa to the global digital commons'
       }
     ]
   },
