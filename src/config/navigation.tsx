@@ -21,6 +21,11 @@ export const mainNavigation: NavigationItem[] = [
     description: 'Our refurbishment and recycling services',
     subItems: [
       {
+        name: 'Build Your Computer',
+        href: '/services/build-your-computer',
+        description: 'AI-powered custom computer builds with global parts sourcing'
+      },
+      {
         name: 'Computer Repair & Upgrades',
         href: '/services/computer-repair-upgrades',
         description: 'Expert repairs and upgrades for all devices'
