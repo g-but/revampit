@@ -1,0 +1,31 @@
+{
+  "kind": "singleType",
+  "collectionName": "main_menus",
+  "info": {
+    "singularName": "main-menu",
+    "pluralName": "main-menus",
+    "displayName": "Main Menu",
+    "description": "Navigation menu for the website"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "menuItems": {
+      "type": "component",
+      "repeatable": true,
+      "component": "navigation.menu-item",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    }
+  }
+} 

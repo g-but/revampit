@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_navigation_menu_items",
+  "info": {
+    "displayName": "MenuItem",
+    "description": "Navigation menu item"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "url": {
+      "type": "string"
+    },
+    "target": {
+      "type": "enumeration",
+      "enum": ["_self", "_blank"],
+      "default": "_self"
+    },
+    "children": {
+      "type": "component",
+      "repeatable": true,
+      "component": "navigation.menu-item"
+    }
+  }
+} 
