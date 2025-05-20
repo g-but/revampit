@@ -101,6 +101,11 @@ export const mainNavigation: NavigationItem[] = [
     description: 'Upcoming workshops and learning opportunities'
   },
   {
+    name: 'Blog',
+    href: '/blog',
+    description: 'Insights on sustainable technology and digital inclusion'
+  },
+  {
     name: 'Get Involved',
     href: '/get-involved',
     description: 'Volunteer and support our mission',

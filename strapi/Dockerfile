@@ -1,20 +1,16 @@
-FROM strapi/base:14-alpine
+FROM node:18-alpine
 
-# Create app directory
 WORKDIR /opt/app
 
-# Copy package.json and yarn.lock
-COPY ./package.json ./
-COPY ./yarn.lock ./
+# Install dependencies with reduced layers
+RUN apk add --no-cache build-base gcc autoconf automake zlib-dev libpng-dev && \
+    mkdir -p /opt/app/public/uploads
 
-# Install dependencies
-RUN yarn install --frozen-lockfile
-
-# Copy app
-COPY . .
+# Copy app files
+COPY ./app /opt/app
 
 # Expose Strapi port
 EXPOSE 1337
 
 # Start Strapi
-CMD ["yarn", "develop"] 
+CMD ["npm", "run", "develop"] 

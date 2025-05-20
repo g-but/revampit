@@ -1,8 +1,8 @@
 {
-  "name": "revampit-strapi",
+  "name": "strapi-app",
   "private": true,
   "version": "0.1.0",
-  "description": "Revamp-it Strapi CMS",
+  "description": "Strapi application",
   "scripts": {
     "develop": "strapi develop",
     "start": "strapi start",
@@ -13,16 +13,16 @@
     "@strapi/strapi": "4.17.1",
     "@strapi/plugin-users-permissions": "4.17.1",
     "@strapi/plugin-i18n": "4.17.1",
-    "pg": "8.8.0"
+    "pg": "8.11.3"
   },
   "author": {
-    "name": "Revamp-it Team"
+    "name": "A Strapi developer"
   },
   "strapi": {
-    "uuid": "8c9b8c2f-5e8d-4a2b-a9c3-b0b3c3d4e5f6"
+    "uuid": "strapi-app"
   },
   "engines": {
-    "node": ">=14.19.1 <=18.x.x",
+    "node": ">=18.0.0 <=20.x.x",
     "npm": ">=6.0.0"
   },
   "license": "MIT"
