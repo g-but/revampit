@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
-import { CONTACT, ORG } from '@/config/org'
+import { ORG } from '@/config/org'
+import { ROUTES } from '@/config/routes'
 import type { ReactNode } from 'react'
 
 /**
@@ -44,10 +45,6 @@ export default async function VisionContent({ locale }: { locale: string }) {
     em: (c: ReactNode) => <em>{c}</em>,
     lime: (c: ReactNode) => <strong className="lime">{c}</strong>,
   }
-
-  const mailto = (
-    subjectKey: 'close.support.subject' | 'close.build.subject' | 'close.commercialSubject',
-  ) => `mailto:${CONTACT.email}?subject=${encodeURIComponent(t(subjectKey))}`
 
   return (
     <div className="theme-vision">
@@ -181,23 +178,23 @@ export default async function VisionContent({ locale }: { locale: string }) {
           <span className="v-eyebrow">{t('close.eyebrow')}</span>
           <h2 className="v-h2">{t('close.title')}</h2>
           <div className="v-doors">
-            <a className="v-door primary" href={mailto('close.support.subject')}>
+            <Link className="v-door primary" href={ROUTES.public.partnerships}>
               <span className="k">{t('close.support.k')}</span>
               <h3 className="v-h3">{t('close.support.title')}</h3>
               <p>{t('close.support.body')}</p>
               <span className="arr">{t('close.support.cta')} &rarr;</span>
-            </a>
-            <a className="v-door ghost" href={mailto('close.build.subject')}>
+            </Link>
+            <Link className="v-door ghost" href={ROUTES.public.getInvolved}>
               <span className="k">{t('close.build.k')}</span>
               <h3 className="v-h3">{t('close.build.title')}</h3>
               <p>{t('close.build.body')}</p>
               <span className="arr">{t('close.build.cta')} &rarr;</span>
-            </a>
+            </Link>
           </div>
           <p className="v-commercial">
             {t.rich('close.commercial', {
               ...tags,
-              a: (c: ReactNode) => <a href={mailto('close.commercialSubject')}>{c}</a>,
+              a: (c: ReactNode) => <Link href={ROUTES.public.contact}>{c}</Link>,
             })}
           </p>
         </section>

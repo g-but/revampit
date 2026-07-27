@@ -332,7 +332,8 @@
       "warehouse": "Warehouse",
       "byAppointmentOnly": "(by appointment only)",
       "country": "Switzerland"
-    }
+    },
+    "vision": "Vision"
   },
   "home": {
     "meta": {
@@ -8987,18 +8988,15 @@
         "k": "Support the mission",
         "title": "Back evig",
         "body": "For foundations, grant-makers and patrons who believe access to intelligence should not depend on a wallet.",
-        "cta": "Start a conversation",
-        "subject": "Supporting evig"
+        "cta": "Start a conversation"
       },
       "build": {
         "k": "Build with us",
         "title": "Join the work",
         "body": "For people and partners who want to research, repair, teach, and put good tools in more hands.",
-        "cta": "See where you fit",
-        "subject": "Building with evig"
+        "cta": "See where you fit"
       },
-      "commercial": "Building on our platform products? <b>hirnli</b> and <b>kivvi</b> are open, independent projects with their own home — <a>get in touch</a>. Kept separate from the association, by design.",
-      "commercialSubject": "evig platform & products"
+      "commercial": "Building on our platform products? <b>hirnli</b> and <b>kivvi</b> are open, independent projects with their own home — <a>get in touch</a>. Kept separate from the association, by design."
     },
     "footer": {
       "legal": "evig — eternal — is a non-profit association (Verein) <em>in formation</em> in Zürich, Switzerland. We do not claim recognised charitable status or issue tax-deductible donation receipts until the association is registered and canton-recognised. Everything on this page is what we are building toward — stated as intent, not a track record we have not yet earned."

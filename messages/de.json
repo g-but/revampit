@@ -332,7 +332,8 @@
       "warehouse": "Lager",
       "byAppointmentOnly": "(nur nach Terminvereinbarung)",
       "country": "Schweiz"
-    }
+    },
+    "vision": "Vision"
   },
   "home": {
     "meta": {
@@ -9004,18 +9005,15 @@
         "k": "Die Mission unterstützen",
         "title": "evig fördern",
         "body": "Für Stiftungen, Förderstellen und Gönner, die überzeugt sind, dass Zugang zu Intelligenz nicht vom Portemonnaie abhängen darf.",
-        "cta": "Ein Gespräch beginnen",
-        "subject": "evig unterstützen"
+        "cta": "Ein Gespräch beginnen"
       },
       "build": {
         "k": "Mit uns bauen",
         "title": "Bei der Arbeit mitmachen",
         "body": "Für Menschen und Partner, die forschen, reparieren, lehren und gute Werkzeuge in mehr Hände bringen wollen.",
-        "cta": "Sieh, wo du hinpasst",
-        "subject": "Mit evig bauen"
+        "cta": "Sieh, wo du hinpasst"
       },
-      "commercial": "Baust du auf unseren Plattform-Produkten auf? <b>hirnli</b> und <b>kivvi</b> sind offene, unabhängige Projekte mit eigenem Zuhause — <a>melde dich</a>. Bewusst getrennt vom Verein.",
-      "commercialSubject": "evig Plattform & Produkte"
+      "commercial": "Baust du auf unseren Plattform-Produkten auf? <b>hirnli</b> und <b>kivvi</b> sind offene, unabhängige Projekte mit eigenem Zuhause — <a>melde dich</a>. Bewusst getrennt vom Verein."
     },
     "footer": {
       "legal": "evig — «ewig» — ist ein gemeinnütziger Verein <em>in Gründung</em> in Zürich, Schweiz. Wir beanspruchen keinen anerkannten gemeinnützigen Status und stellen keine steuerlich abzugsfähigen Spendenbescheinigungen aus, solange der Verein nicht eingetragen und kantonal anerkannt ist. Alles auf dieser Seite ist das, worauf wir hinarbeiten — als Absicht formuliert, nicht als Leistungsausweis, den wir noch nicht verdient haben."
