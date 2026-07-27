@@ -864,7 +864,7 @@
   border: 1px solid var(--color-border); padding: 0.4em 0.6em; text-align: left; min-width: 4em;
 }
 .rich-editor-content th { background: var(--color-surface-raised); font-weight: 600; }
-.rich-editor-content .selectedCell { background: color-mix(in srgb, var(--color-brand, #16a34a) 12%, transparent); }
+.rich-editor-content .selectedCell { background: color-mix(in srgb, var(--color-action) 12%, transparent); }
 .rich-editor-content:empty::before,
 .rich-editor-content p.is-editor-empty:first-child::before {
   content: attr(aria-label); color: var(--color-text-faint); pointer-events: none; float: left; height: 0;
