@@ -10,12 +10,10 @@ tags:
   - roadmap
   - kreislaufwirtschaft
 publishedAt: "2026-07-28"
-published: false
-audience: author
-visibility: unlisted
+published: true
+audience: public
+visibility: public
 ---
-
-> **Entwurf — noch nicht veröffentlicht.** Dieser Beitrag ist bewusst auf `published: false` und `audience: author` gesetzt: sichtbar nur für Super-Admins, nicht im öffentlichen Blog, nicht im RSS. Zum Veröffentlichen `published: true`, `audience: public` und `visibility: public` setzen.
 
 Ich habe eine Plattform gebaut, die alles vereint und automatisiert — vom gespendeten Altgerät über die Qualitätskontrolle bis ins öffentliche Schaufenster, dazu den ganzen internen Betrieb. Revamp-IT hat sich entschieden, diesen Weg nicht mitzugehen, und bleibt bei den bestehenden Systemen: einer Joomla-Website, einem separaten Shopware-Shop und Kivitendo, einem ERP in Perl ohne echte Schnittstelle. Das ist die Entscheidung des Vereins. Ich bin überzeugt, dass der automatisierte Weg der bessere ist — und gehe ihn mit **evig** eigenständig weiter.
 
