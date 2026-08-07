@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -56,7 +56,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -96,7 +96,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -194,7 +194,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -231,7 +231,7 @@ jobs:
 
       - name: Upload E2E artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: e2e-local-artifacts
           path: |
@@ -250,7 +250,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -261,6 +261,33 @@ jobs:
       - name: Run tests
         run: npm run test
         continue-on-error: true
+
+  # Dependency advisories. Blocks a PR that INTRODUCES a critical; high and
+  # below are reported but do not fail, because a third party publishing an
+  # advisory must not be able to jam the merge train (auto-merge refuses a red
+  # base). Advisories that appear with no code change are caught by the
+  # scheduled security-audit.yml instead — this job only sees what a run touches.
+  security:
+    name: Dependency Security Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Audit runtime dependencies
+        env:
+          FAIL_ON: critical
+        run: bash scripts/ci/dependency-audit.sh
 
   # Red-main alarm for the DISPATCHED path.
   #
@@ -278,7 +305,7 @@ jobs:
     # conclusion — which every job contributes to. Enforced by
     # src/__tests__/ci/main-red-verdict.test.ts, because this list has already
     # drifted once (see the commit that added this comment).
-    needs: [quality, auth-smoke, inventory-smoke, migrations, e2e-local, test]
+    needs: [quality, auth-smoke, inventory-smoke, migrations, e2e-local, test, security]
     if: always() && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -300,6 +327,7 @@ jobs:
           R_MIGRATIONS: ${{ needs.migrations.result }}
           R_E2E: ${{ needs.e2e-local.result }}
           R_TEST: ${{ needs.test.result }}
+          R_SECURITY: ${{ needs.security.result }}
         run: |
           set -euo pipefail
           # The question this answers is NOT "did the code break?" but "is main
@@ -311,7 +339,7 @@ jobs:
           # hard as a failing one; treating it as a non-event is what let main
           # sit red and SILENT for ~14h on 2026-08-07 while 11 PRs waited.
           # (`skipped` stays green: jobs here are conditional on event type.)
-          results="$R_QUALITY $R_AUTH $R_INVENTORY $R_MIGRATIONS $R_E2E $R_TEST"
+          results="$R_QUALITY $R_AUTH $R_INVENTORY $R_MIGRATIONS $R_E2E $R_TEST $R_SECURITY"
           conclusion=success
           for result in $results; do
             case "$result" in

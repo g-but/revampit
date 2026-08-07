@@ -29,6 +29,15 @@ permissions:
   pull-requests: write # read PR state, delete the branch
   actions: write # dispatch the re-arm workflows
 
+# KNOWN LIMIT — PRs that edit .github/workflows/ cannot be merged by this
+# sweep. GITHUB_TOKEN has no workflow-writing scope AT ALL: `workflows: write`
+# is not a valid permissions key (adding it makes this file unparseable and
+# silently kills every trigger — that exact mistake shipped as #287 and took
+# the sweep down for 5 hours). To GITHUB_TOKEN such a PR reads as
+# MERGEABLE/BLOCKED and gh, --auto, and the REST endpoint all refuse it.
+# Those PRs need a merge with a personal token (`gh pr merge --squash` as a
+# user); everything else self-merges here.
+
 # Never let two sweeps merge concurrently — they would race on the same PRs.
 concurrency:
   group: auto-merge

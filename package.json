@@ -91,8 +91,9 @@
   "dependencies": {
     "@auth/pg-adapter": "^1.11.3",
     "@aws-sdk/client-s3": "^3.1070.0",
-    "@eslint/eslintrc": "^3.3.3",
+    "@eslint/eslintrc": "^3.3.6",
     "@eslint/js": "^9.39.2",
+    "@fleet/ai-forms": "github:maonakamoto/ai-forms#v0.1.0",
     "@sentry/nextjs": "^10.61.0",
     "@tiptap/extension-link": "^3.29.2",
     "@tiptap/extension-table": "^3.29.2",
@@ -113,7 +114,7 @@
     "exceljs": "^4.4.0",
     "framer-motion": "^12.23.25",
     "gray-matter": "^4.0.3",
-    "ioredis": "^5.10.0",
+    "ioredis": "^6.0.0",
     "jsonwebtoken": "^9.0.2",
     "leaflet": "^1.9.4",
     "lru-cache": "^11.2.6",
@@ -171,7 +172,7 @@
     "jest-environment-jsdom": "^30.2.0",
     "lint-staged": "^16.4.0",
     "npm-run-all": "^4.1.5",
-    "postcss": "^8.5.10",
+    "postcss": "^8.5.26",
     "tailwindcss": "^4.3.0",
     "typescript": "^5.3.3"
   },
@@ -184,10 +185,11 @@
     "nodemailer": "^9.0.1",
     "js-yaml": "^4.3.0",
     "basic-ftp": ">=5.3.0",
-    "postcss": "^8.5.10",
+    "postcss": "^8.5.26",
     "esbuild": "0.28.1",
     "shell-quote": "1.10.0",
     "brace-expansion": "^5.0.9",
-    "uuid": "$uuid"
+    "uuid": "$uuid",
+    "sharp": "$sharp"
   }
 }
