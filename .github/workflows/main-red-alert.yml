@@ -1,0 +1,49 @@
+name: Main Red Alert
+
+# A red main is invisible, and it silently stops the whole repo.
+#
+# 2026-08-06: a regression reddened CI on main at 17:40 the previous day. The
+# fix was pushed to a PR branch, that branch went green, and the fix was called
+# done — but nothing re-runs a base-branch run, so main's own run stayed red.
+# Auto-merge's green-base guard then refused every merge for ~16 hours, holding
+# back 17 PRs while logging "refusing to merge onto a broken base" into a
+# workflow nobody opens. It presented as "the agent can't merge" rather than
+# "the base is broken", which is the expensive part: the symptom points away
+# from the cause.
+#
+# This workflow covers the PUSH path only. A CI run dispatched by the auto-merge
+# sweep emits no `workflow_run` event (GitHub suppresses it for runs created with
+# GITHUB_TOKEN), so that path calls the same script from ci.yml's post-main job
+# instead. That second path is the COMMON one here — every merge is an
+# auto-merge — so a workflow_run-only alarm is silent on almost every main CI
+# run this repo produces. The policy lives in scripts/ci/main-red-alert.sh so
+# the two paths cannot drift.
+#
+# Fixing a red main means re-running MAIN's run (`gh run rerun <id> --failed`),
+# not just your branch's. A green branch on a red base merges nothing.
+
+on:
+  workflow_run:
+    workflows: ['CI Pipeline']
+    branches: [main]
+    types: [completed]
+
+permissions:
+  issues: write
+  actions: read
+
+jobs:
+  alert:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: File or resolve the main-red issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+          RUN_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: bash scripts/ci/main-red-alert.sh
