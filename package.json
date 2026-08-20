@@ -99,7 +99,7 @@
     "@tiptap/extension-table": "^3.29.2",
     "@tiptap/pm": "^3.29.2",
     "@tiptap/react": "^3.29.2",
-    "@tiptap/starter-kit": "^3.29.2",
+    "@tiptap/starter-kit": "^3.30.1",
     "@types/busboy": "^1.5.4",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/nodemailer": "^7.0.1",
