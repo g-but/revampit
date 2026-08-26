@@ -2,7 +2,10 @@ import React from 'react'
 import { ORG } from '@/config/org'
 import { buildMarktplatzNavigationItems } from '@/config/customer-journeys'
 import { ROUTES } from '@/config/routes'
-import { buildServicesNavigationItems } from '@/config/services-nav'
+import {
+  buildLearnServiceNavigationItems,
+  buildServicesNavigationItems,
+} from '@/config/services-nav'
 
 /**
  * Navigation Configuration - SSOT for all navigation data
@@ -153,28 +156,17 @@ export const mainNavigation: NavigationItem[] = [
         href: '/workshops',
         descriptionKey: 'workshopsDesc',
       },
-      {
-        // "Guides" pointed at /knowhow#guides. There is no #guides element on
-        // /knowhow — its only id is `ressourcen` — and the card ON that page
-        // pointed at /#guides, a homepage anchor that does not exist either.
-        // Two dead links that did not even agree with each other, for content
-        // that has never been written.
-        //
-        // These two entries are what evig actually owns to teach with: a
-        // 43-entry open-source alternatives registry, and a Linux page with a
-        // distro-recommendation matrix. Both were filed under Dienstleistungen,
-        // three levels from anyone looking to learn something.
-        name: 'Open-Source-Alternativen',
-        nameKey: 'openSourceSolutions',
-        href: '/services/open-source-solutions',
-        descriptionKey: 'openSourceSolutionsDesc',
-      },
-      {
-        name: 'Linux einrichten',
-        nameKey: 'linuxOpenSource',
-        href: '/services/linux-open-source',
-        descriptionKey: 'linuxOpenSourceDesc',
-      },
+      // "Guides" pointed at /knowhow#guides. There is no #guides element on
+      // /knowhow — its only id is `ressourcen` — and the card ON that page
+      // pointed at /#guides, a homepage anchor that does not exist either.
+      // Two dead links that did not even agree with each other, for content
+      // that has never been written.
+      //
+      // What replaces them is DERIVED, not retyped: the service pages that
+      // declare `navGroup: 'learn'` in SERVICE_CONFIGS. Listing them here by
+      // hand — as the first version of this change did — put the same two
+      // items in two menus fed by two independent lists.
+      ...buildLearnServiceNavigationItems(),
       {
         name: 'Ressourcen',
         nameKey: 'resources',
