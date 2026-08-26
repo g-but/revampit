@@ -86,8 +86,6 @@
       "aboutDesc": "Mission, impact et projets",
       "missionHistoryDesc": "Qui nous sommes et ce qui nous anime",
       "impactDesc": "Résultats mesurables et transparence",
-      "howItWorks": "Comment ça marche",
-      "howItWorksDesc": "Le parcours d’un appareil, du don à sa nouvelle vie",
       "projectsDesc": "Nos initiatives",
       "locationsDesc": "Nos espaces à Zurich",
       "faqDesc": "Questions fréquemment posées",
@@ -191,15 +189,17 @@
       "itHelpHubDesc": "Repair, reinstall OS, solve IT problems — one entry point",
       "transparency": "Transparence",
       "transparencyDesc": "Finances, chiffres clés et méthodes de calcul",
-      "reparaturbonus": "Bonus réparation Zurich",
-      "reparaturbonusDesc": "Jusqu'à 100 francs pour vos réparations — comment ça marche",
       "press": "Presse",
       "pressDesc": "Revue de presse",
       "aiDivision": "Accès à l’intelligence artificielle — l’assistant et le matériel pour le faire tourner",
       "vision": "Vision",
       "visionDesc": "La raison d'être d'evig, en entier",
       "resources": "Ressources",
-      "resourcesDesc": "Outils, distributions et documentation sélectionnés"
+      "resourcesDesc": "Outils, distributions et documentation sélectionnés",
+      "whoWeAre": "Qui nous sommes",
+      "trust": "Confiance",
+      "sectionAiAccess": "Accès à l'IA",
+      "aiDivisionLink": "evig ai"
     },
     "badge": {
       "new": "Nouveau"
