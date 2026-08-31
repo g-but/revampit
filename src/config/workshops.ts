@@ -281,8 +281,8 @@ export function normalizeLevelId(value: string | null | undefined): string | nul
   if (byLabel) return byLabel.id;
 
   // Common DB free-form values (legacy) — match-strings against existing DB content, not UI labels
-  if (v === 'anfänger bis fortgeschrittene' || v === 'anfänger bis experten')
-    return 'beginner_to_advanced'; // i18n-ok
+  // prettier-ignore
+  if (v === 'anfänger bis fortgeschrittene' || v === 'anfänger bis experten') return 'beginner_to_advanced'; // i18n-ok
   if (v === 'fortgeschrittene bis experten') return 'advanced'; // i18n-ok
 
   return null;
