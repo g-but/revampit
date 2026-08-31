@@ -107,7 +107,7 @@
     "@tiptap/pm": "^3.30.5",
     "@tiptap/react": "^3.30.5",
     "@tiptap/starter-kit": "^3.30.5",
-    "ai-kit": "github:bitbaum/ai-kit#v0.6.2",
+    "ai-kit": "github:bitbaum/ai-kit#v0.4.0",
     "bcryptjs": "^2.4.3",
     "busboy": "^1.6.0",
     "clsx": "^2.1.1",
