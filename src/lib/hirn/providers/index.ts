@@ -5,17 +5,20 @@
  * Handles provider selection, fallbacks, and configuration.
  */
 
-import { db } from '@/db';
-import { hirnProviderSettings } from '@/db/schema';
-import { eq, and, desc, isNull, sql } from 'drizzle-orm';
-import { logger } from '@/lib/logger';
-import { GroqProvider } from './groq';
-import { OllamaProvider } from './ollama';
-import { OpenRouterProvider } from './openrouter';
+import { db } from '@/db'
+import { hirnProviderSettings } from '@/db/schema'
+import { eq, and, desc, isNull, sql } from 'drizzle-orm'
+import { logger } from '@/lib/logger'
+import { GroqProvider } from './groq'
+import { OllamaProvider } from './ollama'
+import { OpenRouterProvider } from './openrouter'
+import { recordLLMFailure, recordLLMSuccess } from '../health'
 import type {
   AIProvider,
   ProviderConfig,
   ProviderName,
+  ChatCompletionOptions,
+  ChatCompletionResponse,
   EmbeddingOptions,
   EmbeddingResponse,
 } from './types';
@@ -156,6 +159,30 @@ export async function getDefaultChatProvider(userId?: string): Promise<AIProvide
   throw new Error(
     `Kein KI-Anbieter verfügbar. Geprüft: ${tried || 'keiner'}. Aktualisiere den API-Key (z.B. GROQ_API_KEY) oder die Anbieter-Einstellungen in /admin/hirn.`,
   );
+}
+
+/**
+ * Select the default chat provider and generate a completion in one step.
+ *
+ * Three call sites used to do `getDefaultChatProvider()` then `.chat(...)`
+ * separately, and none of them recorded whether it actually worked — the
+ * same shape of gap that left an AI outage invisible to `/api/health`
+ * elsewhere in this fleet. Callers that need a chat response should use
+ * this instead of calling `getDefaultChatProvider` themselves.
+ */
+export async function getChatResponse(
+  options: ChatCompletionOptions,
+  userId?: string,
+): Promise<ChatCompletionResponse> {
+  try {
+    const provider = await getDefaultChatProvider(userId)
+    const response = await provider.chat(options)
+    recordLLMSuccess()
+    return response
+  } catch (error) {
+    recordLLMFailure(error)
+    throw error
+  }
 }
 
 /**

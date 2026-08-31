@@ -74,16 +74,26 @@ export function maskSensitiveData(data: string): string {
 }
 
 /**
+ * Derive a 32-byte AES-256 key from the configured secret.
+ * createCipher/createDecipher were removed in Node 22 (and never supported
+ * GCM), so we hash the secret to a fixed-length key for createCipheriv.
+ */
+function deriveEncryptionKey(): Buffer {
+  const secret = process.env.PAYMENT_ENCRYPTION_KEY || 'default-key-change-in-production'
+  return crypto.createHash('sha256').update(secret).digest()
+}
+
+/**
  * Encrypt sensitive data before storage
  */
 export function encryptSensitiveData(data: string): string {
-  const algorithm = 'aes-256-gcm';
-  const key = process.env.PAYMENT_ENCRYPTION_KEY || 'default-key-change-in-production';
-  const iv = crypto.randomBytes(16);
+  const algorithm = 'aes-256-gcm'
+  const key = deriveEncryptionKey()
+  const iv = crypto.randomBytes(16)
 
-  const cipher = crypto.createCipher(algorithm, key);
-  let encrypted = cipher.update(data, 'utf8', 'hex');
-  encrypted += cipher.final('hex');
+  const cipher = crypto.createCipheriv(algorithm, key, iv)
+  let encrypted = cipher.update(data, 'utf8', 'hex')
+  encrypted += cipher.final('hex')
 
   const authTag = cipher.getAuthTag();
 
@@ -103,9 +113,9 @@ export function decryptSensitiveData(encryptedData: string): string {
   try {
     const { encrypted, iv, authTag, algorithm } = JSON.parse(encryptedData);
 
-    const key = process.env.PAYMENT_ENCRYPTION_KEY || 'default-key-change-in-production';
-    const decipher = crypto.createDecipher(algorithm, key);
-    decipher.setAuthTag(Buffer.from(authTag, 'hex'));
+    const key = deriveEncryptionKey()
+    const decipher = crypto.createDecipheriv(algorithm, key, Buffer.from(iv, 'hex'))
+    decipher.setAuthTag(Buffer.from(authTag, 'hex'))
 
     let decrypted = decipher.update(encrypted, 'hex', 'utf8');
     decrypted += decipher.final('utf8');

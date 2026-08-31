@@ -24,7 +24,7 @@ export default function Footer() {
   const tDivisions = useTranslations('divisions');
 
   return (
-    <footer className="bg-surface-raised text-text-primary border-t border">
+    <footer className="bg-surface-raised text-text-primary border-t">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand Section */}
@@ -119,13 +119,15 @@ export default function Footer() {
         </div>
 
         {/* Newsletter */}
-        <div className="mt-10 pt-8 border-t border">
-          <NewsletterSignup source="footer" />
+        <div className="mt-10 pt-8 border-t">
+          <NewsletterSignup
+            source="footer"
+          />
         </div>
 
         {/* Social Links — only when evig actually has profiles (see socialLinks) */}
         {socialLinks.length > 0 && (
-          <div className="mt-8 pt-6 border-t border flex justify-center gap-4">
+          <div className="mt-8 pt-6 border-t flex justify-center gap-4">
             {socialLinks.map((social) => (
               <a
                 key={social.name}
@@ -142,15 +144,9 @@ export default function Footer() {
         )}
 
         {/* Legal Links — routes from ROUTES.public SSOT */}
-        <div className="mt-6 pt-6 border-t border">
-          <nav
-            aria-label={tFooter('legal')}
-            className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-text-tertiary"
-          >
-            <Link
-              href={ROUTES.public.impressum}
-              className="hover:text-text-primary transition-colors"
-            >
+        <div className="mt-6 pt-6 border-t">
+          <nav aria-label={tFooter('legal')} className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-text-tertiary">
+            <Link href={ROUTES.public.impressum} className="hover:text-text-primary transition-colors">
               {tFooter('impressum')}
             </Link>
             <Link

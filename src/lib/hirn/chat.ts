@@ -4,14 +4,14 @@
  * AI chat for admin users with baked-in organizational knowledge.
  */
 
-import { db } from '@/db';
-import { hirnChatHistory } from '@/db/schema';
-import { eq, and, asc, desc, sql, or, isNull, count } from 'drizzle-orm';
-import { logger } from '@/lib/logger';
-import { getDefaultChatProvider, type Message } from './providers';
-import { SYSTEM_PROMPT } from './system-prompt';
-import { parseActionEnvelope, stripActionBlock, type HirnActionCard } from './action-cockpit';
-import { API_DEFAULTS } from '@/config/api-defaults';
+import { db } from '@/db'
+import { hirnChatHistory } from '@/db/schema'
+import { eq, and, asc, desc, sql, or, isNull, count } from 'drizzle-orm'
+import { logger } from '@/lib/logger'
+import { getChatResponse, type Message } from './providers'
+import { SYSTEM_PROMPT } from './system-prompt'
+import { parseActionEnvelope, stripActionBlock, type HirnActionCard } from './action-cockpit'
+import { API_DEFAULTS } from '@/config/api-defaults'
 
 export interface ChatOptions {
   sessionId: string;
@@ -76,12 +76,7 @@ export async function chat(message: string, options: ChatOptions): Promise<ChatR
   ];
 
   // Get the chat provider and generate response
-  const provider = await getDefaultChatProvider(userId);
-  const response = await provider.chat({
-    messages,
-    temperature,
-    maxTokens,
-  });
+  const response = await getChatResponse({ messages, temperature, maxTokens }, userId)
 
   // Store conversation history (best-effort — don't let DB errors kill the response)
   try {

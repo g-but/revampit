@@ -8,12 +8,13 @@
  * timeout, fallback, and error categorization.
  */
 
-import { logger } from '@/lib/logger';
-import { db } from '@/db';
-import { hirnProviderSettings } from '@/db/schema';
-import { eq, desc } from 'drizzle-orm';
-import { OLLAMA_URL, APP_URL } from '@/config/urls';
-import { ORG } from '@/config/org';
+import { logger } from '@/lib/logger'
+import { db } from '@/db'
+import { hirnProviderSettings } from '@/db/schema'
+import { eq, desc } from 'drizzle-orm'
+import { OLLAMA_URL, APP_URL } from '@/config/urls'
+import { ORG } from '@/config/org'
+import { recordAIToolsFailure, recordAIToolsSuccess } from './health'
 
 // =============================================================================
 // CONFIGURATION (SSOT - all AI provider settings in one place)
@@ -531,6 +532,7 @@ export async function callWithFallback(opts: CallOptions): Promise<CallResult | 
       });
     }
 
+    recordAIToolsSuccess()
     return {
       text: result.text,
       model: result.model,
@@ -547,7 +549,8 @@ export async function callWithFallback(opts: CallOptions): Promise<CallResult | 
     })),
   });
 
-  return null;
+  recordAIToolsFailure(buildFailureMessage(failedProviders))
+  return null
 }
 
 export interface VisionCallOptions {
@@ -711,21 +714,13 @@ export async function callVisionWithFallback(opts: VisionCallOptions): Promise<C
       });
       continue;
     }
-    if (failed.length > 0)
-      logger.info(`Vision fallback to ${result.provider}`, {
-        failed: failed.map((p) => `${p.provider}:${p.reason}`),
-      });
-    return {
-      text: result.text,
-      model: result.model,
-      provider: result.provider,
-      failedProviders: failed,
-    };
+    if (failed.length > 0) logger.info(`Vision fallback to ${result.provider}`, { failed: failed.map(p => `${p.provider}:${p.reason}`) })
+    recordAIToolsSuccess()
+    return { text: result.text, model: result.model, provider: result.provider, failedProviders: failed }
   }
-  logger.error('All vision providers failed', {
-    failures: failed.map((p) => ({ provider: p.provider, reason: p.reason })),
-  });
-  return null;
+  logger.error('All vision providers failed', { failures: failed.map(p => ({ provider: p.provider, reason: p.reason })) })
+  recordAIToolsFailure(buildFailureMessage(failed))
+  return null
 }
 
 /**
