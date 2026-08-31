@@ -9,14 +9,14 @@
 // result. Pinning here rather than in each npm script keeps one source of
 // truth: test, test:watch, test:coverage and test:i18n all load this config,
 // and jest's worker processes inherit the env set at config-load time.
-process.env.TZ = 'Europe/Zurich'
+process.env.TZ = 'Europe/Zurich';
 
-const nextJest = require('next/jest')
+const nextJest = require('next/jest');
 
 const createJestConfig = nextJest({
   // Provide the path to your Next.js app to load next.config.js and .env files
   dir: './',
-})
+});
 
 // Add any custom config to be passed to Jest
 const customJestConfig = {
@@ -33,9 +33,7 @@ const customJestConfig = {
     '<rootDir>/src/**/*.{test,spec}.{js,jsx,ts,tsx}',
   ],
   moduleDirectories: ['node_modules', '<rootDir>/'],
-  transformIgnorePatterns: [
-    '/node_modules/(?!(@auth|next-auth|next-intl|use-intl|cookie)/)',
-  ],
+  transformIgnorePatterns: ['/node_modules/(?!(@auth|next-auth|next-intl|use-intl|cookie)/)'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^saldo-engine$': '<rootDir>/packages/saldo/src/index.ts',
@@ -45,15 +43,11 @@ const customJestConfig = {
     '^next-intl$': '<rootDir>/__mocks__/next-intl.js',
     '^next-intl/(.*)$': '<rootDir>/__mocks__/next-intl.js',
   },
-  testPathIgnorePatterns: [
-    '<rootDir>/.next/',
-    '<rootDir>/node_modules/',
-    '<rootDir>/cms-api/',
-  ],
-}
+  testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/', '<rootDir>/cms-api/'],
+};
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-const buildConfig = createJestConfig(customJestConfig)
+const buildConfig = createJestConfig(customJestConfig);
 
 // next/jest PREPENDS its own transformIgnorePatterns, and patterns are OR'd —
 // if any one matches, the file is never transformed. So an allowlist entry in
@@ -61,9 +55,11 @@ const buildConfig = createJestConfig(customJestConfig)
 // package must also be injected into next/jest's generated allowlist here.
 // cookie v2 is pure ESM ("type": "module") and is imported by src/lib/auth.
 module.exports = async () => {
-  const config = await buildConfig()
+  const config = await buildConfig();
   config.transformIgnorePatterns = config.transformIgnorePatterns.map((pattern) =>
-    pattern.includes('(?!(next-auth|') ? pattern.replace('(?!(next-auth|', '(?!(cookie|next-auth|') : pattern
-  )
-  return config
-}
+    pattern.includes('(?!(next-auth|')
+      ? pattern.replace('(?!(next-auth|', '(?!(cookie|next-auth|')
+      : pattern,
+  );
+  return config;
+};

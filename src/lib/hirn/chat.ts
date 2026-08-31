@@ -4,66 +4,63 @@
  * AI chat for admin users with baked-in organizational knowledge.
  */
 
-import { db } from '@/db'
-import { hirnChatHistory } from '@/db/schema'
-import { eq, and, asc, desc, sql, or, isNull, count } from 'drizzle-orm'
-import { logger } from '@/lib/logger'
-import { getDefaultChatProvider, type Message } from './providers'
-import { SYSTEM_PROMPT } from './system-prompt'
-import { parseActionEnvelope, stripActionBlock, type HirnActionCard } from './action-cockpit'
-import { API_DEFAULTS } from '@/config/api-defaults'
+import { db } from '@/db';
+import { hirnChatHistory } from '@/db/schema';
+import { eq, and, asc, desc, sql, or, isNull, count } from 'drizzle-orm';
+import { logger } from '@/lib/logger';
+import { getDefaultChatProvider, type Message } from './providers';
+import { SYSTEM_PROMPT } from './system-prompt';
+import { parseActionEnvelope, stripActionBlock, type HirnActionCard } from './action-cockpit';
+import { API_DEFAULTS } from '@/config/api-defaults';
 
 export interface ChatOptions {
-  sessionId: string
-  userId?: string
-  temperature?: number
-  maxTokens?: number
-  systemPrompt?: string       // Custom system prompt override
+  sessionId: string;
+  userId?: string;
+  temperature?: number;
+  maxTokens?: number;
+  systemPrompt?: string; // Custom system prompt override
 }
 
 export interface ChatResponse {
-  content: string
-  actions?: HirnActionCard[]
+  content: string;
+  actions?: HirnActionCard[];
   usage?: {
-    promptTokens: number
-    completionTokens: number
-    totalTokens: number
-  }
-  model: string
-  provider: string
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  };
+  model: string;
+  provider: string;
 }
 
 /**
  * Send a chat message and get a response
  */
-export async function chat(
-  message: string,
-  options: ChatOptions
-): Promise<ChatResponse> {
+export async function chat(message: string, options: ChatOptions): Promise<ChatResponse> {
   const {
     sessionId,
     userId,
     temperature = 0.7,
     maxTokens = 2048,
     systemPrompt = SYSTEM_PROMPT,
-  } = options
+  } = options;
 
   // Get chat history for this session (scoped by user_id for defense in depth)
   const userCondition = userId
     ? or(eq(hirnChatHistory.userId, userId), isNull(hirnChatHistory.userId))
-    : isNull(hirnChatHistory.userId)
+    : isNull(hirnChatHistory.userId);
 
   const historyRows = await db
     .select({ role: hirnChatHistory.role, content: hirnChatHistory.content })
     .from(hirnChatHistory)
     .where(and(eq(hirnChatHistory.sessionId, sessionId), userCondition))
     .orderBy(asc(hirnChatHistory.createdAt))
-    .limit(API_DEFAULTS.CHAT_HISTORY_LIMIT)
+    .limit(API_DEFAULTS.CHAT_HISTORY_LIMIT);
 
-  const history: Message[] = historyRows.map(h => ({
+  const history: Message[] = historyRows.map((h) => ({
     role: h.role as 'user' | 'assistant' | 'system',
     content: h.content,
-  }))
+  }));
 
   // Build messages array
   const messages: Message[] = [
@@ -76,15 +73,15 @@ export async function chat(
       role: 'user',
       content: message,
     },
-  ]
+  ];
 
   // Get the chat provider and generate response
-  const provider = await getDefaultChatProvider(userId)
+  const provider = await getDefaultChatProvider(userId);
   const response = await provider.chat({
     messages,
     temperature,
     maxTokens,
-  })
+  });
 
   // Store conversation history (best-effort — don't let DB errors kill the response)
   try {
@@ -94,7 +91,7 @@ export async function chat(
       sessionId,
       role: 'user',
       content: message,
-    })
+    });
 
     // Store assistant response
     await db.insert(hirnChatHistory).values({
@@ -104,17 +101,17 @@ export async function chat(
       content: response.content,
       provider: response.provider,
       model: response.model,
-    })
+    });
   } catch (dbError) {
     // Log but don't throw — the AI response is still valid
     logger.error('Failed to save chat history', {
       error: dbError instanceof Error ? dbError.message : 'Unknown DB error',
       sessionId,
-    })
+    });
   }
 
-  const parsedActions = parseActionEnvelope(response.content)
-  const cleanedContent = stripActionBlock(response.content)
+  const parsedActions = parseActionEnvelope(response.content);
+  const cleanedContent = stripActionBlock(response.content);
 
   logger.info('Chat response generated', {
     sessionId,
@@ -123,7 +120,7 @@ export async function chat(
     model: response.model,
     actionCount: parsedActions.actions.length,
     actionParsingError: parsedActions.parsingError,
-  })
+  });
 
   return {
     content: cleanedContent,
@@ -131,7 +128,7 @@ export async function chat(
     usage: response.usage,
     model: response.model,
     provider: response.provider,
-  }
+  };
 }
 
 /**
@@ -139,15 +136,17 @@ export async function chat(
  */
 export async function getChatHistory(
   sessionId: string,
-  userId: string
-): Promise<Array<{
-  id: string
-  role: string
-  content: string
-  createdAt: string
-  provider?: string
-  model?: string
-}>> {
+  userId: string,
+): Promise<
+  Array<{
+    id: string;
+    role: string;
+    content: string;
+    createdAt: string;
+    provider?: string;
+    model?: string;
+  }>
+> {
   const rows = await db
     .select({
       id: hirnChatHistory.id,
@@ -161,16 +160,16 @@ export async function getChatHistory(
     // Scope by owner — session UUIDs are not authorization; without the
     // userId filter any staff member could read another's chat.
     .where(and(eq(hirnChatHistory.sessionId, sessionId), eq(hirnChatHistory.userId, userId)))
-    .orderBy(asc(hirnChatHistory.createdAt))
+    .orderBy(asc(hirnChatHistory.createdAt));
 
-  return rows.map(r => ({
+  return rows.map((r) => ({
     id: r.id,
     role: r.role,
     content: r.content,
     createdAt: r.createdAt!,
     provider: r.provider || undefined,
     model: r.model || undefined,
-  }))
+  }));
 }
 
 /**
@@ -178,19 +177,21 @@ export async function getChatHistory(
  */
 export async function getUserSessions(
   userId: string,
-  limit = 20
-): Promise<Array<{
-  sessionId: string
-  firstMessage: string
-  lastActivity: string
-  messageCount: number
-}>> {
-  const h = hirnChatHistory
+  limit = 20,
+): Promise<
+  Array<{
+    sessionId: string;
+    firstMessage: string;
+    lastActivity: string;
+    messageCount: number;
+  }>
+> {
+  const h = hirnChatHistory;
   const rows = await db.execute<{
-    session_id: string
-    first_message: string | null
-    last_activity: string
-    message_count: string
+    session_id: string;
+    first_message: string | null;
+    last_activity: string;
+    message_count: string;
   }>(sql`
     SELECT
       ${h.sessionId} as session_id,
@@ -204,14 +205,14 @@ export async function getUserSessions(
     GROUP BY ${h.sessionId}
     ORDER BY last_activity DESC
     LIMIT ${limit}
-  `)
+  `);
 
-  return rows.rows.map(r => ({
+  return rows.rows.map((r) => ({
     sessionId: r.session_id,
     firstMessage: r.first_message || 'Neues Gespräch',
     lastActivity: r.last_activity,
     messageCount: parseInt(r.message_count),
-  }))
+  }));
 }
 
 /**
@@ -221,14 +222,14 @@ export async function deleteSession(sessionId: string, userId: string): Promise<
   // Scope by owner (see getChatHistory).
   await db
     .delete(hirnChatHistory)
-    .where(and(eq(hirnChatHistory.sessionId, sessionId), eq(hirnChatHistory.userId, userId)))
-  logger.info('Chat session deleted', { sessionId, userId })
+    .where(and(eq(hirnChatHistory.sessionId, sessionId), eq(hirnChatHistory.userId, userId)));
+  logger.info('Chat session deleted', { sessionId, userId });
 }
 
 /**
  * Clear all chat history for a user
  */
 export async function clearUserHistory(userId: string): Promise<void> {
-  await db.delete(hirnChatHistory).where(eq(hirnChatHistory.userId, userId))
-  logger.info('User chat history cleared', { userId })
+  await db.delete(hirnChatHistory).where(eq(hirnChatHistory.userId, userId));
+  logger.info('User chat history cleared', { userId });
 }
