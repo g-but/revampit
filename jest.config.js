@@ -66,7 +66,9 @@ const buildConfig = createJestConfig(customJestConfig);
 module.exports = async () => {
   const config = await buildConfig();
   config.transformIgnorePatterns = config.transformIgnorePatterns.map((pattern) =>
-    pattern.includes('(?!(next-auth|') ? pattern.replace('(?!(next-auth|', '(?!(ai-kit|cookie|next-auth|') : pattern
-  )
-  return config
-}
+    pattern.includes('(?!(next-auth|')
+      ? pattern.replace('(?!(next-auth|', '(?!(ai-kit|cookie|next-auth|')
+      : pattern,
+  );
+  return config;
+};

@@ -120,9 +120,7 @@ export default function Footer() {
 
         {/* Newsletter */}
         <div className="mt-10 pt-8 border-t">
-          <NewsletterSignup
-            source="footer"
-          />
+          <NewsletterSignup source="footer" />
         </div>
 
         {/* Social Links — only when evig actually has profiles (see socialLinks) */}
@@ -145,8 +143,14 @@ export default function Footer() {
 
         {/* Legal Links — routes from ROUTES.public SSOT */}
         <div className="mt-6 pt-6 border-t">
-          <nav aria-label={tFooter('legal')} className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-text-tertiary">
-            <Link href={ROUTES.public.impressum} className="hover:text-text-primary transition-colors">
+          <nav
+            aria-label={tFooter('legal')}
+            className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-text-tertiary"
+          >
+            <Link
+              href={ROUTES.public.impressum}
+              className="hover:text-text-primary transition-colors"
+            >
               {tFooter('impressum')}
             </Link>
             <Link

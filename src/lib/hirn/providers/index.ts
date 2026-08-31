@@ -5,14 +5,14 @@
  * Handles provider selection, fallbacks, and configuration.
  */
 
-import { db } from '@/db'
-import { hirnProviderSettings } from '@/db/schema'
-import { eq, and, desc, isNull, sql } from 'drizzle-orm'
-import { logger } from '@/lib/logger'
-import { GroqProvider } from './groq'
-import { OllamaProvider } from './ollama'
-import { OpenRouterProvider } from './openrouter'
-import { recordLLMFailure, recordLLMSuccess } from '../health'
+import { db } from '@/db';
+import { hirnProviderSettings } from '@/db/schema';
+import { eq, and, desc, isNull, sql } from 'drizzle-orm';
+import { logger } from '@/lib/logger';
+import { GroqProvider } from './groq';
+import { OllamaProvider } from './ollama';
+import { OpenRouterProvider } from './openrouter';
+import { recordLLMFailure, recordLLMSuccess } from '../health';
 import type {
   AIProvider,
   ProviderConfig,
@@ -175,13 +175,13 @@ export async function getChatResponse(
   userId?: string,
 ): Promise<ChatCompletionResponse> {
   try {
-    const provider = await getDefaultChatProvider(userId)
-    const response = await provider.chat(options)
-    recordLLMSuccess()
-    return response
+    const provider = await getDefaultChatProvider(userId);
+    const response = await provider.chat(options);
+    recordLLMSuccess();
+    return response;
   } catch (error) {
-    recordLLMFailure(error)
-    throw error
+    recordLLMFailure(error);
+    throw error;
   }
 }
 

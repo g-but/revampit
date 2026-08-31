@@ -11,15 +11,15 @@
  *      is reachable we log and continue — the direct-context answer still works.
  */
 
-import path from 'node:path'
-import { readFile } from 'node:fs/promises'
-import { getChatResponse, type Message } from '@/lib/hirn/providers'
-import { ingestDocument } from '@/lib/hirn/ingestion'
-import { searchSimilar, formatContext } from '@/lib/hirn/retrieval'
-import { isTextFile } from '@/config/deliverables'
-import { ORG } from '@/config/org'
-import { logger } from '@/lib/logger'
-import type { DeliverableDetail } from '@/lib/schemas/deliverables'
+import path from 'node:path';
+import { readFile } from 'node:fs/promises';
+import { getChatResponse, type Message } from '@/lib/hirn/providers';
+import { ingestDocument } from '@/lib/hirn/ingestion';
+import { searchSimilar, formatContext } from '@/lib/hirn/retrieval';
+import { isTextFile } from '@/config/deliverables';
+import { ORG } from '@/config/org';
+import { logger } from '@/lib/logger';
+import type { DeliverableDetail } from '@/lib/schemas/deliverables';
 
 const PUBLIC_DIR = path.join(process.cwd(), 'public');
 const PER_FILE_CHARS = 8000;
@@ -182,7 +182,7 @@ REGELN:
     { role: 'user', content: message },
   ];
 
-  const response = await getChatResponse({ messages, temperature: 0.3, maxTokens: 900 })
+  const response = await getChatResponse({ messages, temperature: 0.3, maxTokens: 900 });
   // Enforce Swiss German deterministically — the model doesn't always honour the
   // «ss statt ß» rule from the prompt. Safe: ß→ss is always correct in de-CH.
   return response.content.replace(/ß/g, 'ss');

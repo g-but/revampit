@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useMemo } from 'react'
-import { adminInteractive } from '@/lib/admin-ui'
-import { navLinkProps } from '@/lib/design/nav'
-import { useTranslations } from 'next-intl'
-import Link from 'next/link'
-import { Link as PublicLink } from '@/i18n/navigation'
-import Image from 'next/image'
+import { useState, useMemo } from 'react';
+import { adminInteractive } from '@/lib/admin-ui';
+import { navLinkProps } from '@/lib/design/nav';
+import { useTranslations } from 'next-intl';
+import Link from 'next/link';
+import { Link as PublicLink } from '@/i18n/navigation';
+import Image from 'next/image';
 import {
   ChevronLeft,
   ChevronRight,
@@ -220,7 +220,10 @@ export function AdminSidebar({
                 <Link
                   key={section.path}
                   href={section.path}
-                  onClick={() => { setMobileMenuOpen(false); setFilterQuery('') }}
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setFilterQuery('');
+                  }}
                   {...navLinkProps('sidebar', isActive(section.path))}
                 >
                   <Icon className="h-4 w-4 shrink-0 text-text-muted dark:text-text-secondary" />
@@ -260,7 +263,7 @@ export function AdminSidebar({
                   <Link
                     href={only.path}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={navLinkClass(
+                    {...navLinkProps(
                       'sidebar',
                       onlyActive,
                       sidebarCollapsed ? 'justify-center' : '',
@@ -282,75 +285,72 @@ export function AdminSidebar({
 
             return (
               <div key={group.id} className="mb-2">
-                <Link
-                  href={only.path}
-                  onClick={() => setMobileMenuOpen(false)}
-                  {...navLinkProps('sidebar', onlyActive, sidebarCollapsed ? 'justify-center' : '')}
-                  title={sidebarCollapsed ? sectionLabel(tSections, only) : undefined}
-                >
-                  <OnlyIcon className={`shrink-0 ${sidebarCollapsed ? 'h-5 w-5' : 'h-4 w-4'} ${onlyActive ? 'text-action' : 'text-text-muted dark:text-text-secondary'}`} />
-                  {!sidebarCollapsed && <span className="flex-1 text-sm font-medium">{sectionLabel(tSections, only)}</span>}
-                </Link>
+                {!sidebarCollapsed && (
+                  <Button
+                    variant="ghost"
+                    onClick={() => toggleGroup(group.id)}
+                    aria-expanded={isExpanded}
+                    className={`flex w-full items-center justify-between rounded-lg px-2 py-3 lg:py-1.5 text-xs font-medium uppercase tracking-widest transition-colors ${
+                      hasActive
+                        ? 'text-action'
+                        : 'text-text-muted dark:text-text-secondary hover:text-text-secondary dark:hover:text-text-muted'
+                    }`}
+                  >
+                    <span>{localizedGroupLabel(tSections, group)}</span>
+                    <ChevronDown
+                      className={`w-3.5 h-3.5 transition-transform ${isExpanded ? '' : '-rotate-90'}`}
+                    />
+                  </Button>
+                )}
+
+                {(isExpanded || sidebarCollapsed) && (
+                  <div className={`space-y-1 ${sidebarCollapsed ? '' : 'mt-1'}`}>
+                    {accessibleGroupSections.map((section) => {
+                      const active = isActive(section.path);
+                      const sensitive = isSensitiveSection(section.id);
+                      const sensitivityReason = sensitive
+                        ? getSensitivityReason(section.id)
+                        : undefined;
+                      const Icon = section.ui.icon;
+
+                      return (
+                        <Link
+                          key={section.path}
+                          href={section.path}
+                          onClick={() => setMobileMenuOpen(false)}
+                          {...navLinkProps(
+                            'sidebar',
+                            active,
+                            sidebarCollapsed ? 'justify-center' : '',
+                          )}
+                          title={
+                            sidebarCollapsed
+                              ? `${sectionLabel(tSections, section)}${sensitive ? ` (${t('sensitiveLabel')})` : ''}`
+                              : sensitivityReason
+                          }
+                        >
+                          {/* Larger icon when collapsed so it's easier to tap and recognise at a glance */}
+                          <Icon
+                            className={`shrink-0 ${sidebarCollapsed ? 'h-5 w-5' : 'h-4 w-4'} ${active ? 'text-action' : 'text-text-muted dark:text-text-secondary'}`}
+                          />
+                          {!sidebarCollapsed && (
+                            <span className="flex-1 text-sm font-medium flex items-center gap-1.5">
+                              {sectionLabel(tSections, section)}
+                              {sensitive && (
+                                <span title={sensitivityReason}>
+                                  <Shield className="w-3 h-3 text-warning-400" />
+                                </span>
+                              )}
+                            </span>
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-            )
-          }
-
-          return (
-            <div key={group.id} className="mb-2">
-              {!sidebarCollapsed && (
-                <Button
-                  variant="ghost"
-                  onClick={() => toggleGroup(group.id)}
-                  aria-expanded={isExpanded}
-                  className={`flex w-full items-center justify-between rounded-lg px-2 py-3 lg:py-1.5 text-xs font-medium uppercase tracking-widest transition-colors ${
-                    hasActive
-                      ? 'text-action'
-                      : 'text-text-muted dark:text-text-secondary hover:text-text-secondary dark:hover:text-text-muted'
-                  }`}
-                >
-                  <span>{localizedGroupLabel(tSections, group)}</span>
-                  <ChevronDown
-                    className={`w-3.5 h-3.5 transition-transform ${isExpanded ? '' : '-rotate-90'}`}
-                  />
-                </Button>
-              )}
-
-              {(isExpanded || sidebarCollapsed) && (
-                <div className={`space-y-1 ${sidebarCollapsed ? '' : 'mt-1'}`}>
-                  {accessibleGroupSections.map(section => {
-                    const active = isActive(section.path)
-                    const sensitive = isSensitiveSection(section.id)
-                    const sensitivityReason = sensitive ? getSensitivityReason(section.id) : undefined
-                    const Icon = section.ui.icon
-
-                    return (
-                      <Link
-                        key={section.path}
-                        href={section.path}
-                        onClick={() => setMobileMenuOpen(false)}
-                        {...navLinkProps('sidebar', active, sidebarCollapsed ? 'justify-center' : '')}
-                        title={sidebarCollapsed ? `${sectionLabel(tSections, section)}${sensitive ? ` (${t('sensitiveLabel')})` : ''}` : sensitivityReason}
-                      >
-                        {/* Larger icon when collapsed so it's easier to tap and recognise at a glance */}
-                        <Icon className={`shrink-0 ${sidebarCollapsed ? 'h-5 w-5' : 'h-4 w-4'} ${active ? 'text-action' : 'text-text-muted dark:text-text-secondary'}`} />
-                        {!sidebarCollapsed && (
-                          <span className="flex-1 text-sm font-medium flex items-center gap-1.5">
-                            {sectionLabel(tSections, section)}
-                            {sensitive && (
-                              <span title={sensitivityReason}>
-                                <Shield className="w-3 h-3 text-warning-400" />
-                              </span>
-                            )}
-                          </span>
-                        )}
-                      </Link>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-          )
-        })}
+            );
+          })}
 
         {/* Hirn AI — flat accent, no gradients (matches the rest of the
             design system; gradients are reserved for hero overlays). */}

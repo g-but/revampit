@@ -93,7 +93,7 @@ jest.mock('drizzle-orm', () => ({
 // mockGetChatResponse is declared here but only initialized after imports
 // run; the closure in jest.mock captures it by reference so it's available
 // when tests execute.
-const mockGetChatResponse = jest.fn()
+const mockGetChatResponse = jest.fn();
 
 jest.mock('../providers', () => ({
   // Wrapper captures mockGetChatResponse by reference (not by value), so it
@@ -101,7 +101,7 @@ jest.mock('../providers', () => ({
   // calls getChatResponse (provider selection + generation + health
   // recording in one step) rather than getDefaultChatProvider directly.
   getChatResponse: (...args: unknown[]) => mockGetChatResponse.apply(null, args),
-}))
+}));
 
 jest.mock('../system-prompt', () => ({
   SYSTEM_PROMPT: 'You are a helpful assistant.',
@@ -147,20 +147,20 @@ function makeHistoryRow(overrides: Partial<Record<string, unknown>> = {}) {
 }
 
 beforeEach(() => {
-  jest.clearAllMocks()
-  mockDbSelect.mockImplementation(() => makeChain([]))
-  mockDbInsert.mockImplementation(() => makeChain([]))
-  mockDbDelete.mockImplementation(() => makeChain([]))
-  mockDbExecute.mockResolvedValue({ rows: [] })
+  jest.clearAllMocks();
+  mockDbSelect.mockImplementation(() => makeChain([]));
+  mockDbInsert.mockImplementation(() => makeChain([]));
+  mockDbDelete.mockImplementation(() => makeChain([]));
+  mockDbExecute.mockResolvedValue({ rows: [] });
   mockGetChatResponse.mockResolvedValue({
     content: 'Hier ist meine Antwort.',
     provider: 'groq',
     model: 'groq:llama-3.3-70b',
     usage: { promptTokens: 100, completionTokens: 50, totalTokens: 150 },
-  })
-  ;(parseActionEnvelope as jest.Mock).mockReturnValue({ actions: [], parsingError: null })
-  ;(stripActionBlock as jest.Mock).mockImplementation((c: string) => c)
-})
+  });
+  (parseActionEnvelope as jest.Mock).mockReturnValue({ actions: [], parsingError: null });
+  (stripActionBlock as jest.Mock).mockImplementation((c: string) => c);
+});
 
 // ============================================================================
 // chat — history and response

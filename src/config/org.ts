@@ -196,4 +196,4 @@ export const EXTERNAL_LINKS = {
   wiki: '',
   /** Open implementation of the platform and its operational workflow. */
   sourceCode: 'https://github.com/bitbaum/evig',
-} as const
+} as const;

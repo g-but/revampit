@@ -105,5 +105,5 @@ export function navLinkProps(
   return {
     className: navLinkClass(shape, active, className),
     'aria-current': active ? 'page' : undefined,
-  }
+  };
 }
