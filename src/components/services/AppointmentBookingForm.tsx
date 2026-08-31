@@ -49,8 +49,8 @@ export default function AppointmentBookingForm({
   // between SSR and client mount — fine, the user can't interact that
   // fast anyway.
   const [minDate, setMinDate] = useState<string>('');
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMinDate(todayLocalIso());
   }, []);
 

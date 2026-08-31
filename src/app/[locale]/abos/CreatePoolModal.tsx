@@ -91,8 +91,8 @@ export function CreatePoolModal({ onClose, onCreate }: Props) {
               onChange={(e) => setForm((f) => ({ ...f, serviceCategory: e.target.value }))}
             >
               {Object.keys(CATEGORY_EMOJIS).map((val) => (
-                // @ts-expect-error — dynamic category key
                 <option key={val} value={val}>
+                  {/* @ts-expect-error — dynamic category key */}
                   {CATEGORY_EMOJIS[val]} {t(`categories.${val}`)}
                 </option>
               ))}

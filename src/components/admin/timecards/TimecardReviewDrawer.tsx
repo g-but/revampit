@@ -75,8 +75,8 @@ export function TimecardReviewDrawer({
   // the card they just acted on.
   const [flash, setFlash] = useState<string | null>(null);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- portal mount guard (SSR-safe)
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- portal mount guard (SSR-safe)
     setMounted(true);
   }, []);
 
@@ -88,8 +88,8 @@ export function TimecardReviewDrawer({
     } else setError(r.error || t('draftLoadError'));
   }, [cardId, t]);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch → setState resolves off-render
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch → setState resolves off-render
     void load();
   }, [load]);
 

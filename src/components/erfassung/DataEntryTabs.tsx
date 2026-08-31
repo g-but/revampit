@@ -71,8 +71,8 @@ export function DataEntryTabs({
   // Sync prop → local state when parent changes the collapsed prop.
   // This is the legitimate "mirror external value" pattern; setState in
   // effect is unavoidable here.
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsCollapsed(collapsed);
   }, [collapsed]);
 
