@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest';
 /**
  * Tests for the security audit logger (lib/auth/audit.ts).
  *
@@ -15,27 +16,27 @@
  * Each test resets modules so the buffer starts empty.
  */
 
-jest.mock('@/db', () => ({
-  db: { insert: jest.fn() },
+vi.mock('@/db', () => ({
+  db: { insert: vi.fn() },
 }));
 
-jest.mock('@/db/schema', () => ({
+vi.mock('@/db/schema', () => ({
   authAuditLog: { _: 'authAuditLog' },
 }));
 
-jest.mock('drizzle-orm', () => ({
-  eq: jest.fn(),
-  and: jest.fn(),
-  inArray: jest.fn(),
-  gte: jest.fn(),
-  lte: jest.fn(),
-  desc: jest.fn(),
-  sql: Object.assign(jest.fn(), { raw: jest.fn() }),
-  getTableName: jest.fn(() => 'auth_audit_log'),
+vi.mock('drizzle-orm', () => ({
+  eq: vi.fn(),
+  and: vi.fn(),
+  inArray: vi.fn(),
+  gte: vi.fn(),
+  lte: vi.fn(),
+  desc: vi.fn(),
+  sql: Object.assign(vi.fn(), { raw: vi.fn() }),
+  getTableName: vi.fn((..._args: unknown[]) => 'auth_audit_log'),
 }));
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
 const FLUSH_INTERVAL_MS = 5000;
@@ -67,34 +68,34 @@ interface AuditTestModule {
 }
 
 let audit: AuditTestModule;
-let valuesSpy: jest.Mock;
-let loggerWarn: jest.Mock;
+let valuesSpy: Mock;
+let loggerWarn: Mock;
 
-beforeEach(() => {
-  jest.useFakeTimers();
-  jest.resetModules();
+beforeEach(async () => {
+  vi.useFakeTimers();
+  vi.resetModules();
 
   // Re-establish mocks after resetModules (factories re-run on next require)
-  jest.doMock('@/db', () => {
-    valuesSpy = jest.fn().mockResolvedValue([]);
+  vi.doMock('@/db', () => {
+    valuesSpy = vi.fn().mockResolvedValue([]);
     return {
-      db: { insert: jest.fn(() => ({ values: valuesSpy })) },
+      db: { insert: vi.fn((..._args: unknown[]) => ({ values: valuesSpy })) },
     };
   });
 
-  audit = require('../audit') as AuditTestModule;
-  loggerWarn = jest.requireMock('@/lib/logger').logger.warn as jest.Mock;
+  audit = await import('../audit') as unknown as AuditTestModule;
+  loggerWarn = (await import('@/lib/logger')).logger.warn as Mock;
   loggerWarn.mockClear();
 });
 
 afterEach(() => {
-  jest.clearAllTimers();
-  jest.useRealTimers();
+  vi.clearAllTimers();
+  vi.useRealTimers();
 });
 
 /** Advance past the flush interval and drain the resulting promise tick. */
 async function flush(): Promise<void> {
-  jest.advanceTimersByTime(FLUSH_INTERVAL_MS);
+  vi.advanceTimersByTime(FLUSH_INTERVAL_MS);
   // Wait for the async flushAuditBuffer to resolve
   await Promise.resolve();
   await Promise.resolve();
