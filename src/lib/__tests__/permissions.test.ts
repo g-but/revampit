@@ -6,7 +6,7 @@
  */
 
 // Mock sections to avoid lucide-react icons in test environment
-jest.mock('@/config/sections', () => ({
+vi.mock('@/config/sections', () => ({
   SECTIONS: {},
   ADMIN_SECTION_IDS: [
     'dashboard',

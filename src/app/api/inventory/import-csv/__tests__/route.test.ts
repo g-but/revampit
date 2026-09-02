@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for POST /api/inventory/import-csv (withAuth)
  *        GET  /api/inventory/import-csv (withAuth — history)
@@ -9,13 +9,14 @@
  *   GET  - 401, 200 with history
  */
 
-const mockAuth = jest.fn();
+import type { Mock } from 'vitest';
+const mockAuth = vi.fn();
 
-jest.mock('@/auth', () => ({
+vi.mock('@/auth', () => ({
   auth: (...args: unknown[]) => mockAuth.apply(null, args),
 }));
 
-jest.mock('@/lib/api/middleware', () => ({
+vi.mock('@/lib/api/middleware', async () => ({
   // Route is now staff-gated via withAdmin('products', handler); the section
   // check itself is covered by permissions tests.
   withAdmin: (sectionOrHandler: unknown, maybeHandler?: unknown) => {
@@ -23,7 +24,7 @@ jest.mock('@/lib/api/middleware', () => ({
     return (req: Request, context?: { params?: Promise<unknown> }) =>
       mockAuth().then(async (session: unknown) => {
         if (!session || !(session as { user?: { id?: string } }).user?.id) {
-          const { NextResponse } = jest.requireActual('next/server');
+          const { NextResponse } = await vi.importActual<any>('next/server');
           return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
         }
         const resolvedContext = context?.params ? { params: await context.params } : undefined;
@@ -32,10 +33,10 @@ jest.mock('@/lib/api/middleware', () => ({
   },
 }));
 
-const mockSelect = jest.fn();
-const mockInsert = jest.fn();
-const mockValues = jest.fn();
-const mockReturning = jest.fn();
+const mockSelect = vi.fn();
+const mockInsert = vi.fn();
+const mockValues = vi.fn();
+const mockReturning = vi.fn();
 
 // Each CSV row's import runs inside `db.transaction(async tx => { ... })`.
 // The tx exposes a single insert chain — for aiExtractedProducts and
@@ -43,10 +44,10 @@ const mockReturning = jest.fn();
 // for sustainabilityScores there's no .returning() call (fire-and-forget).
 // Returning a thenable that also has a `.returning` method lets one stub
 // serve both shapes.
-const mockTxInsert = jest.fn();
-const mockTransaction = jest.fn();
+const mockTxInsert = vi.fn();
+const mockTransaction = vi.fn();
 
-jest.mock('@/db', () => ({
+vi.mock('@/db', () => ({
   db: {
     select: (...args: unknown[]) => mockSelect(...args),
     insert: (...args: unknown[]) => {
@@ -57,7 +58,7 @@ jest.mock('@/db', () => ({
   },
 }));
 
-jest.mock('@/db/schema', () => ({
+vi.mock('@/db/schema', () => ({
   aiExtractedProducts: {
     id: 'aep_id',
     productName: 'aep_productName',
@@ -78,7 +79,7 @@ jest.mock('@/db/schema', () => ({
   },
 }));
 
-jest.mock('drizzle-orm', () => ({
+vi.mock('drizzle-orm', () => ({
   eq: (a: unknown, b: unknown) => ({ __eq: [a, b] }),
   and: (...args: unknown[]) => ({ __and: args }),
   sql: Object.assign((_s: TemplateStringsArray, ..._v: unknown[]) => ({ __sql: true }), {
@@ -87,9 +88,9 @@ jest.mock('drizzle-orm', () => ({
   desc: (a: unknown) => ({ __desc: a }),
 }));
 
-// Mock csv-parse/sync with jest.fn() so we can override per-test
-const mockCsvParse = jest.fn();
-jest.mock('csv-parse/sync', () => ({
+// Mock csv-parse/sync with vi.fn() so we can override per-test
+const mockCsvParse = vi.fn();
+vi.mock('csv-parse/sync', () => ({
   parse: (...args: unknown[]) => mockCsvParse(...args),
 }));
 
@@ -110,22 +111,22 @@ const TWO_ROWS = [
   },
 ];
 
-const mockValidateBody = jest.fn();
+const mockValidateBody = vi.fn();
 
-jest.mock('@/lib/schemas', () => ({
+vi.mock('@/lib/schemas', () => ({
   validateBody: (...args: unknown[]) => mockValidateBody.apply(null, args),
   ImportCSVSchema: {},
 }));
 
-jest.mock('@/lib/inventory/csv-analysis', () => ({
-  analyzeProductDescription: jest.fn().mockReturnValue({
+vi.mock('@/lib/inventory/csv-analysis', () => ({
+  analyzeProductDescription: vi.fn().mockReturnValue({
     productName: 'ThinkPad X1',
     brand: 'Lenovo',
     category: 'laptops',
     condition: 'good',
     confidence: 0.8,
   }),
-  calculateSustainabilityScore: jest.fn().mockReturnValue({
+  calculateSustainabilityScore: vi.fn().mockReturnValue({
     overall_score: 70,
     environmental_score: 75,
     social_score: 65,
@@ -136,8 +137,8 @@ jest.mock('@/lib/inventory/csv-analysis', () => ({
   }),
 }));
 
-jest.mock('@/lib/api/helpers', () => {
-  const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => {
+  const { NextResponse } = await vi.importActual<any>('next/server');
   return {
     apiSuccess: (data: unknown, status = 200) =>
       NextResponse.json({ success: true, data }, { status }),
@@ -148,20 +149,20 @@ jest.mock('@/lib/api/helpers', () => {
   };
 });
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
-jest.mock('@/config/approval-status', () => ({
+vi.mock('@/config/approval-status', () => ({
   APPROVAL_STATUS: { PENDING: 'pending', APPROVED: 'approved' },
 }));
 
-jest.mock('@/config/marketplace-status', () => ({
+vi.mock('@/config/marketplace-status', () => ({
   INVENTORY_ITEM_STATUS: { AVAILABLE: 'available', RESERVED: 'reserved' },
 }));
 
-const mockCsvImportRateLimit = jest.fn();
-jest.mock('@/lib/security/rate-limit', () => ({
+const mockCsvImportRateLimit = vi.fn();
+vi.mock('@/lib/security/rate-limit', () => ({
   rateLimiters: { csvImport: (...args: unknown[]) => mockCsvImportRateLimit(...args) },
 }));
 
@@ -194,9 +195,9 @@ function makeGetRequest() {
 /** Build a select chain that resolves with `rows` at the limit() step */
 function selectChainReturning(rows: unknown[]) {
   return {
-    from: jest.fn().mockReturnValue({
-      where: jest.fn().mockReturnValue({
-        limit: jest.fn().mockResolvedValue(rows),
+    from: vi.fn().mockReturnValue({
+      where: vi.fn().mockReturnValue({
+        limit: vi.fn().mockResolvedValue(rows),
       }),
     }),
   };
@@ -205,14 +206,14 @@ function selectChainReturning(rows: unknown[]) {
 /** Build a select chain that resolves with `rows` at the where() step */
 function selectChainWhere(rows: unknown[]) {
   return {
-    from: jest.fn().mockReturnValue({
-      where: jest.fn().mockResolvedValue(rows),
+    from: vi.fn().mockReturnValue({
+      where: vi.fn().mockResolvedValue(rows),
     }),
   };
 }
 
-beforeEach(() => {
-  jest.resetAllMocks();
+beforeEach(async () => {
+  vi.resetAllMocks();
   mockAuth.mockResolvedValue(MOCK_SESSION);
   mockValidateBody.mockReturnValue({ success: true, data: { csvContent: 'test' } });
   mockCsvImportRateLimit.mockReturnValue(true);
@@ -243,9 +244,9 @@ beforeEach(() => {
     return await cb(tx);
   });
   // Re-wire analysis mocks that lose impl after resetAllMocks
-  const analysisMocks = jest.requireMock('@/lib/inventory/csv-analysis') as {
-    analyzeProductDescription: jest.Mock;
-    calculateSustainabilityScore: jest.Mock;
+  const analysisMocks = (await import('@/lib/inventory/csv-analysis')) as {
+    analyzeProductDescription: Mock;
+    calculateSustainabilityScore: Mock;
   };
   analysisMocks.analyzeProductDescription.mockReturnValue({
     productName: 'ThinkPad X1',
@@ -285,7 +286,7 @@ describe('POST /api/inventory/import-csv — rate limiting', () => {
 
 describe('POST /api/inventory/import-csv — validation', () => {
   it('returns 400 when body validation fails', async () => {
-    const { NextResponse } = jest.requireActual('next/server');
+    const { NextResponse } = await vi.importActual<any>('next/server');
     mockValidateBody.mockReturnValueOnce({
       success: false,
       error: NextResponse.json({ success: false, error: 'Validation failed' }, { status: 400 }),
@@ -370,11 +371,11 @@ describe('GET /api/inventory/import-csv — history', () => {
       },
     ];
     mockSelect.mockReturnValue({
-      from: jest.fn().mockReturnValue({
-        leftJoin: jest.fn().mockReturnValue({
-          where: jest.fn().mockReturnValue({
-            orderBy: jest.fn().mockReturnValue({
-              limit: jest.fn().mockResolvedValue(historyItems),
+      from: vi.fn().mockReturnValue({
+        leftJoin: vi.fn().mockReturnValue({
+          where: vi.fn().mockReturnValue({
+            orderBy: vi.fn().mockReturnValue({
+              limit: vi.fn().mockResolvedValue(historyItems),
             }),
           }),
         }),

@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for GET/PATCH/DELETE /api/admin/blog/submissions/[id]
  *
@@ -9,19 +9,19 @@
  *   DELETE - 401, 404, 200
  */
 
-const mockAuth = jest.fn();
+const mockAuth = vi.fn();
 
-jest.mock('@/auth', () => ({
+vi.mock('@/auth', () => ({
   auth: (...args: unknown[]) => mockAuth.apply(null, args),
 }));
 
-jest.mock('@/lib/api/middleware', () => ({
+vi.mock('@/lib/api/middleware', async () => ({
   withAdmin: (sectionOrHandler: unknown, maybeHandler?: unknown) => {
     const handler = typeof sectionOrHandler === 'function' ? sectionOrHandler : maybeHandler;
     return (req: Request, context?: { params?: Promise<{ id: string }> }) =>
       mockAuth().then(async (session: unknown) => {
         if (!session || !(session as { user?: { id?: string } }).user?.id) {
-          const { NextResponse } = jest.requireActual('next/server');
+          const { NextResponse } = await vi.importActual<any>('next/server');
           return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
         }
         const resolvedContext = context?.params ? { params: await context.params } : undefined;
@@ -34,20 +34,20 @@ jest.mock('@/lib/api/middleware', () => ({
   },
 }));
 
-const mockSelect = jest.fn();
-const mockFrom = jest.fn();
-const mockAs = jest.fn();
-const mockLeftJoin = jest.fn();
-const mockWhere = jest.fn();
-const mockDelete = jest.fn();
-const mockDeleteWhere = jest.fn();
-const mockApproveSubmission = jest.fn();
-const mockRejectSubmission = jest.fn();
-const mockPublishSubmission = jest.fn();
-const mockRequestChanges = jest.fn();
-const mockEditSubmission = jest.fn();
+const mockSelect = vi.fn();
+const mockFrom = vi.fn();
+const mockAs = vi.fn();
+const mockLeftJoin = vi.fn();
+const mockWhere = vi.fn();
+const mockDelete = vi.fn();
+const mockDeleteWhere = vi.fn();
+const mockApproveSubmission = vi.fn();
+const mockRejectSubmission = vi.fn();
+const mockPublishSubmission = vi.fn();
+const mockRequestChanges = vi.fn();
+const mockEditSubmission = vi.fn();
 
-jest.mock('@/db', () => ({
+vi.mock('@/db', () => ({
   db: {
     select: (...args: unknown[]) => {
       mockSelect(...args);
@@ -60,7 +60,7 @@ jest.mock('@/db', () => ({
   },
 }));
 
-jest.mock('@/db/schema', () => ({
+vi.mock('@/db/schema', () => ({
   blogSubmissions: {
     id: 'bs_id',
     userId: 'bs_userId',
@@ -92,11 +92,11 @@ jest.mock('@/db/schema', () => ({
   users: { id: 'u_id', name: 'u_name', email: 'u_email' },
 }));
 
-jest.mock('drizzle-orm', () => ({
+vi.mock('drizzle-orm', () => ({
   eq: (a: unknown, b: unknown) => ({ __eq: [a, b] }),
 }));
 
-jest.mock('@/lib/services/blog-submission', () => ({
+vi.mock('@/lib/services/blog-submission', () => ({
   approveSubmission: (...args: unknown[]) => mockApproveSubmission.apply(null, args),
   rejectSubmission: (...args: unknown[]) => mockRejectSubmission.apply(null, args),
   publishSubmission: (...args: unknown[]) => mockPublishSubmission.apply(null, args),
@@ -106,8 +106,8 @@ jest.mock('@/lib/services/blog-submission', () => ({
   NoFieldsError: class NoFieldsError extends Error {},
 }));
 
-jest.mock('@/lib/api/helpers', () => {
-  const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => {
+  const { NextResponse } = await vi.importActual<any>('next/server');
   return {
     apiSuccess: (data: unknown) => NextResponse.json({ success: true, data }),
     apiError: (err: unknown, msg: string, status = 500) =>
@@ -119,8 +119,8 @@ jest.mock('@/lib/api/helpers', () => {
   };
 });
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
 import { NextRequest } from 'next/server';
@@ -160,7 +160,7 @@ function makeContext(id = 'sub-1') {
 }
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   mockAuth.mockResolvedValue(MOCK_SESSION);
 
   // GET uses subquery: db.select().from(users).as('reviewer')

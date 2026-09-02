@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for PATCH/DELETE /api/decisions/[id]/comments/[commentId]
  *
@@ -27,19 +27,19 @@
 // Mocks
 // ---------------------------------------------------------------------------
 
-const mockAuth = jest.fn();
+const mockAuth = vi.fn();
 
-jest.mock('@/auth', () => ({
+vi.mock('@/auth', () => ({
   auth: (...args: unknown[]) => mockAuth.apply(null, args),
 }));
 
-jest.mock('@/lib/api/middleware', () => ({
+vi.mock('@/lib/api/middleware', async () => ({
   withAdmin: (sectionOrHandler: unknown, maybeHandler?: unknown) => {
     const handler = typeof sectionOrHandler === 'function' ? sectionOrHandler : maybeHandler;
     return (req: Request, context?: { params?: Promise<{ id: string; commentId: string }> }) =>
       mockAuth().then(async (session: unknown) => {
         if (!session || !(session as { user?: { id?: string } }).user?.id) {
-          const { NextResponse } = jest.requireActual('next/server');
+          const { NextResponse } = await vi.importActual<any>('next/server');
           return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
         }
         const resolvedContext = context?.params ? { params: await context.params } : undefined;
@@ -52,21 +52,21 @@ jest.mock('@/lib/api/middleware', () => ({
   },
 }));
 
-const mockGetDbUserId = jest.fn();
+const mockGetDbUserId = vi.fn();
 
-jest.mock('@/lib/api/task-helpers', () => ({
+vi.mock('@/lib/api/task-helpers', () => ({
   getDbUserId: (...args: unknown[]) => mockGetDbUserId.apply(null, args),
 }));
 
-const mockUpdateComment = jest.fn();
-const mockDeleteComment = jest.fn();
+const mockUpdateComment = vi.fn();
+const mockDeleteComment = vi.fn();
 
-jest.mock('@/lib/services/decisions', () => ({
+vi.mock('@/lib/services/decisions', () => ({
   updateComment: (...args: unknown[]) => mockUpdateComment.apply(null, args),
   deleteComment: (...args: unknown[]) => mockDeleteComment.apply(null, args),
 }));
 
-jest.mock('@/lib/schemas/decisions', () => ({
+vi.mock('@/lib/schemas/decisions', () => ({
   updateCommentSchema: {
     safeParse: (body: unknown) => {
       const b = body as Record<string, unknown>;
@@ -77,7 +77,7 @@ jest.mock('@/lib/schemas/decisions', () => ({
   },
 }));
 
-jest.mock('@/config/error-messages', () => ({
+vi.mock('@/config/error-messages', () => ({
   ERROR_MESSAGES: {
     INTERNAL_SERVER_ERROR: 'Internal server error',
     ALL_FIELDS_REQUIRED: 'All fields required',
@@ -85,12 +85,12 @@ jest.mock('@/config/error-messages', () => ({
   },
 }));
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
-jest.mock('@/lib/api/helpers', () => {
-  const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => {
+  const { NextResponse } = await vi.importActual<any>('next/server');
   return {
     apiSuccess: (data: unknown) => NextResponse.json({ success: true, data }),
     apiError: (err: unknown, msg: string, status = 500) =>
@@ -150,7 +150,7 @@ function makeContext(commentId = 'cmt-1') {
 }
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   mockAuth.mockResolvedValue(MOCK_SESSION);
   mockGetDbUserId.mockResolvedValue({ dbUserId: 'db-admin-1' });
   mockUpdateComment.mockResolvedValue({ comment: MOCK_COMMENT });

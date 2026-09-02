@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for POST /api/tasks/[id]/attention
  *
@@ -14,16 +14,16 @@
 // Mocks
 // ---------------------------------------------------------------------------
 
-const mockAuth = jest.fn();
-jest.mock('@/auth', () => ({ auth: (...args: unknown[]) => mockAuth.apply(null, args) }));
+const mockAuth = vi.fn();
+vi.mock('@/auth', () => ({ auth: (...args: unknown[]) => mockAuth.apply(null, args) }));
 
-jest.mock('@/lib/api/middleware', () => ({
+vi.mock('@/lib/api/middleware', async () => ({
   withAdmin:
     (handler: (req: Request, session: unknown, ctx: unknown) => unknown) =>
     (req: Request, context?: { params?: Promise<{ id: string }> }) =>
       mockAuth().then(async (session: unknown) => {
         if (!session || !(session as { user?: { id?: string } }).user?.id) {
-          const { NextResponse } = jest.requireActual('next/server');
+          const { NextResponse } = await vi.importActual<any>('next/server');
           return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
         }
         const resolvedContext = context?.params ? { params: await context.params } : undefined;
@@ -31,15 +31,15 @@ jest.mock('@/lib/api/middleware', () => ({
       }),
 }));
 
-const mockGetDbUserId = jest.fn();
-const mockGetActiveTask = jest.fn();
-jest.mock('@/lib/api/task-helpers', () => ({
+const mockGetDbUserId = vi.fn();
+const mockGetActiveTask = vi.fn();
+vi.mock('@/lib/api/task-helpers', () => ({
   getDbUserId: (...args: unknown[]) => mockGetDbUserId.apply(null, args),
   getActiveTask: (...args: unknown[]) => mockGetActiveTask.apply(null, args),
 }));
 
-jest.mock('@/lib/api/helpers', () => {
-  const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => {
+  const { NextResponse } = await vi.importActual<any>('next/server');
   return {
     apiSuccess: (data: unknown, status = 200) =>
       NextResponse.json({ success: true, data }, { status }),
@@ -52,38 +52,38 @@ jest.mock('@/lib/api/helpers', () => {
   };
 });
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
-const mockNotifyAllStaff = jest.fn();
-jest.mock('@/lib/services/notifications', () => ({
+const mockNotifyAllStaff = vi.fn();
+vi.mock('@/lib/services/notifications', () => ({
   notifyAllStaff: (...args: unknown[]) => mockNotifyAllStaff.apply(null, args),
 }));
 
-const mockTransactionFn = jest.fn();
-jest.mock('@/db', () => ({
+const mockTransactionFn = vi.fn();
+vi.mock('@/db', () => ({
   db: { transaction: (...args: unknown[]) => mockTransactionFn.apply(null, args) },
 }));
 
-jest.mock('@/db/schema/misc', () => ({
+vi.mock('@/db/schema/misc', () => ({
   tasks: { id: 't_id', currentStatus: 't_cs' },
   taskAttentionFlags: { id: 'taf_id', taskId: 'taf_tid', flaggedBy: 'taf_fb', message: 'taf_msg' },
 }));
 
-jest.mock('drizzle-orm', () => ({
-  eq: jest.fn(),
+vi.mock('drizzle-orm', () => ({
+  eq: vi.fn(),
 }));
 
-jest.mock('@/config/tasks', () => ({
+vi.mock('@/config/tasks', () => ({
   TASK_STATUSES: { NEEDS_ATTENTION: 'needs_attention' },
 }));
 
-jest.mock('@/config/notifications', () => ({
+vi.mock('@/config/notifications', () => ({
   RELATED_TYPES: { TASK: 'task' },
 }));
 
-jest.mock('@/lib/schemas/tasks', () => ({
+vi.mock('@/lib/schemas/tasks', () => ({
   attentionFlagSchema: {
     safeParse: (b: unknown) => ({
       success: true,
@@ -140,7 +140,7 @@ function makeRequest(body: Record<string, unknown> = {}) {
 // ---------------------------------------------------------------------------
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   mockAuth.mockResolvedValue(MOCK_SESSION);
   mockGetActiveTask.mockResolvedValue({ task: MOCK_TASK });
   mockGetDbUserId.mockResolvedValue({ dbUserId: 'db-user-1' });
@@ -148,14 +148,14 @@ beforeEach(() => {
 
   mockTransactionFn.mockImplementation(async (callback: (tx: unknown) => unknown) => {
     const tx = {
-      insert: jest.fn().mockReturnValue({
-        values: jest.fn().mockReturnValue({
-          returning: jest.fn().mockResolvedValue([MOCK_FLAG]),
+      insert: vi.fn().mockReturnValue({
+        values: vi.fn().mockReturnValue({
+          returning: vi.fn().mockResolvedValue([MOCK_FLAG]),
         }),
       }),
-      update: jest.fn().mockReturnValue({
-        set: jest.fn().mockReturnValue({
-          where: jest.fn().mockResolvedValue(undefined),
+      update: vi.fn().mockReturnValue({
+        set: vi.fn().mockReturnValue({
+          where: vi.fn().mockResolvedValue(undefined),
         }),
       }),
     };
@@ -177,7 +177,7 @@ describe('POST /api/tasks/[id]/attention — unauthenticated', () => {
 
 describe('POST /api/tasks/[id]/attention — task not found', () => {
   it('returns 404 when getActiveTask returns an error response', async () => {
-    const { NextResponse } = require('next/server');
+    const { NextResponse } = await import('next/server');
     mockGetActiveTask.mockResolvedValueOnce({
       error: NextResponse.json({ success: false, error: 'Not found' }, { status: 404 }),
     });

@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for GET/PATCH /api/admin/hirn/providers
  *
@@ -24,19 +24,19 @@
 // Mocks
 // ---------------------------------------------------------------------------
 
-const mockAuth = jest.fn();
+const mockAuth = vi.fn();
 
-jest.mock('@/auth', () => ({
+vi.mock('@/auth', () => ({
   auth: (...args: unknown[]) => mockAuth.apply(null, args),
 }));
 
-jest.mock('@/lib/api/middleware', () => ({
+vi.mock('@/lib/api/middleware', async () => ({
   withAdmin: (sectionOrHandler: unknown, maybeHandler?: unknown) => {
     const handler = typeof sectionOrHandler === 'function' ? sectionOrHandler : maybeHandler;
     return (req: Request) =>
-      mockAuth().then((session: unknown) => {
+      mockAuth().then(async (session: unknown) => {
         if (!session || !(session as { user?: { id?: string } }).user?.id) {
-          const { NextResponse } = jest.requireActual('next/server');
+          const { NextResponse } = await vi.importActual<any>('next/server');
           return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
         }
         return (handler as (r: Request, s: unknown) => unknown)(req, session);
@@ -44,14 +44,14 @@ jest.mock('@/lib/api/middleware', () => ({
   },
 }));
 
-const mockGetProviderSettings = jest.fn();
-const mockSetDefaultProvider = jest.fn();
-const mockCreateProvider = jest.fn();
-const mockUpdateProviderSettings = jest.fn();
-const mockSetProviderEnabled = jest.fn();
-const mockIsAvailable = jest.fn();
+const mockGetProviderSettings = vi.fn();
+const mockSetDefaultProvider = vi.fn();
+const mockCreateProvider = vi.fn();
+const mockUpdateProviderSettings = vi.fn();
+const mockSetProviderEnabled = vi.fn();
+const mockIsAvailable = vi.fn();
 
-jest.mock('@/lib/hirn/providers', () => ({
+vi.mock('@/lib/hirn/providers', () => ({
   getProviderSettings: (...args: unknown[]) => mockGetProviderSettings.apply(null, args),
   setDefaultProvider: (...args: unknown[]) => mockSetDefaultProvider.apply(null, args),
   createProvider: (...args: unknown[]) => mockCreateProvider.apply(null, args),
@@ -59,15 +59,15 @@ jest.mock('@/lib/hirn/providers', () => ({
   setProviderEnabled: (...args: unknown[]) => mockSetProviderEnabled.apply(null, args),
 }));
 
-const mockValidateBody = jest.fn();
+const mockValidateBody = vi.fn();
 
-jest.mock('@/lib/schemas', () => ({
+vi.mock('@/lib/schemas', () => ({
   validateBody: (...args: unknown[]) => mockValidateBody.apply(null, args),
   HirnProviderUpdateSchema: {},
 }));
 
-jest.mock('@/lib/api/helpers', () => {
-  const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => {
+  const { NextResponse } = await vi.importActual<any>('next/server');
   return {
     apiSuccess: (data: unknown) => NextResponse.json({ success: true, data }),
     apiError: (err: unknown, msg: string, status = 500) =>
@@ -79,8 +79,8 @@ jest.mock('@/lib/api/helpers', () => {
   };
 });
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
 // ---------------------------------------------------------------------------
@@ -134,7 +134,7 @@ function makePatchRequest(body: Record<string, unknown> = { provider: 'groq', is
 }
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   mockAuth.mockResolvedValue(MOCK_SESSION);
   mockIsAvailable.mockResolvedValue(true);
   mockCreateProvider.mockReturnValue({ isAvailable: mockIsAvailable });
@@ -203,7 +203,7 @@ describe('PATCH /api/admin/hirn/providers — unauthenticated', () => {
 
 describe('PATCH /api/admin/hirn/providers — validation', () => {
   it('returns 400 when body is invalid', async () => {
-    const { NextResponse } = jest.requireActual('next/server');
+    const { NextResponse } = await vi.importActual<any>('next/server');
     mockValidateBody.mockReturnValueOnce({
       success: false,
       error: NextResponse.json(

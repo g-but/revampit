@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for POST /api/auth/resend-code
  *
@@ -23,47 +23,47 @@
 // Mocks
 // ---------------------------------------------------------------------------
 
-const mockCheckRateLimit = jest.fn();
-const mockGetClientIp = jest.fn().mockReturnValue('10.0.0.1');
+const mockCheckRateLimit = vi.fn();
+const mockGetClientIp = vi.fn().mockReturnValue('10.0.0.1');
 
-jest.mock('@/lib/auth/rate-limiter', () => ({
+vi.mock('@/lib/auth/rate-limiter', () => ({
   checkRateLimit: (...args: unknown[]) => mockCheckRateLimit.apply(null, args),
   getClientIp: (...args: unknown[]) => mockGetClientIp.apply(null, args),
 }));
 
-const mockGetUserByEmail = jest.fn();
-const mockCreateVerificationCode = jest.fn().mockResolvedValue('654321');
+const mockGetUserByEmail = vi.fn();
+const mockCreateVerificationCode = vi.fn().mockResolvedValue('654321');
 
-jest.mock('@/lib/auth/db', () => ({
+vi.mock('@/lib/auth/db', () => ({
   getUserByEmail: (...args: unknown[]) => mockGetUserByEmail.apply(null, args),
   createVerificationCode: (...args: unknown[]) => mockCreateVerificationCode.apply(null, args),
 }));
 
-const mockSendEmail = jest.fn();
+const mockSendEmail = vi.fn();
 
-jest.mock('@/lib/email', () => ({
+vi.mock('@/lib/email', () => ({
   sendEmail: (...args: unknown[]) => mockSendEmail.apply(null, args),
 }));
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
-jest.mock('@/lib/api/helpers', () => ({
-  apiSuccess: (data: unknown) => {
-    const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => ({
+  apiSuccess: async (data: unknown) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: true, data });
   },
-  apiBadRequest: (msg: string) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiBadRequest: async (msg: string) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status: 400 });
   },
-  apiError: (err: unknown, msg: string, status = 500) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiError: async (err: unknown, msg: string, status = 500) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status });
   },
-  apiRateLimited: (msg: string) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiRateLimited: async (msg: string) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status: 429 });
   },
 }));
@@ -101,7 +101,7 @@ const VERIFIED_USER = {
 };
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   mockCheckRateLimit.mockReturnValue({ allowed: true, retryAfter: 0, remaining: 4, resetAt: 0 });
   mockGetUserByEmail.mockResolvedValue(UNVERIFIED_USER);
   mockSendEmail.mockResolvedValue({ success: true });

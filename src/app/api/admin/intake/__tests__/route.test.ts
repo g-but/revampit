@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for POST/GET /api/admin/intake
  *
@@ -21,19 +21,19 @@
 // Mocks
 // ---------------------------------------------------------------------------
 
-const mockAuth = jest.fn();
+const mockAuth = vi.fn();
 
-jest.mock('@/auth', () => ({
+vi.mock('@/auth', () => ({
   auth: (...args: unknown[]) => mockAuth.apply(null, args),
 }));
 
-jest.mock('@/lib/api/middleware', () => ({
+vi.mock('@/lib/api/middleware', async () => ({
   withAdmin: (sectionOrHandler: unknown, maybeHandler?: unknown) => {
     const handler = typeof sectionOrHandler === 'function' ? sectionOrHandler : maybeHandler;
     return (req: Request) =>
-      mockAuth().then((session: unknown) => {
+      mockAuth().then(async (session: unknown) => {
         if (!session || !(session as { user?: { id?: string } }).user?.id) {
-          const { NextResponse } = jest.requireActual('next/server');
+          const { NextResponse } = await vi.importActual<any>('next/server');
           return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
         }
         return (handler as (r: Request, s: unknown) => unknown)(req, session);
@@ -41,31 +41,31 @@ jest.mock('@/lib/api/middleware', () => ({
   },
 }));
 
-const mockDbExecute = jest.fn();
-const mockTransaction = jest.fn();
+const mockDbExecute = vi.fn();
+const mockTransaction = vi.fn();
 
-jest.mock('@/db', () => ({
+vi.mock('@/db', () => ({
   db: {
     execute: (...args: unknown[]) => mockDbExecute.apply(null, args),
     transaction: (...args: unknown[]) => mockTransaction.apply(null, args),
   },
 }));
 
-jest.mock('@/db/schema/inventory', () => ({
+vi.mock('@/db/schema/inventory', () => ({
   aiExtractedProducts: {},
   inventoryItems: {},
   productImages: {},
 }));
 
-jest.mock('@/db/schema/misc', () => ({
+vi.mock('@/db/schema/misc', () => ({
   donations: {},
 }));
 
-jest.mock('@/db/schema/auth', () => ({
+vi.mock('@/db/schema/auth', () => ({
   users: {},
 }));
 
-jest.mock('drizzle-orm', () => ({
+vi.mock('drizzle-orm', () => ({
   sql: Object.assign((_strings: TemplateStringsArray, ..._values: unknown[]) => ({ __sql: true }), {
     raw: (s: string) => ({ __raw: s }),
     join: (arr: unknown[], _sep: unknown) => ({ __join: arr }),
@@ -74,59 +74,59 @@ jest.mock('drizzle-orm', () => ({
   SQL: class {},
 }));
 
-const mockCreateErfassungProduct = jest.fn();
-const mockSyncProductToKivvi = jest.fn();
+const mockCreateErfassungProduct = vi.fn();
+const mockSyncProductToKivvi = vi.fn();
 
-jest.mock('@/lib/kivvi/sync-product', () => ({
+vi.mock('@/lib/kivvi/sync-product', () => ({
   syncProductToKivvi: (...args: unknown[]) => mockSyncProductToKivvi.apply(null, args),
 }));
 
-jest.mock('@/lib/erfassung/create-product', () => ({
+vi.mock('@/lib/erfassung/create-product', () => ({
   createErfassungProduct: (...args: unknown[]) => mockCreateErfassungProduct.apply(null, args),
 }));
 
-const mockAppendIntakeEvent = jest.fn();
+const mockAppendIntakeEvent = vi.fn();
 
-jest.mock('@/lib/intake/timeline', () => ({
+vi.mock('@/lib/intake/timeline', () => ({
   appendIntakeEvent: (...args: unknown[]) => mockAppendIntakeEvent.apply(null, args),
 }));
 
-const mockValidateBody = jest.fn();
-const mockValidateQuery = jest.fn();
+const mockValidateBody = vi.fn();
+const mockValidateQuery = vi.fn();
 
-jest.mock('@/lib/schemas', () => ({
+vi.mock('@/lib/schemas', () => ({
   validateBody: (...args: unknown[]) => mockValidateBody.apply(null, args),
   validateQuery: (...args: unknown[]) => mockValidateQuery.apply(null, args),
 }));
 
-jest.mock('@/lib/schemas/intake', () => ({
+vi.mock('@/lib/schemas/intake', () => ({
   IntakeCreateSchema: {},
   IntakeQuerySchema: {},
 }));
 
-jest.mock('@/config/intake-status', () => ({
+vi.mock('@/config/intake-status', () => ({
   INTAKE_STATUS: { IN_PROGRESS: 'in_progress', READY: 'ready', PUBLISHED: 'published' },
 }));
 
-jest.mock('@/config/marketplace-status', () => ({
+vi.mock('@/config/marketplace-status', () => ({
   MARKETPLACE_STATUS: { DRAFT: 'draft', PUBLISHED: 'published' },
   PRODUCT_STATUS: { APPROVED: 'approved' },
 }));
 
-jest.mock('@/config/error-messages', () => ({
+vi.mock('@/config/error-messages', () => ({
   ERROR_MESSAGES: { INTERNAL_SERVER_ERROR: 'Interner Serverfehler' },
 }));
 
-jest.mock('@/config/intake-checklist', () => ({
+vi.mock('@/config/intake-checklist', () => ({
   INTAKE_TIERS: { REFURBISH: 'refurbish', PARTS: 'parts', RECYCLE: 'recycle' },
   QUICK_CAPTURE_TIER: 'quick',
-  isChecklistComplete: jest.fn().mockReturnValue(false),
-  hasChecklistFailure: jest.fn().mockReturnValue(false),
-  getChecklistProgress: jest.fn().mockReturnValue({ completed: 0, total: 5 }),
+  isChecklistComplete: vi.fn().mockReturnValue(false),
+  hasChecklistFailure: vi.fn().mockReturnValue(false),
+  getChecklistProgress: vi.fn().mockReturnValue({ completed: 0, total: 5 }),
 }));
 
-jest.mock('@/lib/api/helpers', () => {
-  const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => {
+  const { NextResponse } = await vi.importActual<any>('next/server');
   return {
     apiSuccess: (data: unknown) => NextResponse.json({ success: true, data }),
     apiError: (err: unknown, msg: string, status = 500) =>
@@ -136,8 +136,8 @@ jest.mock('@/lib/api/helpers', () => {
   };
 });
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
 // ---------------------------------------------------------------------------
@@ -207,8 +207,8 @@ function makeGetRequest(params: Record<string, string> = {}) {
   return new NextRequest(url.toString(), { method: 'GET' });
 }
 
-beforeEach(() => {
-  jest.resetAllMocks();
+beforeEach(async () => {
+  vi.resetAllMocks();
   mockAuth.mockResolvedValue(MOCK_SESSION);
 
   // POST mocks
@@ -237,9 +237,9 @@ beforeEach(() => {
       rows: [{ in_progress: '1', ready: '0', published: '0', total_unfiltered: '1' }],
     }); // statusCounts
 
-  const checklist = require('@/config/intake-checklist');
-  checklist.isChecklistComplete.mockReturnValue(false);
-  checklist.getChecklistProgress.mockReturnValue({ completed: 0, total: 5 });
+  const checklist = await import('@/config/intake-checklist');
+  (checklist.isChecklistComplete as any).mockReturnValue(false);
+  (checklist.getChecklistProgress as any).mockReturnValue({ completed: 0, total: 5 });
 });
 
 // ============================================================================
@@ -256,7 +256,7 @@ describe('POST /api/admin/intake — unauthenticated', () => {
 
 describe('POST /api/admin/intake — validation', () => {
   it('returns 400 when body is invalid', async () => {
-    const { NextResponse } = jest.requireActual('next/server');
+    const { NextResponse } = await vi.importActual<any>('next/server');
     mockValidateBody.mockReturnValueOnce({
       success: false,
       error: NextResponse.json(
@@ -369,7 +369,7 @@ describe('GET /api/admin/intake — unauthenticated', () => {
 
 describe('GET /api/admin/intake — validation', () => {
   it('returns 400 when query is invalid', async () => {
-    const { NextResponse } = jest.requireActual('next/server');
+    const { NextResponse } = await vi.importActual<any>('next/server');
     mockValidateQuery.mockReturnValueOnce({
       success: false,
       error: NextResponse.json(

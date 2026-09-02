@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for GET /api/technicians/[id] (public)
  *
@@ -7,15 +7,15 @@
  *   GET - 400 (invalid UUID), 404 (not found), 200 with profile
  */
 
-const mockGetTechnicianById = jest.fn();
+const mockGetTechnicianById = vi.fn();
 
-jest.mock('@/lib/services/technician-service', () => ({
-  ...jest.requireActual('@/lib/services/technician-service'),
+vi.mock('@/lib/services/technician-service', async () => ({
+  ...(await vi.importActual<any>('@/lib/services/technician-service')),
   getTechnicianById: (...args: unknown[]) => mockGetTechnicianById(...args),
 }));
 
-jest.mock('@/lib/api/helpers', () => {
-  const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => {
+  const { NextResponse } = await vi.importActual<any>('next/server');
   return {
     apiSuccessCached: (data: unknown, _maxAge?: number, _stale?: number) =>
       NextResponse.json({ success: true, data }),
@@ -28,12 +28,12 @@ jest.mock('@/lib/api/helpers', () => {
   };
 });
 
-jest.mock('@/config/error-messages', () => ({
+vi.mock('@/config/error-messages', () => ({
   ERROR_MESSAGES: { INTERNAL_SERVER_ERROR: 'Interner Serverfehler' },
 }));
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
 import { NextRequest } from 'next/server';
@@ -70,7 +70,7 @@ function makeRequest(id: string) {
 }
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
 });
 
 // ============================================================================

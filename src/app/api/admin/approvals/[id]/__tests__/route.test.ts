@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for PATCH /api/admin/approvals/[id] — pilot B on the shared
  * review-workflow core.
@@ -16,19 +16,20 @@
  *     historic activity verbs + content_decision audit with route context
  */
 
-const mockAuth = jest.fn();
+import type { Mock } from 'vitest';
+const mockAuth = vi.fn();
 
-jest.mock('@/auth', () => ({
+vi.mock('@/auth', () => ({
   auth: (...args: unknown[]) => mockAuth.apply(null, args),
 }));
 
-jest.mock('@/lib/api/middleware', () => ({
+vi.mock('@/lib/api/middleware', async () => ({
   withAdmin: (sectionOrHandler: unknown, maybeHandler?: unknown) => {
     const handler = typeof sectionOrHandler === 'function' ? sectionOrHandler : maybeHandler;
     return (req: Request, context?: { params?: Promise<{ id: string }> }) =>
       mockAuth().then(async (session: unknown) => {
         if (!session || !(session as { user?: { id?: string } }).user?.id) {
-          const { NextResponse } = jest.requireActual('next/server');
+          const { NextResponse } = await vi.importActual<any>('next/server');
           return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
         }
         const resolvedContext = context?.params ? { params: await context.params } : undefined;
@@ -41,33 +42,33 @@ jest.mock('@/lib/api/middleware', () => ({
   },
 }));
 
-const mockRunReviewTransition = jest.fn();
-jest.mock('@/lib/lifecycle/review-workflow', () => ({
+const mockRunReviewTransition = vi.fn();
+vi.mock('@/lib/lifecycle/review-workflow', () => ({
   runReviewTransition: (opts: unknown) => mockRunReviewTransition(opts),
 }));
 
-const mockWhere = jest.fn();
-jest.mock('@/db', () => ({
+const mockWhere = vi.fn();
+vi.mock('@/db', () => ({
   db: {
     select: () => ({ from: () => ({ where: mockWhere }) }),
   },
 }));
 
-jest.mock('@/db/schema', () => ({
+vi.mock('@/db/schema', () => ({
   users: { id: 'u_id', email: 'u_email', name: 'u_name' },
 }));
 
-jest.mock('drizzle-orm', () => ({
-  eq: jest.fn().mockReturnValue({ __eq: true }),
+vi.mock('drizzle-orm', () => ({
+  eq: vi.fn().mockReturnValue({ __eq: true }),
 }));
 
-jest.mock('@/lib/schemas', () => ({
-  validateBody: jest.fn(),
+vi.mock('@/lib/schemas', () => ({
+  validateBody: vi.fn(),
   AdminApprovalActionSchema: {},
 }));
 
-jest.mock('@/lib/api/helpers', () => {
-  const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => {
+  const { NextResponse } = await vi.importActual<any>('next/server');
   return {
     apiSuccess: (data: unknown) => NextResponse.json({ success: true, data }),
     apiError: (err: unknown, msg: string, status = 500) =>
@@ -79,11 +80,12 @@ jest.mock('@/lib/api/helpers', () => {
   };
 });
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
 import { NextRequest } from 'next/server';
+import { validateBody } from '@/lib/schemas';
 import { PATCH } from '../route';
 
 const MOCK_SESSION = {
@@ -122,13 +124,14 @@ function makeContext(id = 'sub-1') {
   return { params: Promise.resolve({ id }) };
 }
 
+// Sync on purpose: several tests call this without awaiting right before
+// invoking the route — an async version races the route's validateBody read.
 function setValidBody(data: Record<string, unknown>) {
-  const schemas = jest.requireMock('@/lib/schemas') as { validateBody: jest.Mock };
-  schemas.validateBody.mockReturnValue({ success: true, data });
+  (validateBody as Mock).mockReturnValue({ success: true, data });
 }
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   mockAuth.mockResolvedValue(MOCK_SESSION);
   mockWhere.mockResolvedValue([{ name: 'User', email: 'user@example.com' }]);
   setValidBody({ action: 'approve' });
@@ -148,8 +151,8 @@ describe('PATCH /api/admin/approvals/[id] — auth + validation', () => {
   });
 
   it('returns 400 when body is invalid', async () => {
-    const schemas = jest.requireMock('@/lib/schemas') as { validateBody: jest.Mock };
-    const { NextResponse } = jest.requireActual('next/server');
+    const schemas = (await import('@/lib/schemas')) as unknown as { validateBody: Mock };
+    const { NextResponse } = await vi.importActual<any>('next/server');
     schemas.validateBody.mockReturnValueOnce({
       success: false,
       error: NextResponse.json(

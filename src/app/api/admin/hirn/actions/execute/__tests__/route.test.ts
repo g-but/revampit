@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for POST /api/admin/hirn/actions/execute
  *
@@ -17,19 +17,19 @@
 // Mocks
 // ---------------------------------------------------------------------------
 
-const mockAuth = jest.fn();
+const mockAuth = vi.fn();
 
-jest.mock('@/auth', () => ({
+vi.mock('@/auth', () => ({
   auth: (...args: unknown[]) => mockAuth.apply(null, args),
 }));
 
-jest.mock('@/lib/api/middleware', () => ({
+vi.mock('@/lib/api/middleware', async () => ({
   withAdmin: (sectionOrHandler: unknown, maybeHandler?: unknown) => {
     const handler = typeof sectionOrHandler === 'function' ? sectionOrHandler : maybeHandler;
     return (req: Request) =>
-      mockAuth().then((session: unknown) => {
+      mockAuth().then(async (session: unknown) => {
         if (!session || !(session as { user?: { id?: string } }).user?.id) {
-          const { NextResponse } = jest.requireActual('next/server');
+          const { NextResponse } = await vi.importActual<any>('next/server');
           return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
         }
         return (handler as (r: Request, s: unknown) => unknown)(req, session);
@@ -37,33 +37,33 @@ jest.mock('@/lib/api/middleware', () => ({
   },
 }));
 
-const mockValidateExecuteActionInput = jest.fn();
-const mockExecuteHirnAction = jest.fn();
+const mockValidateExecuteActionInput = vi.fn();
+const mockExecuteHirnAction = vi.fn();
 
-jest.mock('@/lib/hirn/action-executor', () => ({
+vi.mock('@/lib/hirn/action-executor', () => ({
   executeHirnAction: (...args: unknown[]) => mockExecuteHirnAction.apply(null, args),
 }));
 
-jest.mock('@/lib/hirn/action-executor-contracts', () => ({
+vi.mock('@/lib/hirn/action-executor-contracts', () => ({
   validateExecuteActionInput: (...args: unknown[]) =>
     mockValidateExecuteActionInput.apply(null, args),
 }));
 
-const mockCanAccessSection = jest.fn();
+const mockCanAccessSection = vi.fn();
 
-jest.mock('@/lib/permissions', () => ({
+vi.mock('@/lib/permissions', () => ({
   canAccessSection: (...args: unknown[]) => mockCanAccessSection.apply(null, args),
-  isSuperAdmin: jest.fn().mockReturnValue(false),
+  isSuperAdmin: vi.fn().mockReturnValue(false),
 }));
 
-const mockGetDbUserId = jest.fn();
+const mockGetDbUserId = vi.fn();
 
-jest.mock('@/lib/api/task-helpers', () => ({
+vi.mock('@/lib/api/task-helpers', () => ({
   getDbUserId: (...args: unknown[]) => mockGetDbUserId.apply(null, args),
 }));
 
-jest.mock('@/lib/api/helpers', () => {
-  const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => {
+  const { NextResponse } = await vi.importActual<any>('next/server');
   return {
     apiSuccess: (data: unknown) => NextResponse.json({ success: true, data }),
     apiError: (err: unknown, msg: string, status = 500) =>
@@ -112,7 +112,7 @@ function makeRequest(body: Record<string, unknown> = VALID_ACTION_BODY) {
 }
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   mockAuth.mockResolvedValue(MOCK_SESSION);
   mockValidateExecuteActionInput.mockReturnValue({ success: true, data: VALID_ACTION_BODY });
   mockCanAccessSection.mockReturnValue(true);
@@ -158,7 +158,7 @@ describe('POST /api/admin/hirn/actions/execute — success', () => {
   });
 
   it('returns error response when getDbUserId fails', async () => {
-    const { NextResponse } = jest.requireActual('next/server');
+    const { NextResponse } = await vi.importActual<any>('next/server');
     const errorResponse = NextResponse.json(
       { success: false, error: 'User not found' },
       { status: 404 },

@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for GET /api/workshops
  *
@@ -18,29 +18,30 @@
  *   - returns 500 on non-connection DB errors
  */
 
+import type { Mock } from 'vitest';
 // ---------------------------------------------------------------------------
 // Mocks
 // ---------------------------------------------------------------------------
 
-const mockAuth = jest.fn().mockResolvedValue(null); // unauthenticated by default
+const mockAuth = vi.fn().mockResolvedValue(null); // unauthenticated by default
 
-jest.mock('@/auth', () => ({
+vi.mock('@/auth', () => ({
   auth: (...args: unknown[]) => mockAuth.apply(null, args),
 }));
 
 // Drizzle select chain: select().from().where().orderBy()
-const mockOrderBy = jest.fn();
-const mockWhere = jest.fn().mockReturnValue({ orderBy: mockOrderBy });
-const mockFrom = jest.fn().mockReturnValue({ where: mockWhere });
-const mockSelect = jest.fn().mockReturnValue({ from: mockFrom });
+const mockOrderBy = vi.fn();
+const mockWhere = vi.fn().mockReturnValue({ orderBy: mockOrderBy });
+const mockFrom = vi.fn().mockReturnValue({ where: mockWhere });
+const mockSelect = vi.fn().mockReturnValue({ from: mockFrom });
 
-jest.mock('@/db', () => ({
+vi.mock('@/db', () => ({
   db: {
     select: (...args: unknown[]) => mockSelect.apply(null, args),
   },
 }));
 
-jest.mock('@/db/schema', () => ({
+vi.mock('@/db/schema', () => ({
   workshops: {
     id: 'w_id',
     slug: 'w_slug',
@@ -68,30 +69,30 @@ jest.mock('@/db/schema', () => ({
   workshopRegistrations: { id: 'wr_id' },
 }));
 
-jest.mock('drizzle-orm', () => ({
-  ...jest.requireActual('drizzle-orm'),
-  eq: jest.fn().mockReturnValue({ __eq: true }),
-  desc: jest.fn().mockReturnValue({ __desc: true }),
-  asc: jest.fn().mockReturnValue({ __asc: true }),
-  inArray: jest.fn().mockReturnValue({ __inArray: true }),
-  sql: Object.assign(jest.fn().mockReturnValue({ __sql: 'sql' }), {
-    raw: jest.fn(),
-    join: jest.fn().mockReturnValue({ __sqlJoin: true }),
+vi.mock('drizzle-orm', async () => ({
+  ...(await vi.importActual<any>('drizzle-orm')),
+  eq: vi.fn().mockReturnValue({ __eq: true }),
+  desc: vi.fn().mockReturnValue({ __desc: true }),
+  asc: vi.fn().mockReturnValue({ __asc: true }),
+  inArray: vi.fn().mockReturnValue({ __inArray: true }),
+  sql: Object.assign(vi.fn().mockReturnValue({ __sql: 'sql' }), {
+    raw: vi.fn(),
+    join: vi.fn().mockReturnValue({ __sqlJoin: true }),
   }),
 }));
 
-jest.mock('@/lib/api/helpers', () => ({
-  apiSuccess: (data: unknown) => {
-    const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => ({
+  apiSuccess: async (data: unknown) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: true, data });
   },
-  apiError: (err: unknown, msg: string, status = 500) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiError: async (err: unknown, msg: string, status = 500) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status });
   },
 }));
 
-jest.mock('@/config/error-messages', () => ({
+vi.mock('@/config/error-messages', () => ({
   ERROR_MESSAGES: { INTERNAL_SERVER_ERROR: 'Internal server error' },
 }));
 
@@ -144,7 +145,7 @@ function makeRequest(params: Record<string, string> = {}) {
 }
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   mockAuth.mockResolvedValue(null);
   mockSelect.mockReturnValue({ from: mockFrom });
   mockFrom.mockReturnValue({ where: mockWhere });
@@ -184,7 +185,7 @@ describe('GET /api/workshops — basic list (no instances)', () => {
   });
 
   it('does not apply isActive filter when active=false', async () => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockSelect.mockReturnValue({ from: mockFrom });
     mockFrom.mockReturnValue({ where: mockWhere });
     mockWhere.mockReturnValue({ orderBy: mockOrderBy });
@@ -192,7 +193,7 @@ describe('GET /api/workshops — basic list (no instances)', () => {
     await GET(makeRequest({ active: 'false' }));
     const { eq } = await import('drizzle-orm');
     // eq should not be called with true (no active filter)
-    const activeCalls = (eq as jest.Mock).mock.calls.filter((c) => c[1] === true);
+    const activeCalls = (eq as Mock).mock.calls.filter((c) => c[1] === true);
     expect(activeCalls).toHaveLength(0);
   });
 });

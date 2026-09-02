@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for POST /api/admin/ai/smart-product-entry
  *
@@ -7,19 +7,19 @@
  *   POST - 401, 400 (validateBody), 503 (AI unavailable), 200
  */
 
-const mockAuth = jest.fn();
+const mockAuth = vi.fn();
 
-jest.mock('@/auth', () => ({
+vi.mock('@/auth', () => ({
   auth: (...args: unknown[]) => mockAuth.apply(null, args),
 }));
 
-jest.mock('@/lib/api/middleware', () => ({
+vi.mock('@/lib/api/middleware', async () => ({
   withAdmin: (sectionOrHandler: unknown, maybeHandler?: unknown) => {
     const handler = typeof sectionOrHandler === 'function' ? sectionOrHandler : maybeHandler;
     return (req: Request) =>
-      mockAuth().then((session: unknown) => {
+      mockAuth().then(async (session: unknown) => {
         if (!session || !(session as { user?: { id?: string } }).user?.id) {
-          const { NextResponse } = jest.requireActual('next/server');
+          const { NextResponse } = await vi.importActual<any>('next/server');
           return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
         }
         return (handler as (r: Request, s: unknown) => unknown)(req, session);
@@ -27,24 +27,24 @@ jest.mock('@/lib/api/middleware', () => ({
   },
 }));
 
-const mockValidateBody = jest.fn();
-const mockCallWithFallback = jest.fn();
-const mockRobustJsonExtract = jest.fn();
+const mockValidateBody = vi.fn();
+const mockCallWithFallback = vi.fn();
+const mockRobustJsonExtract = vi.fn();
 
-jest.mock('@/lib/schemas', () => ({
+vi.mock('@/lib/schemas', () => ({
   validateBody: (...args: unknown[]) => mockValidateBody.apply(null, args),
   SmartProductEntrySchema: {},
 }));
 
-jest.mock('@/lib/ai/providers', () => ({
+vi.mock('@/lib/ai/providers', () => ({
   callWithFallback: (...args: unknown[]) => mockCallWithFallback.apply(null, args),
 }));
 
-jest.mock('@/lib/ai/extract', () => ({
+vi.mock('@/lib/ai/extract', () => ({
   robustJsonExtract: (...args: unknown[]) => mockRobustJsonExtract.apply(null, args),
 }));
 
-jest.mock('@/lib/ai/config/prompts', () => ({
+vi.mock('@/lib/ai/config/prompts', () => ({
   FORM_AI_REGISTRY: {
     'smart-product-entry': {
       system: 'You are a product expert.',
@@ -56,8 +56,8 @@ jest.mock('@/lib/ai/config/prompts', () => ({
   fillPromptTemplate: (_template: string, vars: Record<string, string>) => vars.text,
 }));
 
-jest.mock('@/lib/api/helpers', () => {
-  const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => {
+  const { NextResponse } = await vi.importActual<any>('next/server');
   return {
     apiSuccess: (data: unknown) => NextResponse.json({ success: true, data }),
     apiError: (err: unknown, msg: string, status = 500) =>
@@ -65,8 +65,8 @@ jest.mock('@/lib/api/helpers', () => {
   };
 });
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
 import { NextRequest } from 'next/server';
@@ -105,7 +105,7 @@ function makeRequest(body?: Record<string, unknown>) {
 }
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   mockAuth.mockResolvedValue(MOCK_SESSION);
   mockValidateBody.mockReturnValue({
     success: true,
@@ -129,7 +129,7 @@ describe('POST /api/admin/ai/smart-product-entry — unauthenticated', () => {
 
 describe('POST /api/admin/ai/smart-product-entry — validation', () => {
   it('returns 400 when body validation fails', async () => {
-    const { NextResponse } = jest.requireActual('next/server');
+    const { NextResponse } = await vi.importActual<any>('next/server');
     mockValidateBody.mockReturnValueOnce({
       success: false,
       error: NextResponse.json({ success: false, error: 'Invalid' }, { status: 400 }),

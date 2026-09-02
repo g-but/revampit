@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for POST /api/user/change-password
  *
@@ -23,73 +23,76 @@
 // Mocks
 // ---------------------------------------------------------------------------
 
-const mockAuth = jest.fn();
+const mockAuth = vi.fn();
 
-jest.mock('@/auth', () => ({
+vi.mock('@/auth', () => ({
   auth: (...args: unknown[]) => mockAuth.apply(null, args),
 }));
 
-const mockSelectWhere = jest.fn();
-const mockSelectFrom = jest.fn().mockReturnValue({ where: mockSelectWhere });
-const mockSelect = jest.fn().mockReturnValue({ from: mockSelectFrom });
+const mockSelectWhere = vi.fn();
+const mockSelectFrom = vi.fn().mockReturnValue({ where: mockSelectWhere });
+const mockSelect = vi.fn().mockReturnValue({ from: mockSelectFrom });
 
-const mockUpdateWhere = jest.fn().mockResolvedValue([]);
-const mockUpdateSet = jest.fn().mockReturnValue({ where: mockUpdateWhere });
-const mockUpdate = jest.fn().mockReturnValue({ set: mockUpdateSet });
+const mockUpdateWhere = vi.fn().mockResolvedValue([]);
+const mockUpdateSet = vi.fn().mockReturnValue({ where: mockUpdateWhere });
+const mockUpdate = vi.fn().mockReturnValue({ set: mockUpdateSet });
 
-jest.mock('@/db', () => ({
+vi.mock('@/db', () => ({
   db: {
     select: (...args: unknown[]) => mockSelect.apply(null, args),
     update: (...args: unknown[]) => mockUpdate.apply(null, args),
   },
 }));
 
-jest.mock('@/db/schema', () => ({
+vi.mock('@/db/schema', () => ({
   users: { id: 'users_id', passwordHash: 'users_passwordHash', updatedAt: 'users_updatedAt' },
 }));
 
-jest.mock('drizzle-orm', () => ({
-  ...jest.requireActual('drizzle-orm'),
-  eq: jest.fn().mockReturnValue({ __eq: true }),
-  sql: Object.assign(jest.fn().mockReturnValue({ __sql: 'NOW()' }), { raw: jest.fn() }),
+vi.mock('drizzle-orm', async () => ({
+  ...(await vi.importActual<any>('drizzle-orm')),
+  eq: vi.fn().mockReturnValue({ __eq: true }),
+  sql: Object.assign(vi.fn().mockReturnValue({ __sql: 'NOW()' }), { raw: vi.fn() }),
 }));
 
-const mockVerifyPassword = jest.fn();
-const mockHashPassword = jest.fn();
+const mockVerifyPassword = vi.fn();
+const mockHashPassword = vi.fn();
 
-jest.mock('@/lib/auth/password', () => ({
+vi.mock('@/lib/auth/password', () => ({
   verifyPassword: (...args: unknown[]) => mockVerifyPassword.apply(null, args),
   hashPassword: (...args: unknown[]) => mockHashPassword.apply(null, args),
 }));
 
-jest.mock('@/lib/api/helpers', () => ({
-  apiSuccess: (data: unknown, status = 200) => {
-    const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => ({
+  apiSuccess: async (data: unknown, status = 200) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: true, data }, { status });
   },
-  apiBadRequest: (msg: string) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiBadRequest: async (msg: string) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status: 400 });
   },
-  apiError: (err: unknown, msg: string, status = 500) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiError: async (err: unknown, msg: string, status = 500) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status });
   },
-  apiUnauthorized: (msg: string) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiUnauthorized: async (msg: string) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status: 401 });
   },
 }));
 
-const mockPasswordChangeLimiter = jest.fn().mockReturnValue(true);
-jest.mock('@/lib/security/rate-limit', () => ({
+const mockPasswordChangeLimiter = vi.fn().mockReturnValue(true);
+vi.mock('@/lib/security/rate-limit', () => ({
   rateLimiters: {
     passwordChange: (id: string) => mockPasswordChangeLimiter(id),
   },
 }));
 
-jest.mock('@/lib/schemas', () => {
-  const { z } = jest.requireActual('zod');
+vi.mock('@/lib/schemas', async () => {
+  const { z } = await vi.importActual<any>('zod');
+  // Hoisted to the factory: validateBody is consumed SYNCHRONOUSLY by the
+  // route, so the inner function must stay sync (jest's requireActual was).
+  const { NextResponse } = await vi.importActual<any>('next/server');
   const ChangePasswordSchema = z.object({
     currentPassword: z.string().min(1),
     newPassword: z.string().min(8),
@@ -98,7 +101,6 @@ jest.mock('@/lib/schemas', () => {
     validateBody: (schema: ReturnType<typeof z.object>, body: unknown) => {
       const result = schema.safeParse(body);
       if (!result.success) {
-        const { NextResponse } = jest.requireActual('next/server');
         return {
           success: false as const,
           error: NextResponse.json({ success: false, error: 'Invalid' }, { status: 400 }),
@@ -145,7 +147,7 @@ function makeRequest(body: unknown) {
 }
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   mockAuth.mockResolvedValue(MOCK_SESSION);
   mockPasswordChangeLimiter.mockReturnValue(true);
 

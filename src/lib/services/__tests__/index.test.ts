@@ -32,19 +32,19 @@
 // Mocks
 // ---------------------------------------------------------------------------
 
-const mockGetServiceTypeBySlug = jest.fn();
-const mockGetServiceTypeById = jest.fn();
-const mockGetAllServiceTypes = jest.fn();
-const mockGetFeaturedServiceTypes = jest.fn();
-const mockGetBookableServiceTypes = jest.fn();
-const mockGetServiceTypesByCategory = jest.fn();
-const mockGetAllServiceSlugsFromDb = jest.fn();
-const mockGetAllServiceTypesForAdmin = jest.fn();
-const mockUpdateServiceType = jest.fn();
-const mockCreateServiceType = jest.fn();
-const mockDeleteServiceType = jest.fn();
+const mockGetServiceTypeBySlug = vi.fn();
+const mockGetServiceTypeById = vi.fn();
+const mockGetAllServiceTypes = vi.fn();
+const mockGetFeaturedServiceTypes = vi.fn();
+const mockGetBookableServiceTypes = vi.fn();
+const mockGetServiceTypesByCategory = vi.fn();
+const mockGetAllServiceSlugsFromDb = vi.fn();
+const mockGetAllServiceTypesForAdmin = vi.fn();
+const mockUpdateServiceType = vi.fn();
+const mockCreateServiceType = vi.fn();
+const mockDeleteServiceType = vi.fn();
 
-jest.mock('../db', () => ({
+vi.mock('../db', () => ({
   getServiceTypeBySlug: (...args: unknown[]) => mockGetServiceTypeBySlug.apply(null, args),
   getServiceTypeById: (...args: unknown[]) => mockGetServiceTypeById.apply(null, args),
   getAllServiceTypes: (...args: unknown[]) => mockGetAllServiceTypes.apply(null, args),
@@ -60,23 +60,23 @@ jest.mock('../db', () => ({
   deleteServiceType: (...args: unknown[]) => mockDeleteServiceType.apply(null, args),
 }));
 
-const mockGetServicePresentation = jest.fn();
-const mockGetServicePricing = jest.fn();
+const mockGetServicePresentation = vi.fn();
+const mockGetServicePricing = vi.fn();
 const mockServicePresentation: Record<string, unknown> = {};
 
-jest.mock('../presentation', () => ({
+vi.mock('../presentation', () => ({
   getServicePresentation: (...args: unknown[]) => mockGetServicePresentation.apply(null, args),
   getServicePricing: (...args: unknown[]) => mockGetServicePricing.apply(null, args),
   // Getter defers access to mockServicePresentation until test execution
-  // (direct value reference would hit TDZ during jest.mock hoisting)
+  // (direct value reference would hit TDZ during vi.mock hoisting)
   get servicePresentation() {
     return mockServicePresentation;
   },
 }));
 
-const mockGetIconByName = jest.fn();
+const mockGetIconByName = vi.fn();
 
-jest.mock('@/config/service-icons', () => ({
+vi.mock('@/config/service-icons', () => ({
   getIconByName: (...args: unknown[]) => mockGetIconByName.apply(null, args),
 }));
 
@@ -146,7 +146,7 @@ const FALLBACK_PRICING = {
 };
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   mockGetServicePresentation.mockReturnValue(FALLBACK_PRESENTATION);
   mockGetServicePricing.mockReturnValue(FALLBACK_PRICING);
   mockGetIconByName.mockReturnValue('MockIcon');

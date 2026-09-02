@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 
 /**
@@ -17,17 +17,22 @@
  *   getReadingTime(content) — Math.ceil(words / 200)
  */
 
-const mockExistsSync = jest.fn();
-const mockReadFileSync = jest.fn();
-const mockReaddirSync = jest.fn();
-const mockStatSync = jest.fn();
+const mockExistsSync = vi.fn();
+const mockReadFileSync = vi.fn();
+const mockReaddirSync = vi.fn();
+const mockStatSync = vi.fn();
 
-jest.mock('fs', () => ({
-  existsSync: (...args: unknown[]) => mockExistsSync.apply(null, args),
-  readFileSync: (...args: unknown[]) => mockReadFileSync.apply(null, args),
-  readdirSync: (...args: unknown[]) => mockReaddirSync.apply(null, args),
-  statSync: (...args: unknown[]) => mockStatSync.apply(null, args),
-}));
+vi.mock('fs', () => {
+  // blog.ts uses `import fs from 'fs'` — the default export must mirror the
+  // named ones (jest's CJS interop provided that for free).
+  const named = {
+    existsSync: (...args: unknown[]) => mockExistsSync.apply(null, args),
+    readFileSync: (...args: unknown[]) => mockReadFileSync.apply(null, args),
+    readdirSync: (...args: unknown[]) => mockReaddirSync.apply(null, args),
+    statSync: (...args: unknown[]) => mockStatSync.apply(null, args),
+  };
+  return { ...named, default: named };
+});
 
 import { getAllPosts, getPostBySlug } from '../blog';
 import { getReadingTime } from '../blog-utils';

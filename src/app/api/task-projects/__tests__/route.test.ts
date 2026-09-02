@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for GET /api/task-projects and POST /api/task-projects
  *
@@ -14,23 +14,24 @@
  *   - returns 201 with created project
  */
 
+import type { Mock } from 'vitest';
 // ---------------------------------------------------------------------------
 // Mocks
 // ---------------------------------------------------------------------------
 
-const mockAuth = jest.fn();
+const mockAuth = vi.fn();
 
-jest.mock('@/auth', () => ({
+vi.mock('@/auth', () => ({
   auth: (...args: unknown[]) => mockAuth.apply(null, args),
 }));
 
-jest.mock('@/lib/api/middleware', () => ({
+vi.mock('@/lib/api/middleware', async () => ({
   withAdmin: (sectionOrHandler: unknown, maybeHandler?: unknown) => {
     const handler = typeof sectionOrHandler === 'function' ? sectionOrHandler : maybeHandler;
     return (req: Request, context?: unknown) =>
-      mockAuth().then((session: unknown) => {
+      mockAuth().then(async (session: unknown) => {
         if (!session || !(session as { user?: { id?: string } }).user?.id) {
-          const { NextResponse } = jest.requireActual('next/server');
+          const { NextResponse } = await vi.importActual<any>('next/server');
           return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
         }
         return (handler as (r: Request, s: unknown, c: unknown) => unknown)(req, session, context);
@@ -38,8 +39,8 @@ jest.mock('@/lib/api/middleware', () => ({
   },
 }));
 
-jest.mock('@/lib/api/helpers', () => {
-  const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => {
+  const { NextResponse } = await vi.importActual<any>('next/server');
   return {
     apiSuccess: (data: unknown, status = 200) =>
       NextResponse.json({ success: true, data }, { status }),
@@ -55,11 +56,11 @@ jest.mock('@/lib/api/helpers', () => {
   };
 });
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
-jest.mock('@/db/schema', () => ({
+vi.mock('@/db/schema', () => ({
   taskProjects: {
     id: 'tp_id',
     title: 'tp_title',
@@ -74,14 +75,14 @@ jest.mock('@/db/schema', () => ({
   users: { id: 'u_id', name: 'u_name', email: 'u_email' },
 }));
 
-jest.mock('drizzle-orm', () => ({
-  eq: jest.fn(),
-  and: jest.fn(),
-  sql: Object.assign(jest.fn().mockReturnValue({}), { raw: jest.fn().mockReturnValue({}) }),
-  not: jest.fn(),
+vi.mock('drizzle-orm', () => ({
+  eq: vi.fn(),
+  and: vi.fn(),
+  sql: Object.assign(vi.fn().mockReturnValue({}), { raw: vi.fn().mockReturnValue({}) }),
+  not: vi.fn(),
 }));
 
-jest.mock('@/lib/schemas/tasks', () => ({
+vi.mock('@/lib/schemas/tasks', () => ({
   createProjectSchema: {
     safeParse: (b: unknown) => {
       const body = b as Record<string, unknown>;
@@ -105,21 +106,21 @@ jest.mock('@/lib/schemas/tasks', () => ({
 // Drizzle fluent chain mock
 // ---------------------------------------------------------------------------
 
-const mockOrderByTerminal = jest.fn();
-const mockWhereTerminal = jest.fn();
-const mockReturning = jest.fn();
-const mockValues = jest.fn().mockReturnValue({ returning: mockReturning });
+const mockOrderByTerminal = vi.fn();
+const mockWhereTerminal = vi.fn();
+const mockReturning = vi.fn();
+const mockValues = vi.fn().mockReturnValue({ returning: mockReturning });
 
-const q: Record<string, jest.Mock> = {};
+const q: Record<string, Mock> = {};
 ['from', 'leftJoin', 'where', 'groupBy', 'having', 'limit', 'offset'].forEach((m) => {
-  q[m] = jest.fn().mockReturnValue(q);
+  q[m] = vi.fn().mockReturnValue(q);
 });
 q.orderBy = mockOrderByTerminal;
 
-jest.mock('@/db', () => ({
+vi.mock('@/db', () => ({
   db: {
-    select: jest.fn(),
-    insert: jest.fn(),
+    select: vi.fn(),
+    insert: vi.fn(),
   },
 }));
 
@@ -176,13 +177,13 @@ function makePostRequest(body?: Record<string, unknown>) {
 // beforeEach
 // ---------------------------------------------------------------------------
 
-beforeEach(() => {
-  jest.resetAllMocks();
+beforeEach(async () => {
+  vi.resetAllMocks();
   mockAuth.mockResolvedValue(MOCK_SESSION);
 
   // Restore chain methods after resetAllMocks
   Object.keys(q).forEach((k) => {
-    q[k] = jest.fn().mockReturnValue(q);
+    q[k] = vi.fn().mockReturnValue(q);
   });
   q.orderBy = mockOrderByTerminal;
   mockOrderByTerminal.mockResolvedValue([MOCK_PROJECT]);
@@ -194,9 +195,9 @@ beforeEach(() => {
   mockValues.mockReturnValue({ returning: mockReturning });
   mockReturning.mockResolvedValue([MOCK_PROJECT]);
 
-  const dbMod = require('@/db');
-  dbMod.db.select.mockReturnValue(q);
-  dbMod.db.insert.mockReturnValue({ values: mockValues });
+  const dbMod = await import('@/db');
+  (dbMod.db.select as any).mockReturnValue(q);
+  (dbMod.db.insert as any).mockReturnValue({ values: mockValues });
 });
 
 // ============================================================================
@@ -259,15 +260,15 @@ describe('POST /api/task-projects — validation', () => {
 });
 
 describe('POST /api/task-projects — success', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     // For POST: first select call uses where as terminal (user lookup)
-    const dbMod = require('@/db');
-    const userLookupChain: Record<string, jest.Mock> = {};
+    const dbMod = await import('@/db');
+    const userLookupChain: Record<string, Mock> = {};
     ['from', 'leftJoin', 'groupBy'].forEach((m) => {
-      userLookupChain[m] = jest.fn().mockReturnValue(userLookupChain);
+      userLookupChain[m] = vi.fn().mockReturnValue(userLookupChain);
     });
-    userLookupChain.where = jest.fn().mockResolvedValue([{ id: 'db-user-1' }]);
-    dbMod.db.select.mockReturnValue(userLookupChain);
+    userLookupChain.where = vi.fn().mockResolvedValue([{ id: 'db-user-1' }]);
+    (dbMod.db.select as any).mockReturnValue(userLookupChain);
   });
 
   it('returns 201 with created project', async () => {

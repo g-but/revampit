@@ -53,12 +53,12 @@
 function makeChain(result: unknown = []) {
   const resolved = Promise.resolve(result);
   const chain: Record<string, unknown> = {};
-  chain.from = jest.fn().mockReturnValue(chain);
-  chain.where = jest.fn().mockReturnValue(chain);
-  chain.limit = jest.fn().mockReturnValue(chain);
-  chain.values = jest.fn().mockReturnValue(chain);
-  chain.set = jest.fn().mockReturnValue(chain);
-  chain.returning = jest.fn().mockReturnValue(chain);
+  chain.from = vi.fn().mockReturnValue(chain);
+  chain.where = vi.fn().mockReturnValue(chain);
+  chain.limit = vi.fn().mockReturnValue(chain);
+  chain.values = vi.fn().mockReturnValue(chain);
+  chain.set = vi.fn().mockReturnValue(chain);
+  chain.returning = vi.fn().mockReturnValue(chain);
   chain.then = (resolved as Promise<unknown>).then.bind(resolved);
   chain.catch = (resolved as Promise<unknown>).catch.bind(resolved);
   chain.finally = (resolved as Promise<unknown>).finally.bind(resolved);
@@ -69,19 +69,19 @@ function makeChain(result: unknown = []) {
 // Mocks
 // ---------------------------------------------------------------------------
 
-const mockDbSelect = jest.fn(() => makeChain([]));
-const mockDbInsert = jest.fn(() => makeChain([]));
-const mockDbUpdate = jest.fn(() => makeChain([]));
+const mockDbSelect = vi.fn(() => makeChain([]));
+const mockDbInsert = vi.fn(() => makeChain([]));
+const mockDbUpdate = vi.fn(() => makeChain([]));
 
-jest.mock('@/db', () => ({
+vi.mock('@/db', () => ({
   db: {
-    select: (...args: unknown[]) => mockDbSelect.apply(null, args),
-    insert: (...args: unknown[]) => mockDbInsert.apply(null, args),
-    update: (...args: unknown[]) => mockDbUpdate.apply(null, args),
+    select: (...args: unknown[]) => mockDbSelect.apply(null, args as never),
+    insert: (...args: unknown[]) => mockDbInsert.apply(null, args as never),
+    update: (...args: unknown[]) => mockDbUpdate.apply(null, args as never),
   },
 }));
 
-jest.mock('@/db/schema/auth', () => ({
+vi.mock('@/db/schema/auth', () => ({
   users: {
     id: 'users_id',
     email: 'users_email',
@@ -110,9 +110,9 @@ jest.mock('@/db/schema/auth', () => ({
   },
 }));
 
-jest.mock('drizzle-orm', () => ({
-  ...jest.requireActual('drizzle-orm'),
-  eq: jest.fn().mockReturnValue({ __eq: true }),
+vi.mock('drizzle-orm', async () => ({
+  ...(await vi.importActual<any>('drizzle-orm')),
+  eq: vi.fn().mockReturnValue({ __eq: true }),
 }));
 
 // ---------------------------------------------------------------------------
@@ -187,7 +187,7 @@ function makeProfileRow(overrides: Partial<Record<string, unknown>> = {}) {
 }
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   mockDbSelect.mockImplementation(() => makeChain([]));
   mockDbInsert.mockImplementation(() => makeChain([]));
   mockDbUpdate.mockImplementation(() => makeChain([]));

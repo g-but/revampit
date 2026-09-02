@@ -7,10 +7,10 @@
 
 // csrf.ts imports NextRequest/NextResponse from next/server which needs Request global.
 // Mock the entire module import — we only test the pure utility exports.
-jest.mock('next/server', () => ({
+vi.mock('next/server', () => ({
   NextRequest: class {},
   NextResponse: {
-    json: jest.fn(),
+    json: vi.fn(),
   },
 }));
 

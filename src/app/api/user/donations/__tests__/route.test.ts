@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for GET /api/user/donations
  *
@@ -20,9 +20,9 @@
 // Mocks
 // ---------------------------------------------------------------------------
 
-const mockAuth = jest.fn();
+const mockAuth = vi.fn();
 
-jest.mock('@/auth', () => ({
+vi.mock('@/auth', () => ({
   auth: (...args: unknown[]) => mockAuth.apply(null, args),
 }));
 
@@ -30,18 +30,18 @@ jest.mock('@/auth', () => ({
 //   1. donations:  select.from(donations).where().orderBy()   → MOCK_DONATIONS
 //   2. linked:     select.from(items).leftJoin().where()  → linked rows
 // mockOrderBy controls the first; mockLinkedWhere controls the second.
-const mockOrderBy = jest.fn();
-const mockLinkedWhere = jest.fn();
+const mockOrderBy = vi.fn();
+const mockLinkedWhere = vi.fn();
 
-const mockSelect = jest.fn();
+const mockSelect = vi.fn();
 
-jest.mock('@/db', () => ({
+vi.mock('@/db', () => ({
   db: {
     select: (...args: unknown[]) => mockSelect.apply(null, args),
   },
 }));
 
-jest.mock('@/db/schema', () => ({
+vi.mock('@/db/schema', () => ({
   donations: {
     id: 'd_id',
     userId: 'd_userId',
@@ -73,31 +73,31 @@ jest.mock('@/db/schema', () => ({
   aiExtractedProducts: { id: 'aep_id', itemUuid: 'aep_uuid' },
 }));
 
-jest.mock('drizzle-orm', () => ({
-  ...jest.requireActual('drizzle-orm'),
-  eq: jest.fn().mockReturnValue({ __eq: true }),
-  desc: jest.fn().mockReturnValue({ __desc: true }),
+vi.mock('drizzle-orm', async () => ({
+  ...(await vi.importActual<any>('drizzle-orm')),
+  eq: vi.fn().mockReturnValue({ __eq: true }),
+  desc: vi.fn().mockReturnValue({ __desc: true }),
   // audit.ts calls getTableName(authAuditLog) at module load; the @/db/schema
   // mock returns plain objects (not real Drizzle tables), so override here.
   getTableName: () => 'auth_audit_log',
 }));
 
-jest.mock('@/lib/api/helpers', () => ({
-  apiSuccess: (data: unknown, status = 200) => {
-    const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => ({
+  apiSuccess: async (data: unknown, status = 200) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: true, data }, { status });
   },
-  apiError: (err: unknown, msg: string, status = 500) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiError: async (err: unknown, msg: string, status = 500) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status });
   },
-  apiUnauthorized: (msg: string) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiUnauthorized: async (msg: string) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status: 401 });
   },
 }));
 
-jest.mock('@/config/error-messages', () => ({
+vi.mock('@/config/error-messages', () => ({
   ERROR_MESSAGES: { INTERNAL_SERVER_ERROR: 'Internal server error' },
 }));
 
@@ -149,7 +149,7 @@ function makeRequest() {
 }
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   mockAuth.mockResolvedValue(MOCK_SESSION);
   mockOrderBy.mockResolvedValue(MOCK_DONATIONS);
   mockLinkedWhere.mockResolvedValue([]);

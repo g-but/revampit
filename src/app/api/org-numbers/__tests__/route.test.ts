@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for GET /api/org-numbers
  *
@@ -21,9 +21,9 @@
 // Mocks
 // ---------------------------------------------------------------------------
 
-const mockGetOrgNumbers = jest.fn();
+const mockGetOrgNumbers = vi.fn();
 
-jest.mock('@/lib/org-numbers', () => ({
+vi.mock('@/lib/org-numbers', () => ({
   getOrgNumbers: (...args: unknown[]) => mockGetOrgNumbers.apply(null, args),
   ORG_NUMBERS_DEFAULTS: {
     'impact-devices': {
@@ -50,21 +50,21 @@ jest.mock('@/lib/org-numbers', () => ({
   },
 }));
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
-jest.mock('@/lib/api/helpers', () => ({
-  apiSuccessCached: (data: unknown) => {
-    const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => ({
+  apiSuccessCached: async (data: unknown) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: true, data });
   },
-  apiBadRequest: (msg: string) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiBadRequest: async (msg: string) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status: 400 });
   },
-  apiError: (err: unknown, msg: string, status = 500) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiError: async (err: unknown, msg: string, status = 500) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status });
   },
 }));
@@ -100,7 +100,7 @@ function makeRequest(params: Record<string, string> = {}) {
 }
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   mockGetOrgNumbers.mockResolvedValue(DB_NUMBERS);
 });
 

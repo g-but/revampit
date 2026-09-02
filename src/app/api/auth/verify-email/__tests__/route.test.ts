@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for POST /api/auth/verify-email and GET /api/auth/verify-email
  *
@@ -25,66 +25,66 @@
 // Mocks
 // ---------------------------------------------------------------------------
 
-const mockVerifyEmailWithToken = jest.fn();
+const mockVerifyEmailWithToken = vi.fn();
 
-jest.mock('@/lib/auth/db', () => ({
+vi.mock('@/lib/auth/db', () => ({
   verifyEmailWithToken: (...args: unknown[]) => mockVerifyEmailWithToken.apply(null, args),
 }));
 
-const mockSendCustomEmail = jest.fn().mockResolvedValue(undefined);
-const mockStaffWelcome = jest
+const mockSendCustomEmail = vi.fn().mockResolvedValue(undefined);
+const mockStaffWelcome = vi
   .fn()
   .mockReturnValue({ subject: 'Willkommen Staff', html: '', text: '' });
-const mockWelcome = jest.fn().mockReturnValue({ subject: 'Willkommen', html: '', text: '' });
+const mockWelcome = vi.fn().mockReturnValue({ subject: 'Willkommen', html: '', text: '' });
 
-jest.mock('@/lib/email', () => ({
+vi.mock('@/lib/email', () => ({
   sendCustomEmail: (...args: unknown[]) => mockSendCustomEmail.apply(null, args),
   staffWelcome: (...args: unknown[]) => mockStaffWelcome.apply(null, args),
   welcome: (...args: unknown[]) => mockWelcome.apply(null, args),
 }));
 
-jest.mock('@/lib/permissions', () => ({
-  isStaffEmail: jest.fn((email: string) => email.endsWith('@revamp-it.ch')),
+vi.mock('@/lib/permissions', () => ({
+  isStaffEmail: vi.fn((email: string) => email.endsWith('@revamp-it.ch')),
 }));
 
-const mockSelectWhere = jest.fn().mockResolvedValue([{ name: 'Hans' }]);
-const mockSelectFrom = jest.fn().mockReturnValue({ where: mockSelectWhere });
-const mockSelect = jest.fn().mockReturnValue({ from: mockSelectFrom });
+const mockSelectWhere = vi.fn().mockResolvedValue([{ name: 'Hans' }]);
+const mockSelectFrom = vi.fn().mockReturnValue({ where: mockSelectWhere });
+const mockSelect = vi.fn().mockReturnValue({ from: mockSelectFrom });
 
-jest.mock('@/db', () => ({
+vi.mock('@/db', () => ({
   db: {
     select: (...args: unknown[]) => mockSelect.apply(null, args),
   },
 }));
 
-jest.mock('@/db/schema', () => ({
+vi.mock('@/db/schema', () => ({
   users: { id: 'users_id', name: 'users_name', email: 'users_email' },
 }));
 
-jest.mock('drizzle-orm', () => ({
-  ...jest.requireActual('drizzle-orm'),
-  eq: jest.fn().mockReturnValue({ __eq: true }),
+vi.mock('drizzle-orm', async () => ({
+  ...(await vi.importActual<any>('drizzle-orm')),
+  eq: vi.fn().mockReturnValue({ __eq: true }),
 }));
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
-jest.mock('@/config/error-messages', () => ({
+vi.mock('@/config/error-messages', () => ({
   ERROR_MESSAGES: { INTERNAL_SERVER_ERROR: 'Internal server error' },
 }));
 
-jest.mock('@/lib/api/helpers', () => ({
-  apiSuccess: (data: unknown, status = 200) => {
-    const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => ({
+  apiSuccess: async (data: unknown, status = 200) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: true, data }, { status });
   },
-  apiBadRequest: (msg: string) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiBadRequest: async (msg: string) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status: 400 });
   },
-  apiError: (err: unknown, msg: string, status = 500) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiError: async (err: unknown, msg: string, status = 500) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status });
   },
 }));
@@ -115,7 +115,7 @@ function makeGetRequest(token?: string) {
 }
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   mockVerifyEmailWithToken.mockResolvedValue({ success: true, email: 'hans@example.com' });
   mockSelectWhere.mockResolvedValue([{ name: 'Hans' }]);
   mockSendCustomEmail.mockResolvedValue(undefined);

@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for POST /api/auth/verify-code
  *
@@ -23,72 +23,72 @@
 // Mocks
 // ---------------------------------------------------------------------------
 
-const mockCheckRateLimit = jest.fn();
-const mockGetClientIp = jest.fn().mockReturnValue('10.0.0.1');
+const mockCheckRateLimit = vi.fn();
+const mockGetClientIp = vi.fn().mockReturnValue('10.0.0.1');
 
-jest.mock('@/lib/auth/rate-limiter', () => ({
+vi.mock('@/lib/auth/rate-limiter', () => ({
   checkRateLimit: (...args: unknown[]) => mockCheckRateLimit.apply(null, args),
   getClientIp: (...args: unknown[]) => mockGetClientIp.apply(null, args),
 }));
 
-const mockVerifyEmailCode = jest.fn();
+const mockVerifyEmailCode = vi.fn();
 
-jest.mock('@/lib/auth/db', () => ({
+vi.mock('@/lib/auth/db', () => ({
   verifyEmailCode: (...args: unknown[]) => mockVerifyEmailCode.apply(null, args),
 }));
 
-const mockSendCustomEmail = jest.fn().mockResolvedValue(undefined);
-const mockStaffWelcome = jest
+const mockSendCustomEmail = vi.fn().mockResolvedValue(undefined);
+const mockStaffWelcome = vi
   .fn()
   .mockReturnValue({ subject: 'Willkommen Staff', html: '', text: '' });
-const mockWelcome = jest.fn().mockReturnValue({ subject: 'Willkommen', html: '', text: '' });
+const mockWelcome = vi.fn().mockReturnValue({ subject: 'Willkommen', html: '', text: '' });
 
-jest.mock('@/lib/email', () => ({
+vi.mock('@/lib/email', () => ({
   sendCustomEmail: (...args: unknown[]) => mockSendCustomEmail.apply(null, args),
   staffWelcome: (...args: unknown[]) => mockStaffWelcome.apply(null, args),
   welcome: (...args: unknown[]) => mockWelcome.apply(null, args),
 }));
 
-jest.mock('@/lib/permissions', () => ({
-  isStaffEmail: jest.fn((email: string) => email.endsWith('@revamp-it.ch')),
+vi.mock('@/lib/permissions', () => ({
+  isStaffEmail: vi.fn((email: string) => email.endsWith('@revamp-it.ch')),
 }));
 
-const mockSelectWhere = jest.fn().mockResolvedValue([{ name: 'Hans' }]);
-const mockSelectFrom = jest.fn().mockReturnValue({ where: mockSelectWhere });
-const mockSelect = jest.fn().mockReturnValue({ from: mockSelectFrom });
+const mockSelectWhere = vi.fn().mockResolvedValue([{ name: 'Hans' }]);
+const mockSelectFrom = vi.fn().mockReturnValue({ where: mockSelectWhere });
+const mockSelect = vi.fn().mockReturnValue({ from: mockSelectFrom });
 
-jest.mock('@/db', () => ({
+vi.mock('@/db', () => ({
   db: { select: (...args: unknown[]) => mockSelect.apply(null, args) },
 }));
 
-jest.mock('@/db/schema', () => ({
+vi.mock('@/db/schema', () => ({
   users: { id: 'users_id', name: 'users_name', email: 'users_email' },
 }));
 
-jest.mock('drizzle-orm', () => ({
-  ...jest.requireActual('drizzle-orm'),
-  eq: jest.fn().mockReturnValue({ __eq: true }),
+vi.mock('drizzle-orm', async () => ({
+  ...(await vi.importActual<any>('drizzle-orm')),
+  eq: vi.fn().mockReturnValue({ __eq: true }),
 }));
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
-jest.mock('@/lib/api/helpers', () => ({
-  apiSuccess: (data: unknown) => {
-    const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => ({
+  apiSuccess: async (data: unknown) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: true, data });
   },
-  apiBadRequest: (msg: string) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiBadRequest: async (msg: string) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status: 400 });
   },
-  apiError: (err: unknown, msg: string, status = 500) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiError: async (err: unknown, msg: string, status = 500) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status });
   },
-  apiRateLimited: (msg: string) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiRateLimited: async (msg: string) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status: 429 });
   },
 }));
@@ -115,7 +115,7 @@ function makeRequest(body: unknown) {
 const VALID_BODY = { email: 'user@example.com', code: '123456' };
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   mockCheckRateLimit.mockReturnValue({ allowed: true, retryAfter: 0, remaining: 4, resetAt: 0 });
   mockVerifyEmailCode.mockResolvedValue({ success: true });
   mockSelectWhere.mockResolvedValue([{ name: 'Hans' }]);

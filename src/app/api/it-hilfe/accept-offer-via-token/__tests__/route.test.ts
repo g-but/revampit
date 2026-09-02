@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for POST /api/it-hilfe/accept-offer-via-token
  *
@@ -9,21 +9,21 @@
  * documented failure mode + the happy path.
  */
 
-const mockVerify = jest.fn();
-const mockLookup = jest.fn();
-const mockAccept = jest.fn();
+const mockVerify = vi.fn();
+const mockLookup = vi.fn();
+const mockAccept = vi.fn();
 
-jest.mock('@/lib/it-hilfe/offer-accept-tokens', () => ({
+vi.mock('@/lib/it-hilfe/offer-accept-tokens', () => ({
   verifyOfferAcceptToken: (...args: unknown[]) => mockVerify(...args),
 }));
 
-jest.mock('@/lib/it-hilfe/accept-offer', () => ({
+vi.mock('@/lib/it-hilfe/accept-offer', () => ({
   acceptOffer: (...args: unknown[]) => mockAccept(...args),
   lookupOfferRequestId: (...args: unknown[]) => mockLookup(...args),
 }));
 
-jest.mock('@/lib/api/helpers', () => {
-  const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => {
+  const { NextResponse } = await vi.importActual<any>('next/server');
   return {
     apiSuccess: (data: unknown, status = 200) =>
       NextResponse.json({ success: true, data }, { status }),
@@ -36,11 +36,11 @@ jest.mock('@/lib/api/helpers', () => {
   };
 });
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
-jest.mock('@/config/error-messages', () => ({
+vi.mock('@/config/error-messages', () => ({
   ERROR_MESSAGES: { INTERNAL_SERVER_ERROR: 'Server error' },
 }));
 
@@ -61,7 +61,7 @@ function makeRequest(body: unknown): NextRequest {
 }
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 // ============================================================================

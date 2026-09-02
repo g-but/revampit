@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for POST /api/auth/reset-password
  *
@@ -18,85 +18,86 @@
  *   - returns 400 on schema validation failure
  */
 
+import type { Mock } from 'vitest';
 // ---------------------------------------------------------------------------
 // Mocks
 // ---------------------------------------------------------------------------
 
-const mockCheckRateLimit = jest.fn();
-const mockGetClientIp = jest.fn().mockReturnValue('10.0.0.1');
+const mockCheckRateLimit = vi.fn();
+const mockGetClientIp = vi.fn().mockReturnValue('10.0.0.1');
 
-jest.mock('@/lib/auth/rate-limiter', () => ({
+vi.mock('@/lib/auth/rate-limiter', () => ({
   checkRateLimit: (...args: unknown[]) => mockCheckRateLimit.apply(null, args),
   getClientIp: (...args: unknown[]) => mockGetClientIp.apply(null, args),
 }));
 
-const mockVerifyPasswordResetToken = jest.fn();
-const mockUpdateUserPassword = jest.fn();
+const mockVerifyPasswordResetToken = vi.fn();
+const mockUpdateUserPassword = vi.fn();
 
-jest.mock('@/lib/auth/db', () => ({
+vi.mock('@/lib/auth/db', () => ({
   verifyPasswordResetToken: (...args: unknown[]) => mockVerifyPasswordResetToken.apply(null, args),
   updateUserPassword: (...args: unknown[]) => mockUpdateUserPassword.apply(null, args),
 }));
 
-const mockHashPassword = jest.fn().mockResolvedValue('$2b$10$new-hashed-password');
+const mockHashPassword = vi.fn().mockResolvedValue('$2b$10$new-hashed-password');
 
-jest.mock('@/lib/auth/password', () => ({
+vi.mock('@/lib/auth/password', () => ({
   hashPassword: (...args: unknown[]) => mockHashPassword.apply(null, args),
 }));
 
-const mockSendCustomEmail = jest.fn().mockResolvedValue(undefined);
-const mockPasswordChangeConfirmation = jest
+const mockSendCustomEmail = vi.fn().mockResolvedValue(undefined);
+const mockPasswordChangeConfirmation = vi
   .fn()
   .mockReturnValue({ subject: 'Passwort geändert', html: '', text: '' });
 
-jest.mock('@/lib/email', () => ({
+vi.mock('@/lib/email', () => ({
   sendCustomEmail: (...args: unknown[]) => mockSendCustomEmail.apply(null, args),
   passwordChangeConfirmation: (...args: unknown[]) =>
     mockPasswordChangeConfirmation.apply(null, args),
 }));
 
-const mockSelectWhere = jest.fn().mockResolvedValue([{ name: 'Hans' }]);
-const mockSelectFrom = jest.fn().mockReturnValue({ where: mockSelectWhere });
-const mockSelect = jest.fn().mockReturnValue({ from: mockSelectFrom });
+const mockSelectWhere = vi.fn().mockResolvedValue([{ name: 'Hans' }]);
+const mockSelectFrom = vi.fn().mockReturnValue({ where: mockSelectWhere });
+const mockSelect = vi.fn().mockReturnValue({ from: mockSelectFrom });
 
-jest.mock('@/db', () => ({
+vi.mock('@/db', () => ({
   db: {
     select: (...args: unknown[]) => mockSelect.apply(null, args),
   },
 }));
 
-jest.mock('@/db/schema', () => ({
+vi.mock('@/db/schema', () => ({
   users: { id: 'users_id', name: 'users_name', email: 'users_email' },
 }));
 
-jest.mock('drizzle-orm', () => ({
-  ...jest.requireActual('drizzle-orm'),
-  eq: jest.fn().mockReturnValue({ __eq: true }),
+vi.mock('drizzle-orm', async () => ({
+  ...(await vi.importActual<any>('drizzle-orm')),
+  eq: vi.fn().mockReturnValue({ __eq: true }),
 }));
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
-jest.mock('@/config/error-messages', () => ({
+vi.mock('@/config/error-messages', () => ({
   ERROR_MESSAGES: { INTERNAL_SERVER_ERROR: 'Internal server error' },
 }));
 
-jest.mock('@/lib/api/helpers', () => ({
-  apiSuccess: (data: unknown, status = 200) => {
-    const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => ({
+  apiSuccess: async (data: unknown, status = 200) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: true, data }, { status });
   },
-  apiBadRequest: (msg: string) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiBadRequest: async (msg: string) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status: 400 });
   },
-  apiError: (err: unknown, msg: string, status = 500) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiError: async (err: unknown, msg: string, status = 500) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status });
   },
-  apiRateLimited: (msg: string) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiRateLimited: async (msg: string) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status: 429 });
   },
 }));
@@ -127,7 +128,7 @@ function makeRequest(body: unknown) {
 }
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   mockCheckRateLimit.mockReturnValue({ allowed: true, retryAfter: 0, remaining: 9, resetAt: 0 });
   mockVerifyPasswordResetToken.mockResolvedValue({ success: true, email: 'hans@example.com' });
   mockUpdateUserPassword.mockResolvedValue({ success: true });
@@ -238,7 +239,7 @@ describe('POST /api/auth/reset-password — resolved-failure swallow lock', () =
     // throwing. A bare `.catch()` would miss this. Without this assertion
     // a refactor could silently revert to the bare-catch shape and the
     // password-recovery confirmation would fail silently.
-    const { logger } = jest.requireMock('@/lib/logger') as { logger: { warn: jest.Mock } };
+    const { logger } = (await import('@/lib/logger')) as unknown as { logger: { warn: Mock } };
     mockSendCustomEmail.mockResolvedValueOnce({ success: false, error: 'Listmonk 500' });
 
     const response = await POST(makeRequest(VALID_BODY));

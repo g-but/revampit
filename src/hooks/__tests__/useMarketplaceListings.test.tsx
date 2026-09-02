@@ -25,13 +25,13 @@
  *   - Failure: error state populated, listings empty
  */
 
-const mockApiFetch = jest.fn();
+const mockApiFetch = vi.fn();
 
-jest.mock('@/lib/api/client', () => ({
+vi.mock('@/lib/api/client', () => ({
   apiFetch: (...args: unknown[]) => mockApiFetch.apply(null, args),
 }));
 
-jest.mock('@/config/marketplace', () => ({
+vi.mock('@/config/marketplace', () => ({
   MARKETPLACE_LIMITS: { DEFAULT_PAGE_SIZE: 20 },
 }));
 
@@ -300,14 +300,14 @@ describe('fetch — failure', () => {
 
 describe('debounced search', () => {
   it('searchInput typing does NOT fire fetch immediately (waits for 300ms debounce)', async () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     mockApiFetch.mockResolvedValue(okResponse());
 
     const { result } = renderListings();
 
     // Wait for the initial mount-fetch to settle (only the first call)
     await act(async () => {
-      jest.advanceTimersByTime(0);
+      vi.advanceTimersByTime(0);
     });
 
     const initialCalls = mockApiFetch.mock.calls.length;
@@ -323,7 +323,7 @@ describe('debounced search', () => {
 
     // After 300ms debounce — search applied, new fetch fires
     await act(async () => {
-      jest.advanceTimersByTime(300);
+      vi.advanceTimersByTime(300);
     });
 
     await waitFor(() => {
@@ -331,7 +331,7 @@ describe('debounced search', () => {
       expect(lastUrl()).toContain('search=macbook');
     });
 
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 });
 
@@ -341,18 +341,18 @@ describe('debounced search', () => {
 
 describe('handleSearch', () => {
   it('preventDefault on submit; term applies via the 300ms debounce', async () => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     mockApiFetch.mockResolvedValue(okResponse());
     const { result } = renderListings();
     await act(async () => {
-      jest.advanceTimersByTime(0);
+      vi.advanceTimersByTime(0);
     });
 
     act(() => {
       result.current.filters.setSearchInput('quick search');
     });
 
-    const preventDefault = jest.fn();
+    const preventDefault = vi.fn();
     const fakeEvent = { preventDefault } as unknown as React.FormEvent;
 
     act(() => {
@@ -362,14 +362,14 @@ describe('handleSearch', () => {
     expect(preventDefault).toHaveBeenCalled();
 
     await act(async () => {
-      jest.advanceTimersByTime(300);
+      vi.advanceTimersByTime(300);
     });
 
     await waitFor(() => {
       expect(lastUrl()).toContain('search=quick');
     });
 
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it('typing a search resets offset to 0', async () => {
@@ -390,7 +390,7 @@ describe('handleSearch', () => {
       result.current.filters.setSearchInput('reset me');
     });
 
-    const preventDefault = jest.fn();
+    const preventDefault = vi.fn();
     act(() => {
       result.current.handleSearch({ preventDefault } as unknown as React.FormEvent);
     });

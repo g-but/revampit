@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for POST /api/marketplace/cart/validate
  *
@@ -10,17 +10,17 @@
  * - 200 with empty unavailable_ids when everything is still available
  */
 
-const mockRateLimit = jest.fn().mockReturnValue(true);
+const mockRateLimit = vi.fn().mockReturnValue(true);
 
-jest.mock('@/lib/security/rate-limit', () => ({
+vi.mock('@/lib/security/rate-limit', () => ({
   rateLimiters: {
     listingBrowse: (...args: unknown[]) => mockRateLimit.apply(null, args),
   },
-  getClientIdentifier: jest.fn().mockReturnValue('127.0.0.1'),
+  getClientIdentifier: vi.fn().mockReturnValue('127.0.0.1'),
 }));
 
-jest.mock('@/lib/api/helpers', () => {
-  const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => {
+  const { NextResponse } = await vi.importActual<any>('next/server');
   return {
     apiSuccess: (data: unknown, status = 200) =>
       NextResponse.json({ success: true, data }, { status }),
@@ -33,13 +33,13 @@ jest.mock('@/lib/api/helpers', () => {
   };
 });
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
-const mockWhere = jest.fn();
+const mockWhere = vi.fn();
 
-jest.mock('@/db', () => ({
+vi.mock('@/db', () => ({
   db: {
     select: () => ({ from: () => ({ where: (...a: unknown[]) => mockWhere(...a) }) }),
   },
@@ -60,7 +60,7 @@ function makeRequest(body: unknown): NextRequest {
 }
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   mockRateLimit.mockReturnValue(true);
 });
 

@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for GET/POST /api/decisions/[id]/votes
  *
@@ -27,19 +27,19 @@
 // Mocks
 // ---------------------------------------------------------------------------
 
-const mockAuth = jest.fn();
+const mockAuth = vi.fn();
 
-jest.mock('@/auth', () => ({
+vi.mock('@/auth', () => ({
   auth: (...args: unknown[]) => mockAuth.apply(null, args),
 }));
 
-jest.mock('@/lib/api/middleware', () => ({
+vi.mock('@/lib/api/middleware', async () => ({
   withAuth:
     (handler: (req: Request, session: unknown, context: unknown) => unknown) =>
     (req: Request, context?: { params?: Promise<{ id: string }> }) =>
       mockAuth().then(async (session: unknown) => {
         if (!session || !(session as { user?: unknown }).user) {
-          const { NextResponse } = jest.requireActual('next/server');
+          const { NextResponse } = await vi.importActual<any>('next/server');
           return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
         }
         const resolvedContext = context?.params ? { params: await context.params } : undefined;
@@ -47,21 +47,21 @@ jest.mock('@/lib/api/middleware', () => ({
       }),
 }));
 
-const mockGetDbUserId = jest.fn();
+const mockGetDbUserId = vi.fn();
 
-jest.mock('@/lib/api/task-helpers', () => ({
+vi.mock('@/lib/api/task-helpers', () => ({
   getDbUserId: (...args: unknown[]) => mockGetDbUserId.apply(null, args),
 }));
 
-const mockGetVotes = jest.fn();
-const mockSubmitVote = jest.fn();
+const mockGetVotes = vi.fn();
+const mockSubmitVote = vi.fn();
 
-jest.mock('@/lib/services/decisions', () => ({
+vi.mock('@/lib/services/decisions', () => ({
   getVotes: (...args: unknown[]) => mockGetVotes.apply(null, args),
   submitVote: (...args: unknown[]) => mockSubmitVote.apply(null, args),
 }));
 
-jest.mock('@/config/error-messages', () => ({
+vi.mock('@/config/error-messages', () => ({
   ERROR_MESSAGES: {
     INTERNAL_SERVER_ERROR: 'Internal server error',
     VOTE_NOT_IN_VOTING_PHASE: 'Abstimmungsphase ist nicht aktiv',
@@ -72,12 +72,12 @@ jest.mock('@/config/error-messages', () => ({
   SUCCESS_MESSAGES: { VOTE_SUBMITTED: 'Stimme abgegeben' },
 }));
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
-jest.mock('@/lib/api/helpers', () => {
-  const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => {
+  const { NextResponse } = await vi.importActual<any>('next/server');
   return {
     apiSuccess: (data: unknown) => NextResponse.json({ success: true, data }),
     apiError: (err: unknown, msg: string, status = 500) =>
@@ -135,7 +135,7 @@ function makeContext(id = 'dec-1') {
 }
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   mockAuth.mockResolvedValue(MOCK_SESSION);
   mockGetDbUserId.mockResolvedValue({ dbUserId: 'db-user-1' });
   mockGetVotes.mockResolvedValue(MOCK_VOTES);

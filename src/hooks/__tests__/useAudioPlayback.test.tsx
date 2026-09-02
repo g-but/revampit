@@ -18,9 +18,10 @@
  *   - cleanup on unmount calls audio.pause()
  */
 
+import type { Mock, MockedClass } from 'vitest';
 type MockAudioInstance = {
-  play: jest.Mock;
-  pause: jest.Mock;
+  play: Mock;
+  pause: Mock;
   currentTime: number;
   ontimeupdate: (() => void) | null;
   onended: (() => void) | null;
@@ -33,10 +34,12 @@ let mockAudioInstance: MockAudioInstance;
 Object.defineProperty(global, 'Audio', {
   configurable: true,
   writable: true,
-  value: jest.fn().mockImplementation(() => {
+  // function, not arrow: the hook calls `new Audio(url)` and vitest invokes
+  // the implementation with `new` — arrows are not constructable.
+  value: vi.fn().mockImplementation(function () {
     mockAudioInstance = {
-      play: jest.fn().mockResolvedValue(undefined),
-      pause: jest.fn(),
+      play: vi.fn().mockResolvedValue(undefined),
+      pause: vi.fn(),
       currentTime: 0,
       ontimeupdate: null,
       onended: null,
@@ -48,7 +51,7 @@ Object.defineProperty(global, 'Audio', {
 import { renderHook, act } from '@testing-library/react';
 import { useAudioPlayback } from '../useAudioPlayback';
 
-const MockAudio = global.Audio as jest.MockedClass<typeof Audio>;
+const MockAudio = global.Audio as MockedClass<typeof Audio>;
 
 beforeEach(() => {
   MockAudio.mockClear();

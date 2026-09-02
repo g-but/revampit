@@ -13,7 +13,7 @@
  */
 
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import { Input } from '../input';
 import { Textarea } from '../textarea';
 import { Select } from '../select';

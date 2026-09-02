@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for GET /api/payments/payrexx-mock-redirect
  *
@@ -10,23 +10,23 @@
  *       - amount is formatted from cents to CHF (e.g. 1999 → "19.99")
  */
 
-jest.mock('@/lib/api/helpers', () => {
-  const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => {
+  const { NextResponse } = await vi.importActual<any>('next/server');
   return {
     apiForbidden: (msg: string) =>
       NextResponse.json({ success: false, error: msg }, { status: 403 }),
   };
 });
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
-jest.mock('@/config/urls', () => ({
+vi.mock('@/config/urls', () => ({
   APP_URL: 'http://localhost:3000',
 }));
 
-jest.mock('@/lib/payments/payrexx-client', () => ({
+vi.mock('@/lib/payments/payrexx-client', () => ({
   PAYREXX_TRANSACTION_STATUS: {
     RESERVED: 'reserved',
     CONFIRMED: 'confirmed',
@@ -34,11 +34,11 @@ jest.mock('@/lib/payments/payrexx-client', () => ({
   },
 }));
 
-jest.mock('@/lib/utils/safe-redirect', () => ({
+vi.mock('@/lib/utils/safe-redirect', () => ({
   sanitizeReturnTo: (val: string | null, fallback: string) => val || fallback,
 }));
 
-jest.mock('@/lib/utils/escape-html', () => ({
+vi.mock('@/lib/utils/escape-html', () => ({
   escapeHtml: (s: string) => s.replace(/</g, '&lt;').replace(/>/g, '&gt;'),
 }));
 
@@ -46,7 +46,7 @@ import { NextRequest } from 'next/server';
 import { GET } from '../route';
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   delete process.env.PAYREXX_INSTANCE;
 });
 

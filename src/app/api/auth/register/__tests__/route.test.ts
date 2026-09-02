@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for POST /api/auth/register
  *
@@ -21,51 +21,51 @@
 // Mocks
 // ---------------------------------------------------------------------------
 
-const mockCheckRateLimit = jest.fn();
-const mockGetClientIp = jest.fn().mockReturnValue('10.0.0.1');
+const mockCheckRateLimit = vi.fn();
+const mockGetClientIp = vi.fn().mockReturnValue('10.0.0.1');
 
-jest.mock('@/lib/auth/rate-limiter', () => ({
+vi.mock('@/lib/auth/rate-limiter', () => ({
   checkRateLimit: (...args: unknown[]) => mockCheckRateLimit.apply(null, args),
   getClientIp: (...args: unknown[]) => mockGetClientIp.apply(null, args),
 }));
 
-const mockRegisterUser = jest.fn();
+const mockRegisterUser = vi.fn();
 
-jest.mock('@/auth', () => ({
+vi.mock('@/auth', () => ({
   registerUser: (...args: unknown[]) => mockRegisterUser.apply(null, args),
 }));
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
-jest.mock('@/lib/api/helpers', () => ({
-  apiSuccess: (data: unknown, status = 200) => {
-    const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => ({
+  apiSuccess: async (data: unknown, status = 200) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: true, data }, { status });
   },
-  apiBadRequest: (msg: string) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiBadRequest: async (msg: string) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status: 400 });
   },
-  apiError: (err: unknown, msg: string, status = 500) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiError: async (err: unknown, msg: string, status = 500) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status });
   },
-  apiRateLimited: (msg: string) => {
-    const { NextResponse } = jest.requireActual('next/server');
+  apiRateLimited: async (msg: string) => {
+    const { NextResponse } = await vi.importActual<any>('next/server');
     return NextResponse.json({ success: false, error: msg }, { status: 429 });
   },
 }));
 
 // The route uses RegisterSchema.safeParse() directly (not validateBody).
 // Mock the schema module to control output without depending on password complexity rules.
-jest.mock('@/lib/schemas', () => {
-  const actual = jest.requireActual('@/lib/schemas');
+vi.mock('@/lib/schemas', async () => {
+  const actual = await vi.importActual<any>('@/lib/schemas');
   return {
     ...actual,
     RegisterSchema: {
-      safeParse: jest.fn((body: unknown) => {
+      safeParse: vi.fn((body: unknown) => {
         const b = body as Record<string, unknown>;
         if (
           !b?.email ||
@@ -113,7 +113,7 @@ function makeRequest(body: unknown) {
 }
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   mockCheckRateLimit.mockReturnValue({ allowed: true, retryAfter: 0, remaining: 4, resetAt: 0 });
   mockRegisterUser.mockResolvedValue({
     success: true,

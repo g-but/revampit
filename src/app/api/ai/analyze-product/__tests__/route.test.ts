@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for POST /api/ai/analyze-product
  *
@@ -8,16 +8,16 @@
  *          200 with saveToDatabase=true inserts records, analysis errors return 500
  */
 
-const mockAuth = jest.fn();
+const mockAuth = vi.fn();
 
-jest.mock('@/auth', () => ({
+vi.mock('@/auth', () => ({
   auth: (...args: unknown[]) => mockAuth.apply(null, args),
 }));
 
-const mockInsert = jest.fn();
-const mockValues = jest.fn();
+const mockInsert = vi.fn();
+const mockValues = vi.fn();
 
-jest.mock('@/db', () => ({
+vi.mock('@/db', () => ({
   db: {
     insert: (...args: unknown[]) => {
       mockInsert(...args);
@@ -26,25 +26,25 @@ jest.mock('@/db', () => ({
   },
 }));
 
-jest.mock('@/db/schema', () => ({
+vi.mock('@/db/schema', () => ({
   aiExtractedProducts: { id: 'aep_id' },
   sustainabilityScores: { id: 'ss_id' },
   aiProcessingLogs: { id: 'apl_id' },
 }));
 
-const mockExtractProductFromImage = jest.fn();
-jest.mock('@/lib/erfassung/ai-extraction', () => ({
+const mockExtractProductFromImage = vi.fn();
+vi.mock('@/lib/erfassung/ai-extraction', () => ({
   extractProductFromImage: (...args: unknown[]) => mockExtractProductFromImage(...args),
 }));
 
-jest.mock('@/lib/security/rate-limit', () => ({
+vi.mock('@/lib/security/rate-limit', () => ({
   rateLimiters: {
-    aiAnalyze: jest.fn().mockReturnValue(true),
+    aiAnalyze: vi.fn().mockReturnValue(true),
   },
 }));
 
-jest.mock('@/lib/api/helpers', () => {
-  const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => {
+  const { NextResponse } = await vi.importActual<any>('next/server');
   return {
     apiSuccess: (data: unknown, status = 200) =>
       NextResponse.json({ success: true, data }, { status }),
@@ -59,16 +59,16 @@ jest.mock('@/lib/api/helpers', () => {
   };
 });
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
-jest.mock('@/config/approval-status', () => ({
+vi.mock('@/config/approval-status', () => ({
   APPROVAL_STATUS: { PENDING: 'pending', APPROVED: 'approved' },
 }));
 
-jest.mock('@/lib/schemas', () => {
-  const actual = jest.requireActual('@/lib/schemas');
+vi.mock('@/lib/schemas', async () => {
+  const actual = await vi.importActual<any>('@/lib/schemas');
   return actual;
 });
 
@@ -111,16 +111,16 @@ function makeRequest(body: unknown) {
   });
 }
 
-beforeEach(() => {
-  jest.resetAllMocks();
+beforeEach(async () => {
+  vi.resetAllMocks();
   mockAuth.mockResolvedValue(MOCK_SESSION);
   mockExtractProductFromImage.mockResolvedValue(MOCK_EXTRACTION_RESULT);
   mockValues.mockReturnValue({
-    returning: jest.fn().mockResolvedValue([{ id: 'product-1' }]),
+    returning: vi.fn().mockResolvedValue([{ id: 'product-1' }]),
   });
   // Rate limiter returns true by default (not limited)
-  const { rateLimiters } = require('@/lib/security/rate-limit');
-  rateLimiters.aiAnalyze.mockReturnValue(true);
+  const { rateLimiters } = await import('@/lib/security/rate-limit');
+  (rateLimiters.aiAnalyze as any).mockReturnValue(true);
 });
 
 // ============================================================================
@@ -246,8 +246,8 @@ describe('POST /api/ai/analyze-product — extraction failure', () => {
 
 describe('POST /api/ai/analyze-product — rate limiting', () => {
   it('returns 429 when rate limit is exceeded', async () => {
-    const { rateLimiters } = require('@/lib/security/rate-limit');
-    rateLimiters.aiAnalyze.mockReturnValueOnce(false);
+    const { rateLimiters } = await import('@/lib/security/rate-limit');
+    (rateLimiters.aiAnalyze as any).mockReturnValueOnce(false);
     const req = makeRequest({ image: 'base64data' });
     const response = await POST(req);
     expect(response.status).toBe(429);

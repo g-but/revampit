@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  *
  * Tests for GET /api/reviews/[id], PUT /api/reviews/[id], DELETE /api/reviews/[id]
  *
@@ -9,17 +9,18 @@
  *   DELETE - 401, 404, 403 (not owner, not admin), 200 (owner deletes), 200 (admin deletes)
  */
 
-const mockAuth = jest.fn();
+import type { Mock } from 'vitest';
+const mockAuth = vi.fn();
 
-jest.mock('@/auth', () => ({
+vi.mock('@/auth', () => ({
   auth: (...args: unknown[]) => mockAuth.apply(null, args),
 }));
 
-jest.mock('@/lib/api/middleware', () => ({
+vi.mock('@/lib/api/middleware', async () => ({
   withAuth: (handler: unknown) => (req: Request, context?: { params?: Promise<unknown> }) =>
     mockAuth().then(async (session: unknown) => {
       if (!session || !(session as { user?: { id?: string } }).user?.id) {
-        const { NextResponse } = jest.requireActual('next/server');
+        const { NextResponse } = await vi.importActual<any>('next/server');
         return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
       }
       const resolvedContext = context?.params ? { params: await context.params } : undefined;
@@ -27,11 +28,11 @@ jest.mock('@/lib/api/middleware', () => ({
     }),
 }));
 
-const mockSelect = jest.fn();
-const mockUpdate = jest.fn();
-const mockInsert = jest.fn();
+const mockSelect = vi.fn();
+const mockUpdate = vi.fn();
+const mockInsert = vi.fn();
 
-jest.mock('@/db', () => ({
+vi.mock('@/db', () => ({
   db: {
     select: (...args: unknown[]) => mockSelect(...args),
     update: (...args: unknown[]) => mockUpdate(...args),
@@ -39,7 +40,7 @@ jest.mock('@/db', () => ({
   },
 }));
 
-jest.mock('@/db/schema/reviews', () => ({
+vi.mock('@/db/schema/reviews', () => ({
   reviews: {
     id: 'r_id',
     reviewerId: 'r_reviewerId',
@@ -92,15 +93,15 @@ jest.mock('@/db/schema/reviews', () => ({
   },
 }));
 
-jest.mock('@/db/schema/auth', () => ({
+vi.mock('@/db/schema/auth', () => ({
   users: { id: 'u_id', name: 'u_name', email: 'u_email' },
 }));
 
-jest.mock('@/db/schema/services', () => ({
+vi.mock('@/db/schema/services', () => ({
   repairerProfiles: { id: 'rp_id', businessName: 'rp_businessName', userId: 'rp_userId' },
 }));
 
-jest.mock('drizzle-orm', () => ({
+vi.mock('drizzle-orm', () => ({
   eq: (a: unknown, b: unknown) => ({ __eq: [a, b] }),
   and: (...args: unknown[]) => ({ __and: args }),
   sql: Object.assign((_strings: TemplateStringsArray, ..._values: unknown[]) => ({ __sql: true }), {
@@ -108,7 +109,7 @@ jest.mock('drizzle-orm', () => ({
   }),
 }));
 
-jest.mock('@/config/database', () => ({
+vi.mock('@/config/database', () => ({
   REVIEW_TARGET_TYPES: {
     REPAIRER: 'repairer',
     SERVICE: 'service',
@@ -118,7 +119,7 @@ jest.mock('@/config/database', () => ({
   },
 }));
 
-jest.mock('@/config/review-status', () => ({
+vi.mock('@/config/review-status', () => ({
   REVIEW_STATUS: {
     PUBLISHED: 'published',
     PENDING_MODERATION: 'pending_moderation',
@@ -127,8 +128,8 @@ jest.mock('@/config/review-status', () => ({
   },
 }));
 
-jest.mock('@/lib/api/helpers', () => {
-  const { NextResponse } = jest.requireActual('next/server');
+vi.mock('@/lib/api/helpers', async () => {
+  const { NextResponse } = await vi.importActual<any>('next/server');
   return {
     apiSuccess: (data: unknown, status = 200) =>
       NextResponse.json({ success: true, data }, { status }),
@@ -145,11 +146,11 @@ jest.mock('@/lib/api/helpers', () => {
   };
 });
 
-jest.mock('@/lib/logger', () => ({
-  logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn() },
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },
 }));
 
-jest.mock('@/config/error-messages', () => ({
+vi.mock('@/config/error-messages', () => ({
   ERROR_MESSAGES: {
     UNAUTHORIZED: 'Unauthorized',
     INTERNAL_SERVER_ERROR: 'Internal Server Error',
@@ -157,9 +158,9 @@ jest.mock('@/config/error-messages', () => ({
   },
 }));
 
-jest.mock('@/lib/schemas', () => {
+vi.mock('@/lib/schemas', () => {
   return {
-    validateBody: jest.fn((schema: unknown, body: unknown) => ({
+    validateBody: vi.fn((schema: unknown, body: unknown) => ({
       success: true as const,
       data: body,
     })),
@@ -170,7 +171,7 @@ jest.mock('@/lib/schemas', () => {
 import { NextRequest } from 'next/server';
 import { GET, PUT, DELETE } from '../route';
 
-const { validateBody } = jest.requireMock('@/lib/schemas');
+const { validateBody } = await import('@/lib/schemas');
 
 const MOCK_SESSION = {
   user: {
@@ -237,7 +238,7 @@ function setupSelectMocks(reviewRows: unknown[], attachmentRows: unknown[] = [])
 
     // Calls 1-2 are subqueries (.from().where().as() or .from().as())
     if (callIdx <= 2) {
-      const subAs = jest.fn().mockReturnValue({
+      const subAs = vi.fn().mockReturnValue({
         id: 'sub_id',
         name: 'sub_name',
         reviewId: 'sub_reviewId',
@@ -245,50 +246,50 @@ function setupSelectMocks(reviewRows: unknown[], attachmentRows: unknown[] = [])
         createdAt: 'sub_createdAt',
         responderId: 'sub_responderId',
       });
-      const subWhere = jest.fn().mockReturnValue({ as: subAs });
-      const subFrom = jest.fn().mockReturnValue({ as: subAs, where: subWhere });
+      const subWhere = vi.fn().mockReturnValue({ as: subAs });
+      const subFrom = vi.fn().mockReturnValue({ as: subAs, where: subWhere });
       return { from: subFrom };
     }
 
     // Call 3: main review query chain
     if (callIdx === 3) {
-      const chainObj: Record<string, jest.Mock> = {};
-      const mockWhere = jest.fn().mockResolvedValue(reviewRows);
-      const mockLeftJoin = jest.fn().mockReturnValue(chainObj);
-      const mockInnerJoin = jest.fn().mockReturnValue(chainObj);
+      const chainObj: Record<string, Mock> = {};
+      const mockWhere = vi.fn().mockResolvedValue(reviewRows);
+      const mockLeftJoin = vi.fn().mockReturnValue(chainObj);
+      const mockInnerJoin = vi.fn().mockReturnValue(chainObj);
       chainObj.leftJoin = mockLeftJoin;
       chainObj.innerJoin = mockInnerJoin;
       chainObj.where = mockWhere;
-      const mockFrom = jest
+      const mockFrom = vi
         .fn()
         .mockReturnValue({ innerJoin: mockInnerJoin, leftJoin: mockLeftJoin });
       return { from: mockFrom };
     }
 
     // Call 4: attachments query chain
-    const mockOrderBy = jest.fn().mockResolvedValue(attachmentRows);
-    const mockWhere = jest.fn().mockReturnValue({ orderBy: mockOrderBy });
-    const mockFrom = jest.fn().mockReturnValue({ where: mockWhere });
+    const mockOrderBy = vi.fn().mockResolvedValue(attachmentRows);
+    const mockWhere = vi.fn().mockReturnValue({ orderBy: mockOrderBy });
+    const mockFrom = vi.fn().mockReturnValue({ where: mockWhere });
     return { from: mockFrom };
   });
 }
 
 function setupUpdateMock() {
-  const mockWhere = jest.fn().mockResolvedValue([]);
-  const mockSet = jest.fn().mockReturnValue({ where: mockWhere });
+  const mockWhere = vi.fn().mockResolvedValue([]);
+  const mockSet = vi.fn().mockReturnValue({ where: mockWhere });
   mockUpdate.mockReturnValue({ set: mockSet });
 }
 
 function setupInsertMock() {
-  const mockReturning = jest.fn().mockResolvedValue([]);
-  const mockValues = jest.fn().mockReturnValue({ returning: mockReturning });
+  const mockReturning = vi.fn().mockResolvedValue([]);
+  const mockValues = vi.fn().mockReturnValue({ returning: mockReturning });
   mockInsert.mockReturnValue({ values: mockValues });
 }
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
   mockAuth.mockResolvedValue(MOCK_SESSION);
-  validateBody.mockImplementation((_schema: unknown, body: unknown) => ({
+  (validateBody as any).mockImplementation((_schema: unknown, body: unknown) => ({
     success: true as const,
     data: body,
   }));
@@ -366,8 +367,8 @@ describe('PUT /api/reviews/[id] — unauthenticated', () => {
 describe('PUT /api/reviews/[id] — not found', () => {
   it('returns 404 when review does not exist', async () => {
     // For PUT, only one select call (no subqueries), so override mockSelect directly
-    const mockWhere = jest.fn().mockResolvedValue([]);
-    const mockFrom = jest.fn().mockReturnValue({ where: mockWhere });
+    const mockWhere = vi.fn().mockResolvedValue([]);
+    const mockFrom = vi.fn().mockReturnValue({ where: mockWhere });
     mockSelect.mockReturnValue({ from: mockFrom });
 
     const req = new NextRequest('http://localhost/api/reviews/nonexistent', {
@@ -382,7 +383,7 @@ describe('PUT /api/reviews/[id] — not found', () => {
 
 describe('PUT /api/reviews/[id] — ownership check', () => {
   it('returns 403 when user does not own the review', async () => {
-    const mockWhere = jest.fn().mockResolvedValue([
+    const mockWhere = vi.fn().mockResolvedValue([
       {
         id: 'review-1',
         reviewerId: 'other-user',
@@ -390,7 +391,7 @@ describe('PUT /api/reviews/[id] — ownership check', () => {
         status: 'published',
       },
     ]);
-    const mockFrom = jest.fn().mockReturnValue({ where: mockWhere });
+    const mockFrom = vi.fn().mockReturnValue({ where: mockWhere });
     mockSelect.mockReturnValue({ from: mockFrom });
 
     const req = new NextRequest('http://localhost/api/reviews/review-1', {
@@ -405,7 +406,7 @@ describe('PUT /api/reviews/[id] — ownership check', () => {
 
 describe('PUT /api/reviews/[id] — success', () => {
   it('returns 200 when owner updates within 30 days', async () => {
-    const mockWhere = jest.fn().mockResolvedValue([
+    const mockWhere = vi.fn().mockResolvedValue([
       {
         id: 'review-1',
         reviewerId: 'user-1',
@@ -413,7 +414,7 @@ describe('PUT /api/reviews/[id] — success', () => {
         status: 'published',
       },
     ]);
-    const mockFrom = jest.fn().mockReturnValue({ where: mockWhere });
+    const mockFrom = vi.fn().mockReturnValue({ where: mockWhere });
     mockSelect.mockReturnValue({ from: mockFrom });
 
     const req = new NextRequest('http://localhost/api/reviews/review-1', {
@@ -430,7 +431,7 @@ describe('PUT /api/reviews/[id] — success', () => {
   it('returns 400 when review is older than 30 days', async () => {
     const oldDate = new Date();
     oldDate.setDate(oldDate.getDate() - 31);
-    const mockWhere = jest.fn().mockResolvedValue([
+    const mockWhere = vi.fn().mockResolvedValue([
       {
         id: 'review-1',
         reviewerId: 'user-1',
@@ -438,7 +439,7 @@ describe('PUT /api/reviews/[id] — success', () => {
         status: 'published',
       },
     ]);
-    const mockFrom = jest.fn().mockReturnValue({ where: mockWhere });
+    const mockFrom = vi.fn().mockReturnValue({ where: mockWhere });
     mockSelect.mockReturnValue({ from: mockFrom });
 
     const req = new NextRequest('http://localhost/api/reviews/review-1', {
@@ -468,8 +469,8 @@ describe('DELETE /api/reviews/[id] — unauthenticated', () => {
 
 describe('DELETE /api/reviews/[id] — not found', () => {
   it('returns 404 when review does not exist', async () => {
-    const mockWhere = jest.fn().mockResolvedValue([]);
-    const mockFrom = jest.fn().mockReturnValue({ where: mockWhere });
+    const mockWhere = vi.fn().mockResolvedValue([]);
+    const mockFrom = vi.fn().mockReturnValue({ where: mockWhere });
     mockSelect.mockReturnValue({ from: mockFrom });
 
     const req = new NextRequest('http://localhost/api/reviews/nonexistent', { method: 'DELETE' });
@@ -480,8 +481,8 @@ describe('DELETE /api/reviews/[id] — not found', () => {
 
 describe('DELETE /api/reviews/[id] — ownership check', () => {
   it('returns 403 when user is not owner and not admin', async () => {
-    const mockWhere = jest.fn().mockResolvedValue([{ reviewerId: 'other-user' }]);
-    const mockFrom = jest.fn().mockReturnValue({ where: mockWhere });
+    const mockWhere = vi.fn().mockResolvedValue([{ reviewerId: 'other-user' }]);
+    const mockFrom = vi.fn().mockReturnValue({ where: mockWhere });
     mockSelect.mockReturnValue({ from: mockFrom });
 
     const req = new NextRequest('http://localhost/api/reviews/review-1', { method: 'DELETE' });
@@ -492,8 +493,8 @@ describe('DELETE /api/reviews/[id] — ownership check', () => {
 
 describe('DELETE /api/reviews/[id] — success', () => {
   it('returns 200 when owner deletes own review', async () => {
-    const mockWhere = jest.fn().mockResolvedValue([{ reviewerId: 'user-1' }]);
-    const mockFrom = jest.fn().mockReturnValue({ where: mockWhere });
+    const mockWhere = vi.fn().mockResolvedValue([{ reviewerId: 'user-1' }]);
+    const mockFrom = vi.fn().mockReturnValue({ where: mockWhere });
     mockSelect.mockReturnValue({ from: mockFrom });
 
     const req = new NextRequest('http://localhost/api/reviews/review-1', { method: 'DELETE' });
@@ -505,8 +506,8 @@ describe('DELETE /api/reviews/[id] — success', () => {
 
   it('returns 200 when admin deletes any review', async () => {
     mockAuth.mockResolvedValueOnce(MOCK_ADMIN_SESSION);
-    const mockWhere = jest.fn().mockResolvedValue([{ reviewerId: 'other-user' }]);
-    const mockFrom = jest.fn().mockReturnValue({ where: mockWhere });
+    const mockWhere = vi.fn().mockResolvedValue([{ reviewerId: 'other-user' }]);
+    const mockFrom = vi.fn().mockReturnValue({ where: mockWhere });
     mockSelect.mockReturnValue({ from: mockFrom });
 
     const req = new NextRequest('http://localhost/api/reviews/review-1', { method: 'DELETE' });
