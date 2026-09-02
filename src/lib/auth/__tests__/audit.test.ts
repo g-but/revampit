@@ -16,9 +16,14 @@ import type { Mock } from 'vitest';
  * Each test resets modules so the buffer starts empty.
  */
 
-vi.mock('@/db', () => ({
-  db: { insert: vi.fn() },
-}));
+// @/db is intentionally NOT mocked at the top level here (unlike the other
+// modules below): beforeEach's vi.doMock('@/db', ...) needs to reassign
+// valuesSpy fresh on every test after vi.resetModules(), and a competing
+// hoisted vi.mock for the same specifier raced with that override
+// intermittently -- which mock "won" after resetModules() depended on
+// internal cache-invalidation timing, occasionally leaving valuesSpy
+// unset. beforeEach runs before every test including the first, so the
+// per-test doMock alone is sufficient.
 
 vi.mock('@/db/schema', () => ({
   authAuditLog: { _: 'authAuditLog' },
