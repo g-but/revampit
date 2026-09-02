@@ -83,7 +83,7 @@ beforeEach(async () => {
     };
   });
 
-  audit = await import('../audit') as unknown as AuditTestModule;
+  audit = (await import('../audit')) as unknown as AuditTestModule;
   loggerWarn = (await import('@/lib/logger')).logger.warn as Mock;
   loggerWarn.mockClear();
 });

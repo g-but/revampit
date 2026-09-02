@@ -126,7 +126,8 @@ const VALID_PROPOSAL_BODY = {
 
 // Build a standard db.select chain for spam check (0 proposals) + no location lookup
 function makeSpamCheckChain(count: number) {
-  const thenFn = vi.fn()
+  const thenFn = vi
+    .fn()
     .mockImplementation((cb: (rows: unknown[]) => unknown) => Promise.resolve(cb([{ count }])));
   const where = vi.fn().mockReturnValue({ then: thenFn });
   const from = vi.fn().mockReturnValue({ where });
@@ -134,7 +135,8 @@ function makeSpamCheckChain(count: number) {
 }
 
 function makeLocationChain(locationRow: unknown) {
-  const thenFn = vi.fn()
+  const thenFn = vi
+    .fn()
     .mockImplementation((cb: (rows: unknown[]) => unknown) =>
       Promise.resolve(cb(locationRow ? [locationRow] : [])),
     );
@@ -294,7 +296,7 @@ describe('POST /api/workshops/propose — success', () => {
     // a warn so an operator can investigate.
     mockSelect.mockReturnValueOnce(makeSpamCheckChain(0)).mockReturnValue(makeAdminEmailsChain([]));
 
-    const emailMod = await import('@/lib/email') as unknown as { sendEmail: Mock };
+    const emailMod = (await import('@/lib/email')) as unknown as { sendEmail: Mock };
     emailMod.sendEmail.mockResolvedValueOnce({ success: false, error: 'SMTP timeout' });
     const logger = (await import('@/lib/logger')).logger as unknown as {
       info: Mock;
@@ -328,7 +330,7 @@ describe('POST /api/workshops/propose — success', () => {
       .mockReturnValueOnce(makeSpamCheckChain(0))
       .mockReturnValue(makeAdminEmailsChain([{ email: 'admin@revamp-it.ch' }]));
 
-    const emailMod = await import('@/lib/email') as unknown as { sendEmail: Mock };
+    const emailMod = (await import('@/lib/email')) as unknown as { sendEmail: Mock };
     // first call = proposer (succeeds), second = admin (resolved failure)
     emailMod.sendEmail
       .mockResolvedValueOnce({ success: true, messageId: 'msg-1' })
@@ -360,7 +362,7 @@ describe('POST /api/workshops/propose — success', () => {
       .mockReturnValueOnce(makeSpamCheckChain(0))
       .mockReturnValue(makeAdminEmailsChain([{ email: 'admin@revamp-it.ch' }]));
 
-    const emailMod = await import('@/lib/email') as unknown as { sendEmail: Mock };
+    const emailMod = (await import('@/lib/email')) as unknown as { sendEmail: Mock };
     emailMod.sendEmail
       .mockResolvedValueOnce({ success: true, messageId: 'msg-1' })
       .mockRejectedValueOnce(new Error('connection refused'));
@@ -387,7 +389,7 @@ describe('POST /api/workshops/propose — success', () => {
       .mockReturnValueOnce(makeSpamCheckChain(0))
       .mockReturnValue(makeAdminEmailsChain([{ email: 'admin@revamp-it.ch' }]));
 
-    const emailMod = await import('@/lib/email') as any;
+    const emailMod = (await import('@/lib/email')) as any;
     emailMod.sendEmail.mockResolvedValue({ success: true });
 
     const req = new NextRequest('http://localhost/api/workshops/propose', {

@@ -26,7 +26,8 @@
 const mockLoginStatusLimiter = vi.fn().mockReturnValue(true); // not limited by default
 
 vi.mock('@/lib/security/rate-limit', () => ({
-  createRateLimiter: vi.fn()
+  createRateLimiter: vi
+    .fn()
     .mockReturnValue((...args: unknown[]) => mockLoginStatusLimiter(...args)),
   getClientIdentifier: vi.fn().mockReturnValue('127.0.0.1'),
 }));

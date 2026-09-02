@@ -49,7 +49,8 @@ vi.mock('@/lib/api/middleware', async () => ({
 // Select chain: select().from().where() for slug check; select().from().orderBy() for list
 const mockSelectWhere = vi.fn();
 const mockSelectOrderBy = vi.fn();
-const mockSelectFrom = vi.fn()
+const mockSelectFrom = vi
+  .fn()
   .mockReturnValue({ where: mockSelectWhere, orderBy: mockSelectOrderBy });
 const mockSelect = vi.fn().mockReturnValue({ from: mockSelectFrom });
 
@@ -78,7 +79,7 @@ vi.mock('@/db/schema', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
   asc: vi.fn().mockReturnValue({ __asc: true }),
 }));

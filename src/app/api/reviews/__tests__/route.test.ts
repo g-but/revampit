@@ -193,12 +193,11 @@ import type { Mock } from 'vitest';
 import { NextRequest, NextResponse } from 'next/server';
 import { GET, POST } from '../route';
 
-const { validateBody, validateQuery } = await import('@/lib/schemas') as any;
-const { validateReviewTarget, notifyRepairerOfReview } = await import(
-  '@/lib/reviews/review-service',
-) as any;
-const { createReview, findDuplicateReview } = await import('@/lib/reviews/create-review') as any;
-const { rateLimiters } = await import('@/lib/security/rate-limit') as any;
+const { validateBody, validateQuery } = (await import('@/lib/schemas')) as any;
+const { validateReviewTarget, notifyRepairerOfReview } =
+  (await import('@/lib/reviews/review-service')) as any;
+const { createReview, findDuplicateReview } = (await import('@/lib/reviews/create-review')) as any;
+const { rateLimiters } = (await import('@/lib/security/rate-limit')) as any;
 
 const MOCK_SESSION = {
   user: {

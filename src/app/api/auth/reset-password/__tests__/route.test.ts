@@ -45,13 +45,13 @@ vi.mock('@/lib/auth/password', () => ({
 }));
 
 const mockSendCustomEmail = vi.fn().mockResolvedValue(undefined);
-const mockPasswordChangeConfirmation = vi.fn()
+const mockPasswordChangeConfirmation = vi
+  .fn()
   .mockReturnValue({ subject: 'Passwort geändert', html: '', text: '' });
 
 vi.mock('@/lib/email', () => ({
   sendCustomEmail: (...args: unknown[]) => mockSendCustomEmail(...args),
-  passwordChangeConfirmation: (...args: unknown[]) =>
-    mockPasswordChangeConfirmation(...args),
+  passwordChangeConfirmation: (...args: unknown[]) => mockPasswordChangeConfirmation(...args),
 }));
 
 const mockSelectWhere = vi.fn().mockResolvedValue([{ name: 'Hans' }]);
@@ -69,7 +69,7 @@ vi.mock('@/db/schema', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
 }));
 
@@ -234,7 +234,7 @@ describe('POST /api/auth/reset-password — resolved-failure swallow lock', () =
     // throwing. A bare `.catch()` would miss this. Without this assertion
     // a refactor could silently revert to the bare-catch shape and the
     // password-recovery confirmation would fail silently.
-    const { logger } = await import('@/lib/logger') as unknown as { logger: { warn: Mock } };
+    const { logger } = (await import('@/lib/logger')) as unknown as { logger: { warn: Mock } };
     mockSendCustomEmail.mockResolvedValueOnce({ success: false, error: 'Listmonk 500' });
 
     const response = await POST(makeRequest(VALID_BODY));

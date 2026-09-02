@@ -243,7 +243,7 @@ describe('POST /api/newsletter/subscribe — email failure', () => {
     // send, so a failed confirmation email must NOT surface as a scary 502 the
     // user can't act on. The route returns 200 and records the failure via
     // logger.warn so the silent-failure-is-logged guarantee stays locked.
-    const { logger } = await import('@/lib/logger') as any;
+    const { logger } = (await import('@/lib/logger')) as any;
     mockSendEmail.mockResolvedValueOnce({ success: false, error: 'SMTP rejected' });
 
     const req = new NextRequest('http://localhost/api/newsletter/subscribe', {

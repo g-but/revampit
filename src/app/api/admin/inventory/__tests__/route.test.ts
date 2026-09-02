@@ -187,7 +187,7 @@ beforeEach(async () => {
   mockInnerJoin.mockReturnValue({ where: mockInnerJoinWhere });
   mockInnerJoinWhere.mockResolvedValue(MOCK_PROFILE_ROWS);
 
-  const helpers = await import('@/lib/api/helpers') as any;
+  const helpers = (await import('@/lib/api/helpers')) as any;
   helpers.parsePagination.mockReturnValue({ limit: 20, offset: 0 });
 });
 

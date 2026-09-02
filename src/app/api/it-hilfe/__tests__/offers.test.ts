@@ -38,7 +38,11 @@ const mockDbTransaction = vi.fn(async (fn: (tx: unknown) => unknown) => {
     set: vi.fn((..._args: unknown[]) => ({ where: vi.fn().mockResolvedValue(undefined) })),
   }));
   const txExecute = vi.fn().mockResolvedValue({ rows: [{ status: 'pending' }] });
-  return fn({ insert: vi.fn((..._args: unknown[]) => mockInsertChain), update: txUpdate, execute: txExecute });
+  return fn({
+    insert: vi.fn((..._args: unknown[]) => mockInsertChain),
+    update: txUpdate,
+    execute: txExecute,
+  });
 });
 
 vi.mock('@/db', () => ({
@@ -103,7 +107,7 @@ describe('GET /api/it-hilfe/requests/[id]/offers', () => {
   let GET: (req: NextRequest, ctx: { params: Promise<{ id: string }> }) => Promise<Response>;
 
   beforeAll(async () => {
-    const mod = await import('../../it-hilfe/requests/[id]/offers/route') as any;
+    const mod = (await import('../../it-hilfe/requests/[id]/offers/route')) as any;
     GET = mod.GET;
   });
 
@@ -229,7 +233,7 @@ describe('POST /api/it-hilfe/requests/[id]/offers', () => {
   let POST: (req: NextRequest, ctx: { params: Promise<{ id: string }> }) => Promise<Response>;
 
   beforeAll(async () => {
-    const mod = await import('../../it-hilfe/requests/[id]/offers/route') as any;
+    const mod = (await import('../../it-hilfe/requests/[id]/offers/route')) as any;
     POST = mod.POST;
   });
 
@@ -489,7 +493,7 @@ describe('DELETE /api/it-hilfe/requests/[id]/offers/[offerId]', () => {
   ) => Promise<Response>;
 
   beforeAll(async () => {
-    const mod = await import('../../it-hilfe/requests/[id]/offers/[offerId]/route') as any;
+    const mod = (await import('../../it-hilfe/requests/[id]/offers/[offerId]/route')) as any;
     DELETE = mod.DELETE;
   });
 

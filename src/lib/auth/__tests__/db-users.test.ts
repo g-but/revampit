@@ -111,7 +111,7 @@ vi.mock('@/db/schema/auth', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
 }));
 

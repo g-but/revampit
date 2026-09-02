@@ -123,7 +123,7 @@ vi.mock('drizzle-orm/pg-core', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
   sql: Object.assign(vi.fn().mockReturnValue({ __sql: 'NOW()' }), {
     raw: vi.fn(),

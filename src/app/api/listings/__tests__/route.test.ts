@@ -344,7 +344,7 @@ beforeEach(async () => {
   mockAuth.mockResolvedValue(MOCK_SESSION);
 
   // Wire rate limiters via await import() — avoids hoisting issues with const declarations
-  const rl = await import('@/lib/security/rate-limit') as any;
+  const rl = (await import('@/lib/security/rate-limit')) as any;
   rl.rateLimiters.listingBrowse.mockReturnValue(true);
   rl.rateLimiters.listingCreate.mockReturnValue(true);
 
@@ -394,8 +394,8 @@ beforeEach(async () => {
   mockReturning.mockResolvedValue([{ id: 'new-listing-id' }]);
 
   // Re-wire fire-and-forget mocks after resetAllMocks() so .catch() calls don't throw
-  const { indexListingInSearch } = await import('@/lib/marketplace/listing-helpers') as any;
-  const { sendCustomEmail } = await import('@/lib/email') as any;
+  const { indexListingInSearch } = (await import('@/lib/marketplace/listing-helpers')) as any;
+  const { sendCustomEmail } = (await import('@/lib/email')) as any;
   indexListingInSearch.mockReturnValue(undefined);
   sendCustomEmail.mockResolvedValue({ success: true });
 
@@ -427,7 +427,7 @@ beforeEach(async () => {
 
 describe('GET /api/listings — rate limiting', () => {
   it('returns 429 when rate limiter returns false', async () => {
-    const rl = await import('@/lib/security/rate-limit') as any;
+    const rl = (await import('@/lib/security/rate-limit')) as any;
     rl.rateLimiters.listingBrowse.mockReturnValueOnce(false);
     const response = await GET(makeGetRequest());
     expect(response.status).toBe(429);
@@ -460,7 +460,8 @@ describe('GET /api/listings — with items', () => {
     // First select (main query): returns rows with _total
     mockOffset.mockResolvedValueOnce([MOCK_LISTING_ROW]);
     // Second select (specs query): terminal is orderBy
-    const mockSpecsOrderBy = vi.fn()
+    const mockSpecsOrderBy = vi
+      .fn()
       .mockResolvedValue([{ listing_id: 'listing-1', key: 'RAM', value: '16GB', unit: null }]);
     const mockSpecsWhere = vi.fn().mockReturnValue({ orderBy: mockSpecsOrderBy });
     const mockSpecsFrom = vi.fn().mockReturnValue({ where: mockSpecsWhere });
@@ -548,7 +549,7 @@ describe('POST /api/listings — authentication', () => {
 
 describe('POST /api/listings — rate limiting', () => {
   it('returns 400 when rate limited', async () => {
-    const rl = await import('@/lib/security/rate-limit') as any;
+    const rl = (await import('@/lib/security/rate-limit')) as any;
     rl.rateLimiters.listingCreate.mockReturnValueOnce(false);
     const response = await POST(makePostRequest());
     expect(response.status).toBe(400);

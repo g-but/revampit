@@ -19,7 +19,8 @@
 // ---------------------------------------------------------------------------
 
 const mockInsertReturning = vi.fn().mockResolvedValue([]);
-const mockInsertValues = vi.fn()
+const mockInsertValues = vi
+  .fn()
   .mockReturnValue({ returning: mockInsertReturning, catch: mockInsertReturning });
 const mockDbInsert = vi.fn().mockReturnValue({ values: mockInsertValues });
 

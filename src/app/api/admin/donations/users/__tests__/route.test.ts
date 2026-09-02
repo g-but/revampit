@@ -58,7 +58,7 @@ vi.mock('@/db/schema', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   or: vi.fn().mockReturnValue({ __or: true }),
   ilike: vi.fn().mockReturnValue({ __ilike: true }),
   asc: vi.fn().mockReturnValue({ __asc: true }),

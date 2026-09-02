@@ -281,9 +281,9 @@ beforeEach(async () => {
   mockUpdateWhere.mockResolvedValue(undefined);
 
   // Re-wire fire-and-forget mocks
-  const emailMod = await import('@/lib/email') as any;
+  const emailMod = (await import('@/lib/email')) as any;
   emailMod.sendCustomEmail.mockResolvedValue({ success: true });
-  const notifyMod = await import('@/lib/services/notifications') as any;
+  const notifyMod = (await import('@/lib/services/notifications')) as any;
   notifyMod.createNotification.mockResolvedValue(undefined);
 });
 

@@ -118,7 +118,7 @@ beforeEach(async () => {
     returning: vi.fn().mockResolvedValue([{ id: 'product-1' }]),
   });
   // Rate limiter returns true by default (not limited)
-  const { rateLimiters } = await import('@/lib/security/rate-limit') as any;
+  const { rateLimiters } = (await import('@/lib/security/rate-limit')) as any;
   rateLimiters.aiAnalyze.mockReturnValue(true);
 });
 
@@ -245,7 +245,7 @@ describe('POST /api/ai/analyze-product — extraction failure', () => {
 
 describe('POST /api/ai/analyze-product — rate limiting', () => {
   it('returns 429 when rate limit is exceeded', async () => {
-    const { rateLimiters } = await import('@/lib/security/rate-limit') as any;
+    const { rateLimiters } = (await import('@/lib/security/rate-limit')) as any;
     rateLimiters.aiAnalyze.mockReturnValueOnce(false);
     const req = makeRequest({ image: 'base64data' });
     const response = await POST(req);

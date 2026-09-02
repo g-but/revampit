@@ -112,8 +112,7 @@ vi.mock('@/lib/permissions', () => ({
 
 vi.mock('@/lib/schemas/team', () => ({
   teamProfileFilterSchema: { safeParse: (...args: unknown[]) => mockSafeParse(...args) },
-  validateCreateTeamProfile: (...args: unknown[]) =>
-    mockValidateCreateTeamProfile(...args),
+  validateCreateTeamProfile: (...args: unknown[]) => mockValidateCreateTeamProfile(...args),
 }));
 
 vi.mock('@/lib/api/helpers', async () => {

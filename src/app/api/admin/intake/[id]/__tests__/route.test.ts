@@ -264,7 +264,7 @@ beforeEach(async () => {
     data: { hersteller: 'Lenovo' },
   });
 
-  const checklist = await import('@/config/intake-checklist') as any;
+  const checklist = (await import('@/config/intake-checklist')) as any;
   checklist.getChecklistForDevice.mockReturnValue([]);
   checklist.getChecklistProgress.mockReturnValue({ completed: 0, total: 0 });
   checklist.isChecklistComplete.mockReturnValue(false);

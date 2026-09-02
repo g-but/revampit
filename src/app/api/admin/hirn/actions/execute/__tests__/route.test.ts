@@ -44,8 +44,7 @@ vi.mock('@/lib/hirn/action-executor', () => ({
 }));
 
 vi.mock('@/lib/hirn/action-executor-contracts', () => ({
-  validateExecuteActionInput: (...args: unknown[]) =>
-    mockValidateExecuteActionInput(...args),
+  validateExecuteActionInput: (...args: unknown[]) => mockValidateExecuteActionInput(...args),
 }));
 
 const mockCanAccessSection = vi.fn();

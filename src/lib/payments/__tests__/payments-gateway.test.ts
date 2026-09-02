@@ -87,7 +87,7 @@ vi.mock('@/db/schema', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
   and: vi.fn().mockReturnValue({ __and: true }),
   sql: Object.assign(vi.fn().mockReturnValue({ __sql: 'mocked' }), {
@@ -172,7 +172,7 @@ describe('getPaymentProvider', () => {
 
     await getPaymentProvider();
 
-    const { eq } = await import('drizzle-orm') as unknown as { eq: Mock };
+    const { eq } = (await import('drizzle-orm')) as unknown as { eq: Mock };
     // eq should be called with the slug column and 'payrexx'
     const slugCall = eq.mock.calls.find((c: unknown[]) => c[1] === 'payrexx');
     expect(slugCall).toBeDefined();

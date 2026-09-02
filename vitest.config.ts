@@ -17,21 +17,24 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts'],
-    include: [
-      'src/**/__tests__/**/*.{js,jsx,ts,tsx}',
-      'src/**/*.{test,spec}.{js,jsx,ts,tsx}',
-    ],
+    include: ['src/**/__tests__/**/*.{js,jsx,ts,tsx}', 'src/**/*.{test,spec}.{js,jsx,ts,tsx}'],
     exclude: ['**/node_modules/**', '**/.next/**', '**/cms-api/**', 'tests/e2e/**'],
   },
   resolve: {
     alias: [
       { find: '@', replacement: path.resolve(__dirname, './src') },
-      { find: 'saldo-engine', replacement: path.resolve(__dirname, './packages/saldo/src/index.ts') },
+      {
+        find: 'saldo-engine',
+        replacement: path.resolve(__dirname, './packages/saldo/src/index.ts'),
+      },
       // Matches jest's moduleNameMapper, which redirected both the bare
       // specifier and every subpath (next-intl/routing, next-intl/navigation)
       // to the same mock -- src/i18n/routing.ts and navigation.ts import those
       // submodules directly.
-      { find: /^next-intl(\/.*)?$/, replacement: path.resolve(__dirname, './__mocks__/next-intl.js') },
+      {
+        find: /^next-intl(\/.*)?$/,
+        replacement: path.resolve(__dirname, './__mocks__/next-intl.js'),
+      },
     ],
   },
 });

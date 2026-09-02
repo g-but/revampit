@@ -48,7 +48,8 @@ const mockTx = {
   update: (...args: unknown[]) => mockTxUpdate(...args),
 };
 
-const mockDbTransaction = vi.fn()
+const mockDbTransaction = vi
+  .fn()
   .mockImplementation(async (fn: (tx: typeof mockTx) => Promise<unknown>) => fn(mockTx));
 
 // ---------------------------------------------------------------------------
@@ -93,7 +94,7 @@ vi.mock('@/db/schema', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
   and: vi.fn().mockReturnValue({ __and: true }),
   isNull: vi.fn().mockReturnValue({ __isNull: true }),

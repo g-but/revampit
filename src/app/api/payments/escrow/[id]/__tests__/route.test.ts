@@ -387,7 +387,7 @@ describe('POST /api/payments/escrow/[id] — amount exceeded', () => {
 
 describe('POST /api/payments/escrow/[id] — success', () => {
   it('returns 200 on full release', async () => {
-    const { captureTransaction } = await import('@/lib/payments/payrexx-client') as any;
+    const { captureTransaction } = (await import('@/lib/payments/payrexx-client')) as any;
     const req = makePostRequest('escrow-1', { amount: 100, releaseType: 'full' });
     const response = await POST(req, makeContext('escrow-1'));
     expect(response.status).toBe(200);
@@ -398,7 +398,7 @@ describe('POST /api/payments/escrow/[id] — success', () => {
   });
 
   it('returns 200 on partial release', async () => {
-    const { captureTransaction } = await import('@/lib/payments/payrexx-client') as any;
+    const { captureTransaction } = (await import('@/lib/payments/payrexx-client')) as any;
     const req = makePostRequest('escrow-1', { amount: 50, releaseType: 'partial' });
     const response = await POST(req, makeContext('escrow-1'));
     expect(response.status).toBe(200);

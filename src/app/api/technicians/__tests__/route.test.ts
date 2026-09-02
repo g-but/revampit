@@ -122,14 +122,16 @@ function buildSelectChain(mainRows: unknown[], countRow: unknown) {
   const mockLeftJoin = vi.fn();
   mockLeftJoin.mockReturnValue({ leftJoin: mockLeftJoin, where: mockWhere, innerJoin: vi.fn() });
   const mockInnerJoin = vi.fn().mockReturnValue({ leftJoin: mockLeftJoin, where: mockWhere });
-  const mockFrom = vi.fn()
+  const mockFrom = vi
+    .fn()
     .mockReturnValue({ innerJoin: mockInnerJoin, leftJoin: mockLeftJoin, where: mockWhere });
 
   // Count query chain: .from().innerJoin().leftJoin(userProfiles).leftJoin(userSkills).where() resolves to array
   const mockCountWhere = vi.fn().mockResolvedValue([countRow]);
   const mockCountLeftJoin = vi.fn();
   mockCountLeftJoin.mockReturnValue({ leftJoin: mockCountLeftJoin, where: mockCountWhere });
-  const mockCountInnerJoin = vi.fn()
+  const mockCountInnerJoin = vi
+    .fn()
     .mockReturnValue({ leftJoin: mockCountLeftJoin, where: mockCountWhere });
   const mockCountFrom = vi.fn().mockReturnValue({
     innerJoin: mockCountInnerJoin,

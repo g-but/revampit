@@ -41,7 +41,7 @@ vi.mock('@/db/schema', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
   and: vi.fn().mockReturnValue({ __and: true }),
 }));
@@ -138,7 +138,7 @@ describe('GET /api/pools/my — authenticated', () => {
 
   it('queries only ACTIVE memberships for the current user', async () => {
     await GET(makeRequest());
-    const { eq } = await import('drizzle-orm') as any;
+    const { eq } = (await import('drizzle-orm')) as any;
     expect(eq).toHaveBeenCalledWith(expect.anything(), 'user-7');
     expect(eq).toHaveBeenCalledWith(expect.anything(), 'active');
   });

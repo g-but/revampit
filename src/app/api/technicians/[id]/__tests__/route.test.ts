@@ -10,7 +10,7 @@
 const mockGetTechnicianById = vi.fn();
 
 vi.mock('@/lib/services/technician-service', async () => ({
-  ...await vi.importActual('@/lib/services/technician-service'),
+  ...(await vi.importActual('@/lib/services/technician-service')),
   getTechnicianById: (...args: unknown[]) => mockGetTechnicianById(...args),
 }));
 

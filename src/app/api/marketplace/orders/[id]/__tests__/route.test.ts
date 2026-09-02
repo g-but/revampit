@@ -374,13 +374,13 @@ beforeEach(async () => {
 
   // Re-wire fire-and-forget email mocks — resetAllMocks() clears implementations,
   // and .catch() on undefined would throw inside the route handler
-  const emailMod = await import('@/lib/email') as any;
+  const emailMod = (await import('@/lib/email')) as any;
   emailMod.sendCustomEmail.mockResolvedValue({ success: true });
-  const templatesMod = await import('@/lib/email/templates/marketplace') as any;
+  const templatesMod = (await import('@/lib/email/templates/marketplace')) as any;
   templatesMod.orderStatusUpdate.mockReturnValue({});
 
   // Re-wire payment mocks (resetAllMocks clears these too)
-  const payrexxMod = await import('@/lib/payments/payrexx-client') as any;
+  const payrexxMod = (await import('@/lib/payments/payrexx-client')) as any;
   payrexxMod.cancelTransaction.mockResolvedValue({ success: true });
   payrexxMod.captureTransaction.mockResolvedValue({ success: true });
 });
@@ -512,7 +512,7 @@ describe('PATCH /api/marketplace/orders/[id] — success (buyer cancels)', () =>
 
 describe('PATCH /api/marketplace/orders/[id] — race-loser aborts cleanly', () => {
   it('does not write or capture when the order changed under the lock', async () => {
-    const payrexx = await import('@/lib/payments/payrexx-client') as any;
+    const payrexx = (await import('@/lib/payments/payrexx-client')) as any;
     // Pre-lock fetch sees a paid order (buyer cancel is valid)...
     wireSelectReturning({ ...MOCK_ORDER, status: 'paid' });
     mockValidateBody.mockReturnValueOnce({

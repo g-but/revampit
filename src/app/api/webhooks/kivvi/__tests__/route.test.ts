@@ -104,7 +104,7 @@ function makeReq(rawBody: string, signature?: string | null) {
 
 // Load the route with the secret in place (captured at module eval time).
 process.env.KIVVI_WEBHOOK_SECRET = SECRET;
-const { POST } = await import('../route') as unknown as typeof import('../route');
+const { POST } = (await import('../route')) as unknown as typeof import('../route');
 
 beforeEach(() => {
   mockDb.rows = [];

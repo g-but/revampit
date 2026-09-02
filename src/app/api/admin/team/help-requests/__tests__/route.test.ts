@@ -111,10 +111,8 @@ vi.mock('drizzle-orm', () => ({
 }));
 
 vi.mock('@/lib/schemas/activity', () => ({
-  validateHelpRequestFilter: (...args: unknown[]) =>
-    mockValidateHelpRequestFilter(...args),
-  validateCreateHelpRequest: (...args: unknown[]) =>
-    mockValidateCreateHelpRequest(...args),
+  validateHelpRequestFilter: (...args: unknown[]) => mockValidateHelpRequestFilter(...args),
+  validateCreateHelpRequest: (...args: unknown[]) => mockValidateCreateHelpRequest(...args),
 }));
 
 vi.mock('@/lib/api/helpers', async () => {

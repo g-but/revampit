@@ -36,11 +36,13 @@ const mockTxUpdateWhere = vi.fn().mockResolvedValue([]);
 const mockTxUpdateSet = vi.fn().mockReturnValue({ where: mockTxUpdateWhere });
 const mockTxUpdate = vi.fn().mockReturnValue({ set: mockTxUpdateSet });
 const mockTx = { insert: mockTxInsert, update: mockTxUpdate };
-const mockDbTransaction = vi.fn()
+const mockDbTransaction = vi
+  .fn()
   .mockImplementation((fn: (tx: typeof mockTx) => Promise<unknown>) => fn(mockTx));
 
 // execute mock (used by editSubmission)
-const mockDbExecute = vi.fn()
+const mockDbExecute = vi
+  .fn()
   .mockResolvedValue({ rows: [{ id: 'sub-1', title: 'Updated Title' }] });
 
 vi.mock('@/db', () => ({
@@ -59,10 +61,9 @@ vi.mock('@/db/schema', () => ({
 vi.mock('drizzle-orm', async () => {
   const sqlFn = vi.fn().mockReturnValue({ __sql: 'mocked_sql' });
   (sqlFn as unknown as Record<string, unknown>).raw = vi.fn().mockReturnValue({ __sql: 'raw' });
-  (sqlFn as unknown as Record<string, unknown>).join = vi.fn()
-    .mockReturnValue({ __sql: 'joined' });
+  (sqlFn as unknown as Record<string, unknown>).join = vi.fn().mockReturnValue({ __sql: 'joined' });
   return {
-    ...await vi.importActual('drizzle-orm'),
+    ...(await vi.importActual('drizzle-orm')),
     sql: sqlFn,
     eq: vi.fn().mockReturnValue({ __eq: true }),
     getTableName: vi.fn().mockReturnValue('mock_table'),

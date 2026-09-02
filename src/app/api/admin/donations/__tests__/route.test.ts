@@ -117,7 +117,7 @@ vi.mock('drizzle-orm/pg-core', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
   and: vi.fn().mockReturnValue({ __and: true }),
   gte: vi.fn().mockReturnValue({ __gte: true }),

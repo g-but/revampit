@@ -50,7 +50,7 @@ vi.mock('@/db/schema/inventory', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
   sql: Object.assign(vi.fn().mockReturnValue({ __sql: 'mocked' }), {
     raw: vi.fn().mockReturnValue({ __raw: true }),
@@ -96,7 +96,7 @@ describe('appendIntakeEvent', () => {
   });
 
   it('passes the inventory ID to eq for WHERE clause', async () => {
-    const { eq } = await import('drizzle-orm') as unknown as { eq: Mock };
+    const { eq } = (await import('drizzle-orm')) as unknown as { eq: Mock };
 
     await appendIntakeEvent('inv-abc', BASE_EVENT);
 
@@ -105,7 +105,7 @@ describe('appendIntakeEvent', () => {
   });
 
   it('adds ISO timestamp when event has no timestamp', async () => {
-    const { sql } = await import('drizzle-orm') as unknown as { sql: Mock };
+    const { sql } = (await import('drizzle-orm')) as unknown as { sql: Mock };
     const before = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
 
     await appendIntakeEvent('inv-1', { ...BASE_EVENT, timestamp: undefined });
@@ -117,7 +117,7 @@ describe('appendIntakeEvent', () => {
   });
 
   it('preserves provided timestamp when present', async () => {
-    const { sql } = await import('drizzle-orm') as unknown as { sql: Mock };
+    const { sql } = (await import('drizzle-orm')) as unknown as { sql: Mock };
     const fixedTs = '2026-01-15T10:00:00.000Z';
 
     await appendIntakeEvent('inv-1', { ...BASE_EVENT, timestamp: fixedTs });

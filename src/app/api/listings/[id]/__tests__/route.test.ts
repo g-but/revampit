@@ -360,7 +360,7 @@ beforeEach(async () => {
   mockDeleteWhere.mockResolvedValue(undefined);
 
   // Re-wire fire-and-forget search mocks after resetAllMocks()
-  const { removeListing, indexListing } = await import('@/lib/search/meilisearch') as any;
+  const { removeListing, indexListing } = (await import('@/lib/search/meilisearch')) as any;
   removeListing.mockResolvedValue(undefined);
   indexListing.mockResolvedValue(undefined);
 
@@ -394,7 +394,8 @@ describe('GET /api/listings/[id] — not found', () => {
       leftJoin: mockListingLeftJoin,
       where: mockListingWhere,
     }));
-    const mockListingInnerJoin = vi.fn()
+    const mockListingInnerJoin = vi
+      .fn()
       .mockReturnValue({ leftJoin: mockListingLeftJoin, where: mockListingWhere });
     mockFrom.mockReturnValueOnce({ innerJoin: mockListingInnerJoin, where: mockListingWhere });
 
@@ -557,7 +558,8 @@ describe('PATCH /api/listings/[id] — ownership checks', () => {
 
   it('returns 403 when not owner', async () => {
     // Ownership check: sellerId is different user
-    const mockOwnerWhere = vi.fn()
+    const mockOwnerWhere = vi
+      .fn()
       .mockResolvedValue([{ sellerId: 'other-user', currentStatus: 'active' }]);
     mockFrom.mockReturnValueOnce({ where: mockOwnerWhere });
     mockInnerJoin.mockReturnValue({ leftJoin: mockLeftJoin, where: mockOwnerWhere });
@@ -584,7 +586,8 @@ describe('PATCH /api/listings/[id] — owner status-transition gate', () => {
   });
 
   it('returns 403 when owner tries ACTIVE → SOLD (off-book sale)', async () => {
-    const mockOwnerWhere = vi.fn()
+    const mockOwnerWhere = vi
+      .fn()
       .mockResolvedValue([{ sellerId: 'user-1', currentStatus: 'active' }]);
     mockFrom.mockReturnValueOnce({ where: mockOwnerWhere });
     mockValidateBody.mockReturnValueOnce({ success: true, data: { status: 'sold' } });
@@ -597,7 +600,8 @@ describe('PATCH /api/listings/[id] — owner status-transition gate', () => {
   it('returns 403 when owner tries RESERVED → ACTIVE (double-sale)', async () => {
     // Buyer's order is mid-flight (listing is RESERVED). Owner tries to
     // flip it back to ACTIVE so other buyers can also purchase. Blocked.
-    const mockOwnerWhere = vi.fn()
+    const mockOwnerWhere = vi
+      .fn()
       .mockResolvedValue([{ sellerId: 'user-1', currentStatus: 'reserved' }]);
     mockFrom.mockReturnValueOnce({ where: mockOwnerWhere });
     mockValidateBody.mockReturnValueOnce({ success: true, data: { status: 'active' } });
@@ -608,7 +612,8 @@ describe('PATCH /api/listings/[id] — owner status-transition gate', () => {
   });
 
   it('returns 403 when owner tries to set REMOVED via PATCH (must use DELETE endpoint)', async () => {
-    const mockOwnerWhere = vi.fn()
+    const mockOwnerWhere = vi
+      .fn()
       .mockResolvedValue([{ sellerId: 'user-1', currentStatus: 'active' }]);
     mockFrom.mockReturnValueOnce({ where: mockOwnerWhere });
     mockValidateBody.mockReturnValueOnce({ success: true, data: { status: 'removed' } });
@@ -620,7 +625,8 @@ describe('PATCH /api/listings/[id] — owner status-transition gate', () => {
 
   it('returns 403 on PATCH against SOLD listing trying to set anything (system-managed state)', async () => {
     // Listing already SOLD. Owner can't PATCH status — needs admin/system intervention.
-    const mockOwnerWhere = vi.fn()
+    const mockOwnerWhere = vi
+      .fn()
       .mockResolvedValue([{ sellerId: 'user-1', currentStatus: 'sold' }]);
     mockFrom.mockReturnValueOnce({ where: mockOwnerWhere });
     mockValidateBody.mockReturnValueOnce({ success: true, data: { status: 'active' } });
@@ -631,7 +637,8 @@ describe('PATCH /api/listings/[id] — owner status-transition gate', () => {
   });
 
   it('allows DRAFT → ACTIVE (legitimate publish flow)', async () => {
-    const mockOwnerWhere = vi.fn()
+    const mockOwnerWhere = vi
+      .fn()
       .mockResolvedValue([{ sellerId: 'user-1', currentStatus: 'draft' }]);
     mockFrom.mockReturnValueOnce({ where: mockOwnerWhere });
     mockValidateBody.mockReturnValueOnce({ success: true, data: { status: 'active' } });
@@ -642,7 +649,8 @@ describe('PATCH /api/listings/[id] — owner status-transition gate', () => {
       catch: vi.fn().mockResolvedValue(undefined),
     });
     const mockMeiliLeftJoin = vi.fn().mockReturnValue({ where: mockMeiliWhere });
-    const mockMeiliInnerJoin = vi.fn()
+    const mockMeiliInnerJoin = vi
+      .fn()
       .mockReturnValue({ leftJoin: mockMeiliLeftJoin, where: mockMeiliWhere });
     mockFrom.mockReturnValue({
       innerJoin: mockMeiliInnerJoin,
@@ -656,7 +664,8 @@ describe('PATCH /api/listings/[id] — owner status-transition gate', () => {
   });
 
   it('allows ACTIVE → DRAFT (legitimate unpublish flow)', async () => {
-    const mockOwnerWhere = vi.fn()
+    const mockOwnerWhere = vi
+      .fn()
       .mockResolvedValue([{ sellerId: 'user-1', currentStatus: 'active' }]);
     mockFrom.mockReturnValueOnce({ where: mockOwnerWhere });
     mockValidateBody.mockReturnValueOnce({ success: true, data: { status: 'draft' } });
@@ -672,7 +681,8 @@ describe('PATCH /api/listings/[id] — owner status-transition gate', () => {
     // still update title/description/etc. on a RESERVED listing. This
     // matters so an owner with a mid-flight order can correct a typo
     // in the description without admin intervention.
-    const mockOwnerWhere = vi.fn()
+    const mockOwnerWhere = vi
+      .fn()
       .mockResolvedValue([{ sellerId: 'user-1', currentStatus: 'reserved' }]);
     mockFrom.mockReturnValueOnce({ where: mockOwnerWhere });
     mockValidateBody.mockReturnValueOnce({ success: true, data: { title: 'Corrected title' } });
@@ -683,7 +693,8 @@ describe('PATCH /api/listings/[id] — owner status-transition gate', () => {
       catch: vi.fn().mockResolvedValue(undefined),
     });
     const mockMeiliLeftJoin = vi.fn().mockReturnValue({ where: mockMeiliWhere });
-    const mockMeiliInnerJoin = vi.fn()
+    const mockMeiliInnerJoin = vi
+      .fn()
       .mockReturnValue({ leftJoin: mockMeiliLeftJoin, where: mockMeiliWhere });
     mockFrom.mockReturnValue({
       innerJoin: mockMeiliInnerJoin,
@@ -704,7 +715,8 @@ describe('PATCH /api/listings/[id] — validation', () => {
   beforeEach(() => {
     mockAuth.mockResolvedValue(MOCK_SESSION);
     // Owner is current user
-    const mockOwnerWhere = vi.fn()
+    const mockOwnerWhere = vi
+      .fn()
       .mockResolvedValue([{ sellerId: 'user-1', currentStatus: 'active' }]);
     mockFrom.mockReturnValueOnce({ where: mockOwnerWhere });
   });
@@ -729,7 +741,8 @@ describe('PATCH /api/listings/[id] — success', () => {
 
   it('returns 200 on successful update', async () => {
     // Ownership check
-    const mockOwnerWhere = vi.fn()
+    const mockOwnerWhere = vi
+      .fn()
       .mockResolvedValue([{ sellerId: 'user-1', currentStatus: 'active' }]);
     mockFrom.mockReturnValueOnce({ where: mockOwnerWhere });
 
@@ -757,7 +770,8 @@ describe('PATCH /api/listings/[id] — success', () => {
       catch: vi.fn().mockResolvedValue(undefined),
     });
     const mockMeiliLeftJoin = vi.fn().mockReturnValue({ where: mockMeiliWhere });
-    const mockMeiliInnerJoin = vi.fn()
+    const mockMeiliInnerJoin = vi
+      .fn()
       .mockReturnValue({ leftJoin: mockMeiliLeftJoin, where: mockMeiliWhere });
     mockFrom.mockReturnValue({
       innerJoin: mockMeiliInnerJoin,

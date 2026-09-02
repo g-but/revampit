@@ -79,7 +79,7 @@ vi.mock('@/db/schema/marketplace', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
   and: vi.fn().mockReturnValue({ __and: true }),
   sql: Object.assign(vi.fn().mockReturnValue({ __sql: 'mocked' }), {
@@ -182,7 +182,7 @@ describe('findDuplicateReview', () => {
     await findDuplicateReview('user-1', 'it_hilfe', 'req-1', 'booking-abc');
 
     // eq should be called more times (extra condition for bookingId)
-    const { eq } = await import('drizzle-orm') as unknown as { eq: Mock };
+    const { eq } = (await import('drizzle-orm')) as unknown as { eq: Mock };
     const calls = eq.mock.calls.map((c: unknown[]) => c[0]);
     // bookingId column should appear among eq calls
     expect(calls).toContain('r_bookingId');

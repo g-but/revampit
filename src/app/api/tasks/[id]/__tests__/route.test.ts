@@ -263,7 +263,7 @@ describe('GET /api/tasks/[id] — unauthenticated', () => {
 
 describe('GET /api/tasks/[id] — authenticated', () => {
   it('returns 200 with task, completions, flags, and requests', async () => {
-    const dbMod = await import('@/db') as any;
+    const dbMod = (await import('@/db')) as any;
     dbMod.db.select
       .mockReturnValueOnce(makeChain('where', [MOCK_TASK])) // task details
       .mockReturnValueOnce(makeChain('limit', [])) // completions
@@ -281,7 +281,7 @@ describe('GET /api/tasks/[id] — authenticated', () => {
   });
 
   it('returns 404 when task rows are empty', async () => {
-    const dbMod = await import('@/db') as any;
+    const dbMod = (await import('@/db')) as any;
     dbMod.db.select
       .mockReturnValueOnce(makeChain('where', [])) // task not found
       .mockReturnValueOnce(makeChain('limit', []))
@@ -314,7 +314,7 @@ describe('PATCH /api/tasks/[id] — validation', () => {
 
 describe('PATCH /api/tasks/[id] — not found', () => {
   it('returns 404 when task does not exist', async () => {
-    const dbMod = await import('@/db') as any;
+    const dbMod = (await import('@/db')) as any;
     // select for existence check returns empty
     const existenceChain: Record<string, Mock> = {};
     ['from', 'leftJoin', 'where', 'orderBy', 'limit', 'groupBy'].forEach((m) => {
@@ -330,14 +330,15 @@ describe('PATCH /api/tasks/[id] — not found', () => {
 
 describe('PATCH /api/tasks/[id] — success', () => {
   it('returns 200 with updated task', async () => {
-    const dbMod = await import('@/db') as any;
+    const dbMod = (await import('@/db')) as any;
 
     // select for existence check
     const existenceChain: Record<string, Mock> = {};
     ['from', 'leftJoin', 'where', 'orderBy', 'limit', 'groupBy'].forEach((m) => {
       existenceChain[m] = vi.fn().mockReturnValue(existenceChain);
     });
-    existenceChain.where = vi.fn()
+    existenceChain.where = vi
+      .fn()
       .mockResolvedValue([{ id: 'task-1', title: 'Old title', assignedTo: null }]);
     dbMod.db.select.mockReturnValue(existenceChain);
 
@@ -369,7 +370,7 @@ describe('DELETE /api/tasks/[id] — unauthenticated', () => {
 
 describe('DELETE /api/tasks/[id] — not found', () => {
   it('returns 404 when no rows returned from update', async () => {
-    const dbMod = await import('@/db') as any;
+    const dbMod = (await import('@/db')) as any;
     const mockReturning = vi.fn().mockResolvedValue([]);
     const mockWhere = vi.fn().mockReturnValue({ returning: mockReturning });
     const mockSet = vi.fn().mockReturnValue({ where: mockWhere });
@@ -382,7 +383,7 @@ describe('DELETE /api/tasks/[id] — not found', () => {
 
 describe('DELETE /api/tasks/[id] — success', () => {
   it('returns 200 with archived: true', async () => {
-    const dbMod = await import('@/db') as any;
+    const dbMod = (await import('@/db')) as any;
     const mockReturning = vi.fn().mockResolvedValue([{ id: 'task-1' }]);
     const mockWhere = vi.fn().mockReturnValue({ returning: mockReturning });
     const mockSet = vi.fn().mockReturnValue({ where: mockWhere });

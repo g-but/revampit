@@ -225,7 +225,7 @@ beforeEach(async () => {
 
   mockValidateBody.mockReturnValue({ success: true, data: { price_chf: 299 } });
 
-  const checklist = await import('@/config/intake-checklist') as any;
+  const checklist = (await import('@/config/intake-checklist')) as any;
   checklist.isChecklistComplete.mockReturnValue(true);
 });
 
@@ -266,7 +266,7 @@ describe('POST /api/admin/intake/[id]/publish — validation', () => {
   });
 
   it('returns 400 when checklist is not complete', async () => {
-    const checklist = await import('@/config/intake-checklist') as any;
+    const checklist = (await import('@/config/intake-checklist')) as any;
     checklist.isChecklistComplete.mockReturnValueOnce(false);
     const response = await POST(makeRequest(), makeContext());
     expect(response.status).toBe(400);

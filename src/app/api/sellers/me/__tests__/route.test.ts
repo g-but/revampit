@@ -47,7 +47,8 @@ vi.mock('@/lib/api/middleware', async () => ({
 // (GET + PATCH re-read join user_profiles; the PATCH exists-check does not.)
 const mockSelectWhere = vi.fn();
 const mockSelectLeftJoin = vi.fn().mockReturnValue({ where: mockSelectWhere });
-const mockSelectFrom = vi.fn()
+const mockSelectFrom = vi
+  .fn()
   .mockReturnValue({ where: mockSelectWhere, leftJoin: mockSelectLeftJoin });
 const mockSelect = vi.fn().mockReturnValue({ from: mockSelectFrom });
 
@@ -97,7 +98,7 @@ vi.mock('@/db/schema', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
   sql: Object.assign(vi.fn().mockReturnValue({ __sql: 'sql' }), { raw: vi.fn() }),
 }));

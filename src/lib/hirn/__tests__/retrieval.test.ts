@@ -63,7 +63,7 @@ vi.mock('@/db/schema', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   sql: Object.assign(vi.fn().mockReturnValue({ __sql: 'mocked' }), {
     raw: vi.fn().mockReturnValue({ __raw: true }),
     join: vi.fn().mockReturnValue({ __join: true }),

@@ -283,7 +283,7 @@ describe('POST /api/it-hilfe/requests/[id]/offers', () => {
     mockReturning.mockResolvedValue([{ id: 'new-offer-1' }]);
     mockValues.mockReturnValue({ returning: mockReturning });
     // Reset rate limiter to allow by default
-    const { rateLimiters } = await import('@/lib/security/rate-limit') as unknown as {
+    const { rateLimiters } = (await import('@/lib/security/rate-limit')) as unknown as {
       rateLimiters: { offerCreate: Mock };
     };
     rateLimiters.offerCreate.mockReturnValue(true);
@@ -301,7 +301,7 @@ describe('POST /api/it-hilfe/requests/[id]/offers', () => {
 
   it('returns 400 when rate limited', async () => {
     mockAuth.mockResolvedValue(MOCK_SESSION);
-    const { rateLimiters } = await import('@/lib/security/rate-limit') as unknown as {
+    const { rateLimiters } = (await import('@/lib/security/rate-limit')) as unknown as {
       rateLimiters: { offerCreate: Mock };
     };
     rateLimiters.offerCreate.mockReturnValue(false);
@@ -653,7 +653,7 @@ describe('POST /api/it-hilfe/requests/[id]/offers', () => {
       // Inspect the central notifyUsers call — acceptUrl is now carried in
       // metadata (the offers route post-QQ.4.3 routes through notifyUsers,
       // which dispatches to itHilfeNewOfferReceived via getEmailContent).
-      const notifMock = await import('@/lib/services/notifications') as unknown as {
+      const notifMock = (await import('@/lib/services/notifications')) as unknown as {
         notifyUsers: Mock;
       };
       expect(notifMock.notifyUsers).toHaveBeenCalledTimes(1);
@@ -669,9 +669,9 @@ describe('POST /api/it-hilfe/requests/[id]/offers', () => {
       const token = url.searchParams.get('token');
       expect(token).toBeTruthy();
 
-      const { verifyOfferAcceptToken } = await vi.importActual(
+      const { verifyOfferAcceptToken } = (await vi.importActual(
         '@/lib/it-hilfe/offer-accept-tokens',
-      ) as {
+      )) as {
         verifyOfferAcceptToken: (t: string) => { ok: boolean; offerId?: string; reason?: string };
       };
       const verifyResult = verifyOfferAcceptToken(token as string);

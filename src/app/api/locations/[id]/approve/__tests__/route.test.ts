@@ -178,8 +178,7 @@ function setupSuccessfulTransaction() {
     const mockTxUpdate = vi.fn().mockReturnValue({
       set: vi.fn().mockReturnValue({ where: vi.fn().mockResolvedValue(undefined) }),
     });
-    const mockTxInsert = vi.fn()
-      .mockReturnValue({ values: vi.fn().mockResolvedValue(undefined) });
+    const mockTxInsert = vi.fn().mockReturnValue({ values: vi.fn().mockResolvedValue(undefined) });
     return callback({ update: mockTxUpdate, insert: mockTxInsert });
   });
 }
@@ -205,7 +204,8 @@ beforeEach(() => {
   let dbSelectCallCount = 0;
   mockSelect.mockImplementation(() => {
     dbSelectCallCount++;
-    const mockLocWhere = vi.fn()
+    const mockLocWhere = vi
+      .fn()
       .mockResolvedValue(dbSelectCallCount === 1 ? [MOCK_LOCATION] : [MOCK_CREATOR]);
     return { from: vi.fn().mockReturnValue({ where: mockLocWhere }) };
   });
@@ -268,7 +268,8 @@ describe('POST /api/locations/[id]/approve — validation', () => {
   it('returns 400 for invalid status transition (e.g. reject approved location)', async () => {
     // Override mockSelect so first call returns approved location
     mockSelect.mockImplementationOnce(() => {
-      const mockLocWhere = vi.fn()
+      const mockLocWhere = vi
+        .fn()
         .mockResolvedValue([{ ...MOCK_LOCATION, approvalStatus: 'approved' }]);
       return { from: vi.fn().mockReturnValue({ where: mockLocWhere }) };
     });
@@ -325,7 +326,7 @@ describe('POST /api/locations/[id]/approve — success', () => {
     const response = await POST(req, makeContext());
     expect(response.status).toBe(200); // The decision still applies
 
-    const { logger } = await import('@/lib/logger') as any;
+    const { logger } = (await import('@/lib/logger')) as any;
     expect(logger.warn).toHaveBeenCalledWith(
       'Location approval notification email failed (resolved)',
       expect.objectContaining({ action: 'approve', error: 'SMTP rejected' }),

@@ -118,7 +118,7 @@ beforeEach(async () => {
   mockGetIngestionStats.mockResolvedValue({ totalDocuments: 5, totalChunks: 42 });
   mockIsSuperAdmin.mockReturnValue(true);
 
-  const helpers = await import('@/lib/api/helpers') as any;
+  const helpers = (await import('@/lib/api/helpers')) as any;
   helpers.parsePagination.mockReturnValue({ limit: 20, offset: 0 });
 });
 

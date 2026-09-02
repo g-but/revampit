@@ -45,7 +45,8 @@ function mockFetchResponse(data: unknown, ok = true, status = 200) {
   mockFetch.mockResolvedValueOnce({
     ok,
     status,
-    json: vi.fn()
+    json: vi
+      .fn()
       .mockResolvedValue(
         ok ? { success: true, data } : { success: false, error: `Mock error ${status}` },
       ),

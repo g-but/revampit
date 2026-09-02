@@ -200,7 +200,7 @@ beforeEach(async () => {
   mockUpdateWhere.mockResolvedValue([MOCK_APPOINTMENT]);
 
   const { sendAppointmentNotification, buildActionUpdate, executeAppointmentUpdate } =
-    await import('@/lib/services/appointment-actions') as any;
+    (await import('@/lib/services/appointment-actions')) as any;
   sendAppointmentNotification.mockResolvedValue(undefined);
   buildActionUpdate.mockReturnValue({ updateSet: {}, newStatus: null });
   executeAppointmentUpdate.mockResolvedValue({ ...MOCK_APPOINTMENT });
@@ -292,7 +292,7 @@ describe('PATCH /api/appointments/[id] — validation', () => {
   });
 
   it('returns 403 when buildActionUpdate returns a permission error', async () => {
-    const { buildActionUpdate } = await import('@/lib/services/appointment-actions') as any;
+    const { buildActionUpdate } = (await import('@/lib/services/appointment-actions')) as any;
     buildActionUpdate.mockReturnValueOnce({ error: 'Kein Zugriff auf diesen Termin' });
 
     const req = new NextRequest('http://localhost/api/appointments/appt-1', {
@@ -305,7 +305,7 @@ describe('PATCH /api/appointments/[id] — validation', () => {
   });
 
   it('returns 400 when buildActionUpdate returns a non-permission error', async () => {
-    const { buildActionUpdate } = await import('@/lib/services/appointment-actions') as any;
+    const { buildActionUpdate } = (await import('@/lib/services/appointment-actions')) as any;
     buildActionUpdate.mockReturnValueOnce({ error: 'Ungültige Aktion' });
 
     const req = new NextRequest('http://localhost/api/appointments/appt-1', {
@@ -318,9 +318,8 @@ describe('PATCH /api/appointments/[id] — validation', () => {
   });
 
   it('returns 400 when trying to re-rate an already-rated appointment', async () => {
-    const { buildActionUpdate, executeAppointmentUpdate } = (await import(
-      '@/lib/services/appointment-actions'
-    )) as any;
+    const { buildActionUpdate, executeAppointmentUpdate } =
+      (await import('@/lib/services/appointment-actions')) as any;
     buildActionUpdate.mockReturnValueOnce({ updateSet: {}, newStatus: null });
     // null returned from executeAppointmentUpdate when action=rate means already rated
     executeAppointmentUpdate.mockResolvedValueOnce(null);
@@ -342,9 +341,8 @@ describe('PATCH /api/appointments/[id] — validation', () => {
 
 describe('PATCH /api/appointments/[id] — success', () => {
   it('returns 200 with updated appointment', async () => {
-    const { buildActionUpdate, executeAppointmentUpdate } = (await import(
-      '@/lib/services/appointment-actions'
-    )) as any;
+    const { buildActionUpdate, executeAppointmentUpdate } =
+      (await import('@/lib/services/appointment-actions')) as any;
     buildActionUpdate.mockReturnValueOnce({
       updateSet: { status: 'accepted' },
       newStatus: 'accepted',

@@ -212,7 +212,8 @@ function setupSuccessSelectMocks() {
         const mockOrderBy = vi.fn().mockReturnValue({ limit: mockLimit });
         const mockWhere = vi.fn().mockReturnValue({ orderBy: mockOrderBy });
         const mockInnerJoin2 = vi.fn().mockReturnValue({ where: mockWhere });
-        const mockInnerJoin = vi.fn()
+        const mockInnerJoin = vi
+          .fn()
           .mockReturnValue({ innerJoin: mockInnerJoin2, where: mockWhere });
         const mockFrom = vi.fn().mockReturnValue({ innerJoin: mockInnerJoin, where: mockWhere });
         return { from: mockFrom };
@@ -225,8 +226,7 @@ function setupSuccessSelectMocks() {
       }
       case 4: {
         // reviews (rating info)
-        const mockWhere = vi.fn()
-          .mockResolvedValue([{ average_rating: '4.5', review_count: '8' }]);
+        const mockWhere = vi.fn().mockResolvedValue([{ average_rating: '4.5', review_count: '8' }]);
         const mockFrom = vi.fn().mockReturnValue({ where: mockWhere });
         return { from: mockFrom };
       }

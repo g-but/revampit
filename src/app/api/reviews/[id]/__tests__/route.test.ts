@@ -169,7 +169,7 @@ import type { Mock } from 'vitest';
 import { NextRequest, NextResponse } from 'next/server';
 import { GET, PUT, DELETE } from '../route';
 
-const { validateBody } = await import('@/lib/schemas') as any;
+const { validateBody } = (await import('@/lib/schemas')) as any;
 
 const MOCK_SESSION = {
   user: {
@@ -258,7 +258,8 @@ function setupSelectMocks(reviewRows: unknown[], attachmentRows: unknown[] = [])
       chainObj.leftJoin = mockLeftJoin;
       chainObj.innerJoin = mockInnerJoin;
       chainObj.where = mockWhere;
-      const mockFrom = vi.fn()
+      const mockFrom = vi
+        .fn()
         .mockReturnValue({ innerJoin: mockInnerJoin, leftJoin: mockLeftJoin });
       return { from: mockFrom };
     }

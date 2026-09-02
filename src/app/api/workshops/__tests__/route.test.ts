@@ -69,7 +69,7 @@ vi.mock('@/db/schema', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
   desc: vi.fn().mockReturnValue({ __desc: true }),
   asc: vi.fn().mockReturnValue({ __asc: true }),
@@ -178,7 +178,7 @@ describe('GET /api/workshops — basic list (no instances)', () => {
 
   it('applies isActive filter by default', async () => {
     await GET(makeRequest());
-    const { eq } = await import('drizzle-orm') as any;
+    const { eq } = (await import('drizzle-orm')) as any;
     expect(eq).toHaveBeenCalledWith(expect.anything(), true);
   });
 
@@ -189,7 +189,7 @@ describe('GET /api/workshops — basic list (no instances)', () => {
     mockWhere.mockReturnValue({ orderBy: mockOrderBy });
     mockOrderBy.mockResolvedValue(MOCK_WORKSHOPS);
     await GET(makeRequest({ active: 'false' }));
-    const { eq } = await import('drizzle-orm') as any;
+    const { eq } = (await import('drizzle-orm')) as any;
     // eq should not be called with true (no active filter)
     const activeCalls = (eq as Mock).mock.calls.filter((c) => c[1] === true);
     expect(activeCalls).toHaveLength(0);

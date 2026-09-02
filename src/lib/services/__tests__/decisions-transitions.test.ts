@@ -26,7 +26,8 @@
 const mockDbExecute = vi.fn();
 const mockTxExecute = vi.fn();
 const mockTx = { execute: (...args: unknown[]) => mockTxExecute(...args) };
-const mockDbTransaction = vi.fn()
+const mockDbTransaction = vi
+  .fn()
   .mockImplementation(async (fn: (tx: typeof mockTx) => Promise<unknown>) => fn(mockTx));
 
 vi.mock('@/db', () => ({
@@ -39,10 +40,9 @@ vi.mock('@/db', () => ({
 vi.mock('drizzle-orm', async () => {
   const sqlFn = vi.fn().mockReturnValue({ __sql: 'mocked' });
   (sqlFn as unknown as Record<string, unknown>).raw = vi.fn().mockReturnValue({ __sql: 'raw' });
-  (sqlFn as unknown as Record<string, unknown>).join = vi.fn()
-    .mockReturnValue({ __sql: 'joined' });
+  (sqlFn as unknown as Record<string, unknown>).join = vi.fn().mockReturnValue({ __sql: 'joined' });
   return {
-    ...await vi.importActual('drizzle-orm'),
+    ...(await vi.importActual('drizzle-orm')),
     sql: sqlFn,
     getTableName: vi.fn().mockReturnValue('mock_table'),
   };

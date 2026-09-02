@@ -41,8 +41,7 @@ vi.mock('@/lib/erfassung/bulk-extraction', () => ({
 }));
 
 vi.mock('@/lib/schemas', () => ({
-  validateBody: vi.fn()
-    .mockReturnValue({ success: true, data: { text: 'Product A\nProduct B' } }),
+  validateBody: vi.fn().mockReturnValue({ success: true, data: { text: 'Product A\nProduct B' } }),
   BulkTextSchema: {},
 }));
 
@@ -97,7 +96,7 @@ beforeEach(async () => {
     { produktname: 'Product B', hersteller: 'Brand B' },
   ]);
 
-  const schemas = await import('@/lib/schemas') as any;
+  const schemas = (await import('@/lib/schemas')) as any;
   schemas.validateBody.mockReturnValue({ success: true, data: { text: 'Product A\nProduct B' } });
 });
 
@@ -115,7 +114,7 @@ describe('POST /api/admin/erfassung/bulk-text — unauthenticated', () => {
 
 describe('POST /api/admin/erfassung/bulk-text — validation', () => {
   it('returns 400 when body is invalid', async () => {
-    const schemas = await import('@/lib/schemas') as any;
+    const schemas = (await import('@/lib/schemas')) as any;
     schemas.validateBody.mockReturnValueOnce({
       success: false,
       error: NextResponse.json(

@@ -421,7 +421,8 @@ describe('POST /api/locations/[id]/bookings — validation', () => {
     mockSelect.mockImplementation(() => {
       selectCallCount++;
       if (selectCallCount === 1) {
-        const mockLocWhere = vi.fn()
+        const mockLocWhere = vi
+          .fn()
           .mockResolvedValue([{ ...MOCK_LOCATION_APPROVED, maxCapacity: 5 }]);
         return { from: vi.fn().mockReturnValue({ where: mockLocWhere }) };
       }

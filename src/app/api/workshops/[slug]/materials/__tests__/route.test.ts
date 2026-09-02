@@ -114,7 +114,8 @@ const MOCK_PUBLIC_MATERIAL = {
 
 // Build parallel query chain with .then() for workshop lookup and registration check
 function makeWorkshopLookupChain(workshop: unknown) {
-  const thenFn = vi.fn()
+  const thenFn = vi
+    .fn()
     .mockImplementation((cb: (rows: unknown[]) => unknown) =>
       Promise.resolve(cb(workshop ? [workshop] : [])),
     );
@@ -124,7 +125,8 @@ function makeWorkshopLookupChain(workshop: unknown) {
 }
 
 function makeRegistrationLookupChain(reg: unknown) {
-  const thenFn = vi.fn()
+  const thenFn = vi
+    .fn()
     .mockImplementation((cb: (rows: unknown[]) => unknown) =>
       Promise.resolve(cb(reg ? [reg] : [])),
     );

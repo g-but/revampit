@@ -14,7 +14,8 @@ const mockTxInsertConflict = vi.fn().mockResolvedValue(undefined);
 const mockTxInsertValues = vi.fn().mockReturnValue({ onConflictDoUpdate: mockTxInsertConflict });
 const mockTxInsert = vi.fn().mockReturnValue({ values: mockTxInsertValues });
 const mockTx = { delete: mockTxDelete, insert: mockTxInsert };
-const mockTransaction = vi.fn()
+const mockTransaction = vi
+  .fn()
   .mockImplementation((fn: (tx: typeof mockTx) => Promise<unknown>) => fn(mockTx));
 
 vi.mock('@/db', () => ({

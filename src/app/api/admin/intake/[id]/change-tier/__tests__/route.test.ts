@@ -197,7 +197,7 @@ beforeEach(async () => {
     data: { new_tier: 'parts', reason: 'Screen broken' },
   });
 
-  const checklist = await import('@/config/intake-checklist') as any;
+  const checklist = (await import('@/config/intake-checklist')) as any;
   checklist.getChecklistForDevice.mockReturnValue([{ id: 'photos', label: 'Fotos' }]);
 });
 

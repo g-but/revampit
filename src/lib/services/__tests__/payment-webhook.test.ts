@@ -87,7 +87,8 @@ const mockDbExecute = vi.fn().mockResolvedValue({ rows: [] });
 // outer mocks, so the same mock chain (mockDbUpdate / mockDbSelect /
 // mockDbExecute) drives both the per-statement test assertions AND the
 // transactional payment-webhook flow.
-const mockDbTransaction = vi.fn()
+const mockDbTransaction = vi
+  .fn()
   .mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) =>
     fn({
       select: (...args: unknown[]) => mockDbSelect(...args),
@@ -126,7 +127,7 @@ vi.mock('@/db/schema/inventory', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
   and: vi.fn().mockReturnValue({ __and: true }),
   sql: Object.assign(vi.fn().mockReturnValue({ __sql: 'mocked' }), {
@@ -388,7 +389,7 @@ describe('handleMarketplacePayment — RESERVED', () => {
 
   it('does not throw when fire-and-forget email fails', async () => {
     const order = makeOrder({ status: ORDER_STATUS.PENDING_PAYMENT });
-    const { sendCustomEmail } = await import('@/lib/email') as any;
+    const { sendCustomEmail } = (await import('@/lib/email')) as any;
     sendCustomEmail.mockRejectedValueOnce(new Error('SMTP down'));
 
     await expect(
@@ -463,7 +464,7 @@ describe('handleMarketplacePayment — Kivvi sync ownership guard (RESERVED)', (
         },
       ]),
     );
-    const { createKivviInvoice } = await import('@/lib/kivvi/client') as any;
+    const { createKivviInvoice } = (await import('@/lib/kivvi/client')) as any;
     const order = makeOrder({ status: ORDER_STATUS.PENDING_PAYMENT, listingId: 'listing-owned' });
 
     await handleMarketplacePayment(order, PAYREXX_TRANSACTION_STATUS.RESERVED, 'tx-owned', {
@@ -492,7 +493,7 @@ describe('handleMarketplacePayment — Kivvi sync ownership guard (RESERVED)', (
       updateKivviDocumentStatus,
       recordKivviPayment,
       recordKivviAgencySale,
-    } = await import('@/lib/kivvi/client') as any;
+    } = (await import('@/lib/kivvi/client')) as any;
     const order = makeOrder({
       status: ORDER_STATUS.PENDING_PAYMENT,
       listingId: 'listing-p2p',
@@ -574,7 +575,7 @@ describe('handleMarketplacePayment — CONFIRMED', () => {
 
   it('books P2P seller payout on CONFIRMED when escrow is released', async () => {
     mockDbSelect.mockImplementation(() => makeSelectChain([{ isRevampit: false }]));
-    const { recordKivviPayout } = await import('@/lib/kivvi/client') as any;
+    const { recordKivviPayout } = (await import('@/lib/kivvi/client')) as any;
     const order = makeOrder({
       status: ORDER_STATUS.PAID,
       sellerPayoutChf: '230.00',
@@ -597,7 +598,7 @@ describe('handleMarketplacePayment — CONFIRMED', () => {
 
   it('skips payout sync for owned-stock orders on CONFIRMED', async () => {
     mockDbSelect.mockImplementation(() => makeSelectChain([{ isRevampit: true }]));
-    const { recordKivviPayout } = await import('@/lib/kivvi/client') as any;
+    const { recordKivviPayout } = (await import('@/lib/kivvi/client')) as any;
     const order = makeOrder({ status: ORDER_STATUS.PAID });
 
     await handleMarketplacePayment(order, PAYREXX_TRANSACTION_STATUS.CONFIRMED, null, {

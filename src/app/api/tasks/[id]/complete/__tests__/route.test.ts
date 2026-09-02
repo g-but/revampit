@@ -162,7 +162,7 @@ describe('POST /api/tasks/[id]/complete — unauthenticated', () => {
 
 describe('POST /api/tasks/[id]/complete — task not found', () => {
   it('returns 404 when getActiveTask returns an error response', async () => {
-    const { NextResponse } = await import('next/server') as any;
+    const { NextResponse } = (await import('next/server')) as any;
     mockGetActiveTask.mockResolvedValueOnce({
       error: NextResponse.json({ success: false, error: 'Not found' }, { status: 404 }),
     });

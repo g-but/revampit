@@ -120,7 +120,7 @@ import type { Mock } from 'vitest';
 import { NextRequest, NextResponse } from 'next/server';
 import { POST, PUT, DELETE } from '../route';
 
-const { validateBody } = await import('@/lib/schemas') as any;
+const { validateBody } = (await import('@/lib/schemas')) as any;
 
 const MOCK_SESSION = {
   user: {

@@ -276,14 +276,16 @@ describe('PUT /api/user/technician-profile', () => {
     mockValues.mockReturnValue({ onConflictDoUpdate: mockOnConflictDoUpdate });
     // Second insert (skills)
     let insertCount = 0;
-    vi.spyOn((await import('@/db')).db as any, 'insert').mockImplementation((...args: unknown[]) => {
-      insertCount++;
-      mockInsert(...args);
-      if (insertCount === 1) {
-        return { values: mockValues };
-      }
-      return { values: mockInsertSkillValues };
-    });
+    vi.spyOn((await import('@/db')).db as any, 'insert').mockImplementation(
+      (...args: unknown[]) => {
+        insertCount++;
+        mockInsert(...args);
+        if (insertCount === 1) {
+          return { values: mockValues };
+        }
+        return { values: mockInsertSkillValues };
+      },
+    );
 
     const res = await PUT(makeRequest('PUT', {}) as never);
     const body = await res.json();

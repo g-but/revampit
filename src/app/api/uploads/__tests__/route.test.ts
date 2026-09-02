@@ -43,7 +43,7 @@ vi.mock('sharp', () => {
 
 // Mock path.join to return predictable paths
 vi.mock('path', async () => ({
-  ...await vi.importActual('path'),
+  ...(await vi.importActual('path')),
   join: (...args: string[]) => args.join('/'),
   extname: (filename: string) => {
     const parts = filename.split('.');

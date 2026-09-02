@@ -111,10 +111,9 @@ vi.mock('@/db/schema', () => ({
 vi.mock('drizzle-orm', async () => {
   const sqlFn = vi.fn().mockReturnValue({ __sql: 'mocked' });
   (sqlFn as unknown as Record<string, unknown>).raw = vi.fn().mockReturnValue({ __sql: 'raw' });
-  (sqlFn as unknown as Record<string, unknown>).join = vi.fn()
-    .mockReturnValue({ __sql: 'joined' });
+  (sqlFn as unknown as Record<string, unknown>).join = vi.fn().mockReturnValue({ __sql: 'joined' });
   return {
-    ...await vi.importActual('drizzle-orm'),
+    ...(await vi.importActual('drizzle-orm')),
     sql: sqlFn,
     eq: vi.fn().mockReturnValue({ __eq: true }),
     and: vi.fn().mockReturnValue({ __and: true }),

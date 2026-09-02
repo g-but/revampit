@@ -86,7 +86,7 @@ describe('createInAppNotifications', () => {
   });
 
   it('deduplicates recipients and delegates to notifyUsers', async () => {
-    const { notifyUsers } = await import('@/lib/services/notifications') as any;
+    const { notifyUsers } = (await import('@/lib/services/notifications')) as any;
 
     await createInAppNotifications({
       recipientIds: ['u1', 'u2', 'u1'],
@@ -110,7 +110,7 @@ describe('createInAppNotifications', () => {
   });
 
   it('delegates single recipient to notifyUsers', async () => {
-    const { notifyUsers } = await import('@/lib/services/notifications') as any;
+    const { notifyUsers } = (await import('@/lib/services/notifications')) as any;
 
     await createInAppNotifications({
       recipientIds: ['u1'],
@@ -125,7 +125,7 @@ describe('createInAppNotifications', () => {
   });
 
   it('does not throw on notifyUsers failure (logs warning instead)', async () => {
-    const { notifyUsers } = await import('@/lib/services/notifications') as any;
+    const { notifyUsers } = (await import('@/lib/services/notifications')) as any;
     notifyUsers.mockRejectedValueOnce(new Error('Service error'));
 
     await expect(
@@ -136,7 +136,7 @@ describe('createInAppNotifications', () => {
       }),
     ).resolves.toBeUndefined();
 
-    const { logger } = await import('@/lib/logger') as any;
+    const { logger } = (await import('@/lib/logger')) as any;
     expect(logger.warn).toHaveBeenCalledWith(
       'Failed to create in-app notifications',
       expect.objectContaining({ error: expect.any(Error) }),

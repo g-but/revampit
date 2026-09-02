@@ -62,7 +62,7 @@ vi.mock('@/db/schema', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
   desc: vi.fn().mockReturnValue({ __desc: true }),
 }));
@@ -189,7 +189,7 @@ describe('GET /api/blog/my-submissions — authenticated', () => {
   });
 
   it('adds statusLabel to each submission', async () => {
-    const { getApprovalStatusLabel } = await import('@/config/approval-status') as any;
+    const { getApprovalStatusLabel } = (await import('@/config/approval-status')) as any;
     const response = await GET(makeRequest());
     const body = await response.json();
     expect(body.data.submissions[0].statusLabel).toBe('Label: pending');
@@ -240,7 +240,7 @@ describe('GET /api/blog/my-submissions — authenticated', () => {
 
   it('queries by current user id', async () => {
     await GET(makeRequest());
-    const { eq } = await import('drizzle-orm') as any;
+    const { eq } = (await import('drizzle-orm')) as any;
     expect(eq).toHaveBeenCalledWith(expect.anything(), 'user-blog');
   });
 

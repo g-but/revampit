@@ -108,7 +108,8 @@ vi.mock('@/lib/schemas/intake', () => ({
 }));
 
 vi.mock('@/config/intake-checklist', () => ({
-  getChecklistForDevice: vi.fn()
+  getChecklistForDevice: vi
+    .fn()
     .mockReturnValue([{ id: 'photos', label: 'Fotos', category: 'Aufnahme' }]),
   isChecklistComplete: vi.fn().mockReturnValue(false),
   hasChecklistFailure: vi.fn().mockReturnValue(false),
@@ -215,7 +216,7 @@ beforeEach(async () => {
     data: { item_id: 'photos', result: 'pass', notes: '' },
   });
 
-  const checklist = await import('@/config/intake-checklist') as any;
+  const checklist = (await import('@/config/intake-checklist')) as any;
   checklist.getChecklistForDevice.mockReturnValue([
     { id: 'photos', label: 'Fotos', category: 'Aufnahme' },
   ]);
@@ -256,7 +257,7 @@ describe('PATCH /api/admin/intake/[id]/checklist — validation', () => {
   });
 
   it('returns 400 when checklist item_id is not valid for this device', async () => {
-    const checklist = await import('@/config/intake-checklist') as any;
+    const checklist = (await import('@/config/intake-checklist')) as any;
     checklist.getChecklistForDevice.mockReturnValueOnce([]); // no applicable items
     const response = await PATCH(
       makeRequest({ item_id: 'nonexistent', result: 'pass' }),
@@ -275,7 +276,7 @@ describe('PATCH /api/admin/intake/[id]/checklist — validation', () => {
   });
 
   it('returns 400 when the second-person rule is violated (Vier-Augen-Prinzip)', async () => {
-    const checklist = await import('@/config/intake-checklist') as any;
+    const checklist = (await import('@/config/intake-checklist')) as any;
     checklist.violatesSecondPersonRule.mockReturnValueOnce(true);
     const response = await PATCH(makeRequest(), makeContext());
     expect(response.status).toBe(400);
@@ -284,7 +285,7 @@ describe('PATCH /api/admin/intake/[id]/checklist — validation', () => {
   });
 
   it('does not infer a solo override from a generic note', async () => {
-    const checklist = await import('@/config/intake-checklist') as any;
+    const checklist = (await import('@/config/intake-checklist')) as any;
     checklist.violatesSecondPersonRule.mockReturnValue(true);
     mockValidateBody.mockReturnValueOnce({
       success: true,
@@ -298,7 +299,7 @@ describe('PATCH /api/admin/intake/[id]/checklist — validation', () => {
   });
 
   it('allows an explicit solo sign-off with an audited override reason', async () => {
-    const checklist = await import('@/config/intake-checklist') as any;
+    const checklist = (await import('@/config/intake-checklist')) as any;
     checklist.violatesSecondPersonRule.mockReturnValue(true);
     mockValidateBody.mockReturnValueOnce({
       success: true,
@@ -329,7 +330,7 @@ describe('PATCH /api/admin/intake/[id]/checklist — validation', () => {
   });
 
   it('does NOT apply the second-person rule to fail verdicts', async () => {
-    const checklist = await import('@/config/intake-checklist') as any;
+    const checklist = (await import('@/config/intake-checklist')) as any;
     checklist.violatesSecondPersonRule.mockReturnValue(true);
     mockValidateBody.mockReturnValueOnce({
       success: true,
@@ -405,7 +406,7 @@ describe('PATCH /api/admin/intake/[id]/checklist — bulk (Alles in Ordnung)', (
   // column and silently dropped most verdicts. A bulk pass is ONE request,
   // ONE serialized write, ONE audit event.
   it('marks many items in one request with a single timeline event', async () => {
-    const checklist = await import('@/config/intake-checklist') as any;
+    const checklist = (await import('@/config/intake-checklist')) as any;
     checklist.getChecklistForDevice.mockReturnValue([
       { id: 'photos', label: 'Fotos', category: 'Aufnahme' },
       { id: 'cleaning', label: 'Reinigung', category: 'Aufnahme' },
@@ -431,7 +432,7 @@ describe('PATCH /api/admin/intake/[id]/checklist — bulk (Alles in Ordnung)', (
   });
 
   it('refuses to bulk-sign a second-person item (final QA stays individual)', async () => {
-    const checklist = await import('@/config/intake-checklist') as any;
+    const checklist = (await import('@/config/intake-checklist')) as any;
     checklist.getChecklistForDevice.mockReturnValue([
       { id: 'photos', label: 'Fotos', category: 'Aufnahme' },
       { id: 'final_qa', label: 'QK', category: 'QK', requiresSecondPerson: true },

@@ -193,7 +193,7 @@ beforeEach(async () => {
   mockValues.mockReturnValue({ returning: mockReturning });
   mockReturning.mockResolvedValue([MOCK_PROJECT]);
 
-  const dbMod = await import('@/db') as any;
+  const dbMod = (await import('@/db')) as any;
   dbMod.db.select.mockReturnValue(q);
   dbMod.db.insert.mockReturnValue({ values: mockValues });
 });
@@ -260,7 +260,7 @@ describe('POST /api/task-projects — validation', () => {
 describe('POST /api/task-projects — success', () => {
   beforeEach(async () => {
     // For POST: first select call uses where as terminal (user lookup)
-    const dbMod = await import('@/db') as any;
+    const dbMod = (await import('@/db')) as any;
     const userLookupChain: Record<string, Mock> = {};
     ['from', 'leftJoin', 'groupBy'].forEach((m) => {
       userLookupChain[m] = vi.fn().mockReturnValue(userLookupChain);

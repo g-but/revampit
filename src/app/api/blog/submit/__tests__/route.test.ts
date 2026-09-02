@@ -83,7 +83,7 @@ vi.mock('@/db/schema', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
   desc: vi.fn().mockReturnValue({ __desc: true }),
 }));
@@ -196,13 +196,13 @@ describe('GET /api/blog/submit — authenticated', () => {
 
   it('applies eq filter when status param is provided', async () => {
     await GET(makeRequest({ status: 'pending' }));
-    const { eq } = await import('drizzle-orm') as any;
+    const { eq } = (await import('drizzle-orm')) as any;
     expect(eq).toHaveBeenCalledWith(expect.anything(), 'pending');
   });
 
   it('does not apply eq filter when status=all', async () => {
     await GET(makeRequest({ status: 'all' }));
-    const { eq } = await import('drizzle-orm') as any;
+    const { eq } = (await import('drizzle-orm')) as any;
     const statusCalls = (eq as Mock).mock.calls.filter((c) => c[1] === 'all');
     expect(statusCalls).toHaveLength(0);
   });

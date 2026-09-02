@@ -65,7 +65,7 @@ describe('getEmailProvider', () => {
     // Import fresh in each test to avoid cross-contamination
     vi.resetModules();
     await withEnv({ LISTMONK_ENABLED: undefined }, async () => {
-      const { getEmailProvider } = await import('../email') as any;
+      const { getEmailProvider } = (await import('../email')) as any;
       expect(getEmailProvider()).toBe('smtp');
     });
   });
@@ -73,7 +73,7 @@ describe('getEmailProvider', () => {
   it('returns "listmonk" when LISTMONK_ENABLED=true', async () => {
     vi.resetModules();
     await withEnv({ LISTMONK_ENABLED: 'true' }, async () => {
-      const { getEmailProvider } = await import('../email') as any;
+      const { getEmailProvider } = (await import('../email')) as any;
       expect(getEmailProvider()).toBe('listmonk');
     });
   });
@@ -81,7 +81,7 @@ describe('getEmailProvider', () => {
   it('returns "smtp" when LISTMONK_ENABLED=false', async () => {
     vi.resetModules();
     await withEnv({ LISTMONK_ENABLED: 'false' }, async () => {
-      const { getEmailProvider } = await import('../email') as any;
+      const { getEmailProvider } = (await import('../email')) as any;
       expect(getEmailProvider()).toBe('smtp');
     });
   });
@@ -91,7 +91,7 @@ describe('isEmailConfigured', () => {
   it('returns true when LISTMONK_ENABLED=true', async () => {
     vi.resetModules();
     await withEnv({ LISTMONK_ENABLED: 'true' }, async () => {
-      const { isEmailConfigured } = await import('../email') as any;
+      const { isEmailConfigured } = (await import('../email')) as any;
       expect(isEmailConfigured()).toBe(true);
     });
   });
@@ -105,7 +105,7 @@ describe('isEmailConfigured', () => {
         EMAIL_PASS: 'secret',
       },
       async () => {
-        const { isEmailConfigured } = await import('../email') as any;
+        const { isEmailConfigured } = (await import('../email')) as any;
         expect(isEmailConfigured()).toBe(true);
       },
     );
@@ -120,7 +120,7 @@ describe('isEmailConfigured', () => {
         EMAIL_PASS: undefined,
       },
       async () => {
-        const { isEmailConfigured } = await import('../email') as any;
+        const { isEmailConfigured } = (await import('../email')) as any;
         expect(isEmailConfigured()).toBe(false);
       },
     );
@@ -137,7 +137,7 @@ describe('validateEmailConfig', () => {
         EMAIL_PASS: 'secret',
       },
       async () => {
-        const { validateEmailConfig } = await import('../email') as any;
+        const { validateEmailConfig } = (await import('../email')) as any;
         expect(() => validateEmailConfig()).toThrow(/EMAIL_USER/);
       },
     );
@@ -152,7 +152,7 @@ describe('validateEmailConfig', () => {
         EMAIL_PASS: undefined,
       },
       async () => {
-        const { validateEmailConfig } = await import('../email') as any;
+        const { validateEmailConfig } = (await import('../email')) as any;
         expect(() => validateEmailConfig()).toThrow(/EMAIL_PASS/);
       },
     );
@@ -161,7 +161,7 @@ describe('validateEmailConfig', () => {
   it('does not throw when LISTMONK_ENABLED=true', async () => {
     vi.resetModules();
     await withEnv({ LISTMONK_ENABLED: 'true' }, async () => {
-      const { validateEmailConfig } = await import('../email') as any;
+      const { validateEmailConfig } = (await import('../email')) as any;
       expect(() => validateEmailConfig()).not.toThrow();
     });
   });

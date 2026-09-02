@@ -242,7 +242,7 @@ beforeEach(async () => {
     return await cb(tx);
   });
   // Re-wire analysis mocks that lose impl after resetAllMocks
-  const analysisMocks = await import('@/lib/inventory/csv-analysis') as unknown as {
+  const analysisMocks = (await import('@/lib/inventory/csv-analysis')) as unknown as {
     analyzeProductDescription: Mock;
     calculateSustainabilityScore: Mock;
   };

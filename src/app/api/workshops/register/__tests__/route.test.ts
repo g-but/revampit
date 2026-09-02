@@ -191,7 +191,8 @@ function makeWorkshopChain(workshop: unknown) {
 
 // Build a chain for the parallel duplicate check + instance lookup (uses .then())
 function makeParallelChain(row: unknown) {
-  const thenFn = vi.fn()
+  const thenFn = vi
+    .fn()
     .mockImplementation((cb: (rows: unknown[]) => unknown) =>
       Promise.resolve(cb(row ? [row] : [])),
     );
@@ -333,8 +334,8 @@ describe('POST /api/workshops/register — already registered', () => {
 
     // Inspect the duplicate-check's WHERE clause: it should be an `and(...)`
     // wrapping eq(userId), eq(workshopId), AND ne(status, 'cancelled').
-    const whereMock = (parallelChain.from as Mock).mock.results[0].value.innerJoin.mock
-      .results[0].value.where as Mock;
+    const whereMock = (parallelChain.from as Mock).mock.results[0].value.innerJoin.mock.results[0]
+      .value.where as Mock;
     const whereArg = whereMock.mock.calls[0][0] as { __and?: unknown[] };
     expect(whereArg.__and).toBeDefined();
     const containsCancelledExclusion = whereArg.__and!.some(

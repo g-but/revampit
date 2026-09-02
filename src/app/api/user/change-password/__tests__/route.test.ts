@@ -49,7 +49,7 @@ vi.mock('@/db/schema', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
   sql: Object.assign(vi.fn().mockReturnValue({ __sql: 'NOW()' }), { raw: vi.fn() }),
 }));
@@ -235,7 +235,7 @@ describe('POST /api/user/change-password — success', () => {
 
   it("updates only the authenticated user's record", async () => {
     await POST(makeRequest({ currentPassword: 'OldPass1!', newPassword: 'NewPass99!' }));
-    const { eq } = await import('drizzle-orm') as any;
+    const { eq } = (await import('drizzle-orm')) as any;
     expect(eq).toHaveBeenCalledWith(expect.anything(), 'user-99');
   });
 

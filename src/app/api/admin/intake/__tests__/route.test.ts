@@ -235,7 +235,7 @@ beforeEach(async () => {
       rows: [{ in_progress: '1', ready: '0', published: '0', total_unfiltered: '1' }],
     }); // statusCounts
 
-  const checklist = await import('@/config/intake-checklist') as any;
+  const checklist = (await import('@/config/intake-checklist')) as any;
   checklist.isChecklistComplete.mockReturnValue(false);
   checklist.getChecklistProgress.mockReturnValue({ completed: 0, total: 5 });
 });

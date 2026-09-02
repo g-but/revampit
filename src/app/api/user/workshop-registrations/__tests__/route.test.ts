@@ -58,7 +58,7 @@ vi.mock('@/db/schema', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
   desc: vi.fn().mockReturnValue({ __desc: true }),
 }));
@@ -164,7 +164,7 @@ describe('GET /api/user/workshop-registrations — authenticated', () => {
   it('filters by session user id (queries only current user)', async () => {
     await GET(makeRequest());
     // Verify eq was called with the user's id
-    const { eq } = await import('drizzle-orm') as any;
+    const { eq } = (await import('drizzle-orm')) as any;
     expect(eq).toHaveBeenCalledWith(expect.anything(), 'user-1');
   });
 });

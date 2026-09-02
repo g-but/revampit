@@ -171,7 +171,7 @@ describe('POST /api/it-hilfe/requests/[id]/complete', () => {
       return fn({ update: txUpdate, execute: txExecute });
     });
     // Re-establish fire-and-forget mocks cleared by resetAllMocks
-    const notif = await import('@/lib/it-hilfe/notifications') as unknown as {
+    const notif = (await import('@/lib/it-hilfe/notifications')) as unknown as {
       notifyRequestCompleted: Mock;
     };
     notif.notifyRequestCompleted.mockImplementation(() => undefined);

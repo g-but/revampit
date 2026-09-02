@@ -22,7 +22,7 @@
  */
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   sql: vi.fn((strings: TemplateStringsArray) => ({ __sql: strings.join('') })),
 }));
 

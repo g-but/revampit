@@ -233,7 +233,7 @@ describe('PUT /api/admin/workshops/registrations/[id] — success', () => {
     const response = await PUT(makeRequest({ status: 'confirmed' }), makeContext());
     expect(response.status).toBe(200); // status change applies regardless
 
-    const { logger } = await import('@/lib/logger') as any;
+    const { logger } = (await import('@/lib/logger')) as any;
     expect(logger.warn).toHaveBeenCalledWith(
       'Workshop status update email failed (resolved)',
       expect.objectContaining({ newStatus: 'confirmed', error: 'Listmonk disabled' }),

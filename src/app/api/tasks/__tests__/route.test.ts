@@ -231,7 +231,7 @@ beforeEach(async () => {
   mockGetDbUserId.mockResolvedValue({ dbUserId: 'db-user-1' });
   mockNotifyUsers.mockResolvedValue(undefined);
 
-  const dbMod = await import('@/db') as any;
+  const dbMod = (await import('@/db')) as any;
 
   // GET default: single select chain that resolves at orderBy
   dbMod.db.select.mockReturnValue(makeSelectChain('offset', [MOCK_TASK]));
@@ -270,7 +270,7 @@ describe('GET /api/tasks — authenticated', () => {
   });
 
   it('returns empty array when no tasks exist', async () => {
-    const dbMod = await import('@/db') as any;
+    const dbMod = (await import('@/db')) as any;
     dbMod.db.select.mockReturnValueOnce(makeSelectChain('offset', []));
     const response = await GET(makeGetRequest());
     const body = await response.json();

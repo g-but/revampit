@@ -137,7 +137,7 @@ describe('GET /api/it-hilfe/requests', () => {
   let GET: (req: NextRequest) => Promise<Response>;
 
   beforeAll(async () => {
-    const mod = await import('../../it-hilfe/requests/route') as any;
+    const mod = (await import('../../it-hilfe/requests/route')) as any;
     GET = mod.GET;
   });
 
@@ -234,7 +234,7 @@ describe('GET /api/it-hilfe/requests/[id]', () => {
   let GET: (req: NextRequest, ctx: { params: Promise<{ id: string }> }) => Promise<Response>;
 
   beforeAll(async () => {
-    const mod = await import('../../it-hilfe/requests/[id]/route') as any;
+    const mod = (await import('../../it-hilfe/requests/[id]/route')) as any;
     GET = mod.GET;
   });
 
@@ -330,7 +330,7 @@ describe('PUT /api/it-hilfe/requests/[id]', () => {
   let PUT: (req: NextRequest, ctx: { params: Promise<{ id: string }> }) => Promise<Response>;
 
   beforeAll(async () => {
-    const mod = await import('../../it-hilfe/requests/[id]/route') as any;
+    const mod = (await import('../../it-hilfe/requests/[id]/route')) as any;
     PUT = mod.PUT;
   });
 

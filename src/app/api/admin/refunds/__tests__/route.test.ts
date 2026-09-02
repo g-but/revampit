@@ -128,7 +128,7 @@ beforeEach(async () => {
   vi.resetAllMocks();
   mockAuth.mockResolvedValue(MOCK_SESSION);
 
-  const helpers = await import('@/lib/api/helpers') as any;
+  const helpers = (await import('@/lib/api/helpers')) as any;
   helpers.parsePagination.mockReturnValue({ limit: 20, offset: 0 });
 
   // Two parallel queries: refunds list + count

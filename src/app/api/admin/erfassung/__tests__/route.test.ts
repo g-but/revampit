@@ -67,7 +67,7 @@ vi.mock('@/db/schema/inventory', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
 }));
 
@@ -160,7 +160,7 @@ beforeEach(async () => {
   mockWhere.mockReturnValue({ catch: mockCatch });
   mockCatch.mockReturnValue(undefined);
 
-  const schemas = await import('@/lib/schemas') as any;
+  const schemas = (await import('@/lib/schemas')) as any;
   schemas.validateBody.mockReturnValue({
     success: true,
     data: {
@@ -187,7 +187,7 @@ describe('POST /api/admin/erfassung — unauthenticated', () => {
 
 describe('POST /api/admin/erfassung — validation', () => {
   it('returns 400 when body is invalid', async () => {
-    const schemas = await import('@/lib/schemas') as any;
+    const schemas = (await import('@/lib/schemas')) as any;
     schemas.validateBody.mockReturnValueOnce({
       success: false,
       error: NextResponse.json(

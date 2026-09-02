@@ -298,9 +298,9 @@ beforeEach(async () => {
   mockTxExecute.mockResolvedValue({ rows: [{ status: MOCK_ORDER.status }] });
 
   // Re-wire fire-and-forget mocks
-  const emailMod = await import('@/lib/email') as any;
+  const emailMod = (await import('@/lib/email')) as any;
   emailMod.sendCustomEmail.mockResolvedValue({ success: true });
-  const notifyMod = await import('@/lib/services/notifications') as any;
+  const notifyMod = (await import('@/lib/services/notifications')) as any;
   notifyMod.createNotification.mockResolvedValue(undefined);
 });
 
@@ -399,7 +399,7 @@ describe('POST confirm-receipt — cart order (listingId null)', () => {
 // verify the re-check skips apply when the locked status is no longer valid.
 describe('POST confirm-receipt — race-loser does not double-capture', () => {
   it('skips capture + writes when the order already left shipped/delivered under the lock', async () => {
-    const payrexx = await import('@/lib/payments/payrexx-client') as any;
+    const payrexx = (await import('@/lib/payments/payrexx-client')) as any;
     // Pre-lock fetch sees a shipped order (valid)...
     wireSelectReturning({ ...MOCK_ORDER, status: 'shipped' });
     // ...but under the lock it is already 'completed' (a concurrent caller won).

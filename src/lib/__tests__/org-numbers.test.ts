@@ -74,7 +74,7 @@ vi.mock('@/db/schema', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
   asc: vi.fn().mockReturnValue({ __asc: true }),
 }));
@@ -237,7 +237,7 @@ describe('getOrgNumbers', () => {
   });
 
   it('passes category filter to query when provided', async () => {
-    const { eq } = await import('drizzle-orm') as unknown as { eq: Mock };
+    const { eq } = (await import('drizzle-orm')) as unknown as { eq: Mock };
     mockDbSelect.mockReturnValueOnce(makeChain([makeRow()]));
 
     await getOrgNumbers('impact');

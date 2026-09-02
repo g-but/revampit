@@ -85,7 +85,7 @@ vi.mock('@/db/schema', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   sql: Object.assign(vi.fn().mockReturnValue({ __sql: 'mocked' }), {
     raw: vi.fn().mockReturnValue({ __raw: true }),
   }),
@@ -94,12 +94,11 @@ vi.mock('drizzle-orm', async () => ({
   max: vi.fn().mockReturnValue({ __max: null }),
 }));
 
-const mockChunkText = vi.fn()
-  .mockReturnValue([{ content: 'text chunk', index: 0, metadata: {} }]);
-const mockChunkMarkdown = vi.fn()
+const mockChunkText = vi.fn().mockReturnValue([{ content: 'text chunk', index: 0, metadata: {} }]);
+const mockChunkMarkdown = vi
+  .fn()
   .mockReturnValue([{ content: 'md chunk', index: 0, metadata: {} }]);
-const mockChunkCode = vi.fn()
-  .mockReturnValue([{ content: 'code chunk', index: 0, metadata: {} }]);
+const mockChunkCode = vi.fn().mockReturnValue([{ content: 'code chunk', index: 0, metadata: {} }]);
 
 vi.mock('../chunking', () => ({
   chunkText: (...args: unknown[]) => mockChunkText(...args),

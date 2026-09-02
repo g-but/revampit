@@ -179,7 +179,7 @@ beforeEach(async () => {
   mockDeleteDecision.mockResolvedValue({ deleted: true });
 
   // Re-setup isSuperAdmin mock after resetAllMocks
-  const perms = await import('@/lib/permissions') as any;
+  const perms = (await import('@/lib/permissions')) as any;
   perms.isSuperAdmin.mockReturnValue(false);
 });
 

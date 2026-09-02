@@ -162,7 +162,7 @@ beforeEach(async () => {
   mockCreateDecision.mockResolvedValue(MOCK_CREATED);
 
   // Re-set parsePagination mock after resetAllMocks
-  const helpers = await import('@/lib/api/helpers') as any;
+  const helpers = (await import('@/lib/api/helpers')) as any;
   helpers.parsePagination.mockReturnValue({ page: 1, limit: 20, offset: 0 });
 });
 

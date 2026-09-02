@@ -61,7 +61,7 @@ vi.mock('@/db/schema/auth', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   sql: Object.assign(vi.fn().mockReturnValue({ __sql: 'sql' }), {
     raw: vi.fn(),
     join: vi.fn(),
@@ -81,8 +81,7 @@ vi.mock('@/lib/security/rate-limit', () => ({
 
 const mockFindOrCreateAnonymousUser = vi.fn();
 vi.mock('@/lib/it-hilfe/find-or-create-anonymous-user', () => ({
-  findOrCreateAnonymousUser: (...args: unknown[]) =>
-    mockFindOrCreateAnonymousUser(...args),
+  findOrCreateAnonymousUser: (...args: unknown[]) => mockFindOrCreateAnonymousUser(...args),
 }));
 
 const mockCreatePasswordResetToken = vi.fn();
@@ -248,13 +247,13 @@ beforeEach(async () => {
   // vi.resetAllMocks() wipes return values on vi.fn() defined inside
   // vi.mock() factories — re-set the template mock so it doesn't return
   // undefined into sendCustomEmail.
-  const templates = await import('@/lib/email/templates/it-hilfe') as any;
+  const templates = (await import('@/lib/email/templates/it-hilfe')) as any;
   templates.itHilfeAnonymousRequestClaim.mockReturnValue({ subject: 's', html: 'h', text: 't' });
 
-  const helpers = await import('@/lib/api/helpers') as any;
+  const helpers = (await import('@/lib/api/helpers')) as any;
   helpers.parsePagination.mockReturnValue({ limit: 20, offset: 0, page: 1 });
 
-  const schemas = await import('@/lib/schemas/it-hilfe') as any;
+  const schemas = (await import('@/lib/schemas/it-hilfe')) as any;
   schemas.validateAndRespond.mockReturnValue({
     success: true,
     data: {
@@ -267,7 +266,7 @@ beforeEach(async () => {
     },
   });
 
-  const itHilfe = await import('@/config/it-hilfe') as any;
+  const itHilfe = (await import('@/config/it-hilfe')) as any;
   itHilfe.deriveBudgetType.mockReturnValue('free');
 });
 
@@ -334,7 +333,7 @@ describe('POST /api/it-hilfe/requests — anonymous submissions', () => {
 
   it('returns 201 when session is null AND submitterEmail is provided', async () => {
     mockAuth.mockResolvedValueOnce(null);
-    const schemas = await import('@/lib/schemas/it-hilfe') as any;
+    const schemas = (await import('@/lib/schemas/it-hilfe')) as any;
     schemas.validateAndRespond.mockReturnValueOnce({
       success: true,
       data: {
@@ -364,7 +363,7 @@ describe('POST /api/it-hilfe/requests — anonymous submissions', () => {
   it('sends the claim email when wasCreated is true (new anonymous account)', async () => {
     mockAuth.mockResolvedValueOnce(null);
     mockFindOrCreateAnonymousUser.mockResolvedValueOnce({ userId: 'new-anon-1', wasCreated: true });
-    const schemas = await import('@/lib/schemas/it-hilfe') as any;
+    const schemas = (await import('@/lib/schemas/it-hilfe')) as any;
     schemas.validateAndRespond.mockReturnValueOnce({
       success: true,
       data: {
@@ -390,7 +389,7 @@ describe('POST /api/it-hilfe/requests — anonymous submissions', () => {
     // request, so the user lands on it after setting a password + signing in.
     // (Without this, the post-claim UX dumps users on the default page and
     // they have to navigate to /it-hilfe/my themselves.)
-    const templates = await import('@/lib/email/templates/it-hilfe') as any;
+    const templates = (await import('@/lib/email/templates/it-hilfe')) as any;
     const claimArgs = templates.itHilfeAnonymousRequestClaim.mock.calls[0];
     const claimUrl = claimArgs[1] as string;
     expect(claimUrl).toContain('callbackUrl=');
@@ -401,7 +400,7 @@ describe('POST /api/it-hilfe/requests — anonymous submissions', () => {
     // anonymous accounts (the claim email replaces it). Two emails to the
     // same person would confuse and the standard one's "view your request"
     // link wouldn't work until they've claimed.
-    const notifMod = await import('@/lib/it-hilfe/notifications') as any;
+    const notifMod = (await import('@/lib/it-hilfe/notifications')) as any;
     const notifArgs = notifMod.sendRequestCreatedNotifications.mock.calls[0][0];
     expect(notifArgs.includeRequesterConfirmation).toBe(false);
   });
@@ -412,7 +411,7 @@ describe('POST /api/it-hilfe/requests — anonymous submissions', () => {
       userId: 'existing-2',
       wasCreated: false,
     });
-    const schemas = await import('@/lib/schemas/it-hilfe') as any;
+    const schemas = (await import('@/lib/schemas/it-hilfe')) as any;
     schemas.validateAndRespond.mockReturnValueOnce({
       success: true,
       data: { title: 'X', submitterEmail: 'known@example.com' },
@@ -421,7 +420,7 @@ describe('POST /api/it-hilfe/requests — anonymous submissions', () => {
     await POST(makePostRequest({ submitterEmail: 'known@example.com' }));
     await new Promise((resolve) => setImmediate(resolve));
 
-    const notifMod = await import('@/lib/it-hilfe/notifications') as any;
+    const notifMod = (await import('@/lib/it-hilfe/notifications')) as any;
     const notifArgs = notifMod.sendRequestCreatedNotifications.mock.calls[0][0];
     // Existing user: they have a password, the standard confirmation email's
     // link works for them — DON'T suppress it.
@@ -437,7 +436,7 @@ describe('POST /api/it-hilfe/requests — anonymous submissions', () => {
     // email never arrived; user locked out).
     mockAuth.mockResolvedValueOnce(null);
     mockFindOrCreateAnonymousUser.mockResolvedValueOnce({ userId: 'new-anon-2', wasCreated: true });
-    const schemas = await import('@/lib/schemas/it-hilfe') as any;
+    const schemas = (await import('@/lib/schemas/it-hilfe')) as any;
     schemas.validateAndRespond.mockReturnValueOnce({
       success: true,
       data: { title: 'Laptop geht nicht', submitterEmail: 'newuser2@example.com' },
@@ -447,7 +446,7 @@ describe('POST /api/it-hilfe/requests — anonymous submissions', () => {
     await POST(makePostRequest({ submitterEmail: 'newuser2@example.com' }));
     await new Promise((resolve) => setImmediate(resolve));
 
-    const loggerMod = await import('@/lib/logger') as any;
+    const loggerMod = (await import('@/lib/logger')) as any;
     expect(loggerMod.logger.warn).toHaveBeenCalledWith(
       'Anonymous-request claim email failed (resolved)',
       expect.objectContaining({ error: 'SMTP rejected', email: 'newuser2@example.com' }),
@@ -460,7 +459,7 @@ describe('POST /api/it-hilfe/requests — anonymous submissions', () => {
       userId: 'existing-1',
       wasCreated: false,
     });
-    const schemas = await import('@/lib/schemas/it-hilfe') as any;
+    const schemas = (await import('@/lib/schemas/it-hilfe')) as any;
     schemas.validateAndRespond.mockReturnValueOnce({
       success: true,
       data: {
@@ -479,7 +478,7 @@ describe('POST /api/it-hilfe/requests — anonymous submissions', () => {
   it('uses client IP for rate limiting key when unauthenticated', async () => {
     mockAuth.mockResolvedValueOnce(null);
     mockGetClientIdentifier.mockReturnValueOnce('203.0.113.1');
-    const schemas = await import('@/lib/schemas/it-hilfe') as any;
+    const schemas = (await import('@/lib/schemas/it-hilfe')) as any;
     schemas.validateAndRespond.mockReturnValueOnce({
       success: true,
       data: { title: 'X', submitterEmail: 'foo@bar.com' },
@@ -504,7 +503,7 @@ describe('POST /api/it-hilfe/requests — rate limiting', () => {
 
 describe('POST /api/it-hilfe/requests — validation', () => {
   it('returns 400 when validation fails', async () => {
-    const schemas = await import('@/lib/schemas/it-hilfe') as any;
+    const schemas = (await import('@/lib/schemas/it-hilfe')) as any;
     schemas.validateAndRespond.mockReturnValueOnce({
       success: false,
       errors: ['title: Titel erforderlich'],

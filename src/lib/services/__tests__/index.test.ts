@@ -50,11 +50,9 @@ vi.mock('../db', () => ({
   getAllServiceTypes: (...args: unknown[]) => mockGetAllServiceTypes(...args),
   getFeaturedServiceTypes: (...args: unknown[]) => mockGetFeaturedServiceTypes(...args),
   getBookableServiceTypes: (...args: unknown[]) => mockGetBookableServiceTypes(...args),
-  getServiceTypesByCategory: (...args: unknown[]) =>
-    mockGetServiceTypesByCategory(...args),
+  getServiceTypesByCategory: (...args: unknown[]) => mockGetServiceTypesByCategory(...args),
   getAllServiceSlugs: (...args: unknown[]) => mockGetAllServiceSlugsFromDb(...args),
-  getAllServiceTypesForAdmin: (...args: unknown[]) =>
-    mockGetAllServiceTypesForAdmin(...args),
+  getAllServiceTypesForAdmin: (...args: unknown[]) => mockGetAllServiceTypesForAdmin(...args),
   updateServiceType: (...args: unknown[]) => mockUpdateServiceType(...args),
   createServiceType: (...args: unknown[]) => mockCreateServiceType(...args),
   deleteServiceType: (...args: unknown[]) => mockDeleteServiceType(...args),

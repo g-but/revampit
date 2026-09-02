@@ -408,7 +408,7 @@ beforeEach(async () => {
 
   // Re-wire fire-and-forget email mocks — resetAllMocks() wipes implementations,
   // so these must be restored or .catch() calls on undefined will throw inside the route
-  const emailMod = await import('@/lib/email') as any;
+  const emailMod = (await import('@/lib/email')) as any;
   emailMod.sendCustomEmail.mockResolvedValue({ success: true });
   emailMod.orderConfirmationBuyer.mockReturnValue({});
   emailMod.newOrderNotificationSeller.mockReturnValue({});
@@ -585,7 +585,7 @@ describe('POST /api/marketplace/orders — success', () => {
   });
 
   it('buyer + seller email orderUrl points to /dashboard/orders/<id> (not the previous /marketplace/orders/<id> which 404s)', async () => {
-    const emailMod = await import('@/lib/email') as any;
+    const emailMod = (await import('@/lib/email')) as any;
     // Seller lookup returns a valid recipient so the fire-and-forget chain runs
     const limitFn = vi.fn().mockResolvedValue([{ email: 'seller@example.com', name: 'Seller' }]);
     const sellerWhereFn = vi.fn().mockReturnValue({ limit: limitFn });

@@ -42,7 +42,7 @@ vi.mock('@/db/schema/auth', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
 }));
 
@@ -148,7 +148,7 @@ describe('PATCH /api/me/preferences — valid input', () => {
 
   it('calls db.update filtered by the session user id', async () => {
     await PATCH(makeRequest({ dashboardMode: 'coordinator' }));
-    const { eq } = await import('drizzle-orm') as any;
+    const { eq } = (await import('drizzle-orm')) as any;
     expect(eq).toHaveBeenCalledWith(expect.anything(), 'user-42');
   });
 

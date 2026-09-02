@@ -174,7 +174,8 @@ function setupSuccessExecute() {
   // the offer status (see accept-offer.ts race-fix). Then it does the
   // conversation-check execute. Return rows for the lock+recheck reads,
   // then empty rows for the conversation lookup.
-  const txExecute = vi.fn()
+  const txExecute = vi
+    .fn()
     .mockResolvedValueOnce({ rows: [{ status: 'open' }] }) // FOR UPDATE request
     .mockResolvedValueOnce({ rows: [{ status: 'pending' }] }) // re-read offer
     .mockResolvedValueOnce({ rows: [] }) // conversation lookup (none exists)

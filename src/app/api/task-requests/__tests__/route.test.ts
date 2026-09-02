@@ -164,7 +164,7 @@ beforeEach(async () => {
   q.orderBy = mockOrderBy;
   mockOrderBy.mockResolvedValue([MOCK_REQUEST]);
 
-  const dbMod = await import('@/db') as any;
+  const dbMod = (await import('@/db')) as any;
   dbMod.db.select.mockReturnValue(q);
 });
 

@@ -29,16 +29,36 @@
 const DEFAULT_EMAIL = () => ({ subject: 'Test Email', html: '<p>Test</p>', text: 'Test' });
 
 vi.mock('../templates/auth', () => ({
-  verificationCode: vi.fn((..._args: unknown[]) => ({ subject: 'Test Email', html: '<p>Test</p>', text: 'Test' })),
+  verificationCode: vi.fn((..._args: unknown[]) => ({
+    subject: 'Test Email',
+    html: '<p>Test</p>',
+    text: 'Test',
+  })),
   staffVerificationCode: vi.fn((..._args: unknown[]) => ({
     subject: 'Test Email',
     html: '<p>Test</p>',
     text: 'Test',
   })),
-  emailVerification: vi.fn((..._args: unknown[]) => ({ subject: 'Test Email', html: '<p>Test</p>', text: 'Test' })),
-  welcome: vi.fn((..._args: unknown[]) => ({ subject: 'Test Email', html: '<p>Test</p>', text: 'Test' })),
-  staffWelcome: vi.fn((..._args: unknown[]) => ({ subject: 'Test Email', html: '<p>Test</p>', text: 'Test' })),
-  passwordReset: vi.fn((..._args: unknown[]) => ({ subject: 'Test Email', html: '<p>Test</p>', text: 'Test' })),
+  emailVerification: vi.fn((..._args: unknown[]) => ({
+    subject: 'Test Email',
+    html: '<p>Test</p>',
+    text: 'Test',
+  })),
+  welcome: vi.fn((..._args: unknown[]) => ({
+    subject: 'Test Email',
+    html: '<p>Test</p>',
+    text: 'Test',
+  })),
+  staffWelcome: vi.fn((..._args: unknown[]) => ({
+    subject: 'Test Email',
+    html: '<p>Test</p>',
+    text: 'Test',
+  })),
+  passwordReset: vi.fn((..._args: unknown[]) => ({
+    subject: 'Test Email',
+    html: '<p>Test</p>',
+    text: 'Test',
+  })),
   passwordChangeConfirmation: vi.fn((..._args: unknown[]) => ({
     subject: 'Test Email',
     html: '<p>Test</p>',
@@ -47,21 +67,53 @@ vi.mock('../templates/auth', () => ({
 }));
 
 vi.mock('../templates/workshop', () => ({
-  workshopRegistrationConfirmation: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
-  workshopRegistrationStatusUpdate: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
+  workshopRegistrationConfirmation: vi.fn((..._args: unknown[]) => ({
+    subject: 'T',
+    html: 'H',
+    text: 'T',
+  })),
+  workshopRegistrationStatusUpdate: vi.fn((..._args: unknown[]) => ({
+    subject: 'T',
+    html: 'H',
+    text: 'T',
+  })),
   workshopReminder: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
   workshopCancellation: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
   workshopFeedbackRequest: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
-  workshopProposalSubmitted: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
-  workshopProposalApproved: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
-  workshopProposalRejected: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
-  workshopProposalChangesRequested: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
+  workshopProposalSubmitted: vi.fn((..._args: unknown[]) => ({
+    subject: 'T',
+    html: 'H',
+    text: 'T',
+  })),
+  workshopProposalApproved: vi.fn((..._args: unknown[]) => ({
+    subject: 'T',
+    html: 'H',
+    text: 'T',
+  })),
+  workshopProposalRejected: vi.fn((..._args: unknown[]) => ({
+    subject: 'T',
+    html: 'H',
+    text: 'T',
+  })),
+  workshopProposalChangesRequested: vi.fn((..._args: unknown[]) => ({
+    subject: 'T',
+    html: 'H',
+    text: 'T',
+  })),
 }));
 
 vi.mock('../templates/admin', () => ({
-  adminNewWorkshopProposal: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
+  adminNewWorkshopProposal: vi.fn((..._args: unknown[]) => ({
+    subject: 'T',
+    html: 'H',
+    text: 'T',
+  })),
   adminNewBlogSubmission: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
-  adminNewSellerApplication: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
+  adminNewSellerApplication: vi.fn((..._args: unknown[]) => ({
+    subject: 'T',
+    html: 'H',
+    text: 'T',
+  })),
 }));
 
 vi.mock('../templates/misc', () => ({
@@ -70,31 +122,75 @@ vi.mock('../templates/misc', () => ({
   blogSubmissionApproved: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
   blogSubmissionRejected: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
   blogSubmissionPublished: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
-  blogSubmissionChangesRequested: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
+  blogSubmissionChangesRequested: vi.fn((..._args: unknown[]) => ({
+    subject: 'T',
+    html: 'H',
+    text: 'T',
+  })),
   newReviewNotification: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
-  sellerApplicationSubmitted: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
-  locationApprovalNotification: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
-  locationSubmissionConfirmation: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
-  contentSubmissionApproved: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
-  contentSubmissionRejected: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
+  sellerApplicationSubmitted: vi.fn((..._args: unknown[]) => ({
+    subject: 'T',
+    html: 'H',
+    text: 'T',
+  })),
+  locationApprovalNotification: vi.fn((..._args: unknown[]) => ({
+    subject: 'T',
+    html: 'H',
+    text: 'T',
+  })),
+  locationSubmissionConfirmation: vi.fn((..._args: unknown[]) => ({
+    subject: 'T',
+    html: 'H',
+    text: 'T',
+  })),
+  contentSubmissionApproved: vi.fn((..._args: unknown[]) => ({
+    subject: 'T',
+    html: 'H',
+    text: 'T',
+  })),
+  contentSubmissionRejected: vi.fn((..._args: unknown[]) => ({
+    subject: 'T',
+    html: 'H',
+    text: 'T',
+  })),
 }));
 
 vi.mock('../templates/it-hilfe', () => ({
-  itHilfeRequestConfirmation: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
+  itHilfeRequestConfirmation: vi.fn((..._args: unknown[]) => ({
+    subject: 'T',
+    html: 'H',
+    text: 'T',
+  })),
   adminNewITHilfeRequest: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
-  helperNewMatchingRequest: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
+  helperNewMatchingRequest: vi.fn((..._args: unknown[]) => ({
+    subject: 'T',
+    html: 'H',
+    text: 'T',
+  })),
 }));
 
 vi.mock('../templates/appointments', () => ({
   appointmentNewBooking: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
-  appointmentQuoteReceived: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
+  appointmentQuoteReceived: vi.fn((..._args: unknown[]) => ({
+    subject: 'T',
+    html: 'H',
+    text: 'T',
+  })),
   appointmentStatusUpdate: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
-  appointmentUnassignedAlert: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
+  appointmentUnassignedAlert: vi.fn((..._args: unknown[]) => ({
+    subject: 'T',
+    html: 'H',
+    text: 'T',
+  })),
 }));
 
 vi.mock('../templates/decisions', () => ({
   decisionVotingOpened: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
-  decisionDeadlineReminder: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
+  decisionDeadlineReminder: vi.fn((..._args: unknown[]) => ({
+    subject: 'T',
+    html: 'H',
+    text: 'T',
+  })),
   decisionClosed: vi.fn((..._args: unknown[]) => ({ subject: 'T', html: 'H', text: 'T' })),
 }));
 

@@ -197,7 +197,7 @@ describe('getTechnicianProfile', () => {
     const result = await getTechnicianProfile(USER_ID);
 
     expect(result).toBeNull();
-    const { logger } = await import('@/lib/logger') as any;
+    const { logger } = (await import('@/lib/logger')) as any;
     expect(logger.error).toHaveBeenCalledTimes(1);
   });
 });
@@ -359,7 +359,7 @@ describe('getMyOffers', () => {
     const result = await getMyOffers(USER_ID);
 
     expect(result).toEqual([]);
-    const { logger } = await import('@/lib/logger') as any;
+    const { logger } = (await import('@/lib/logger')) as any;
     expect(logger.error).toHaveBeenCalledTimes(1);
   });
 });

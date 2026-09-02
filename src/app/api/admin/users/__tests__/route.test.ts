@@ -131,7 +131,7 @@ beforeEach(async () => {
   mockLimit.mockReturnValue({ offset: mockOffset });
   mockOffset.mockResolvedValue(MOCK_ROWS);
 
-  const permissions = await import('@/lib/permissions') as any;
+  const permissions = (await import('@/lib/permissions')) as any;
   permissions.isSuperAdmin.mockReturnValue(false);
 });
 

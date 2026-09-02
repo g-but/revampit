@@ -109,7 +109,8 @@ vi.mock('@/config/error-messages', () => ({
 }));
 
 const mockSendCustomEmail = vi.fn().mockResolvedValue(undefined);
-const mockLocationSubmissionConfirmation = vi.fn()
+const mockLocationSubmissionConfirmation = vi
+  .fn()
   .mockReturnValue({ subject: 'test', html: '<p>test</p>' });
 
 vi.mock('@/lib/email', () => ({

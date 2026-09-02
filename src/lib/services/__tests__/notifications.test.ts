@@ -302,7 +302,7 @@ describe('notifyAllStaff', () => {
   });
 
   it('excludes the specified user from notifications', async () => {
-    const { ne } = await import('drizzle-orm') as any;
+    const { ne } = (await import('drizzle-orm')) as any;
 
     selectResult = [{ user_id: 'staff-b', email: 'b@r.ch', email_notifications: true }];
     insertReturningResult = [{ id: 'n1' }];
@@ -325,7 +325,7 @@ describe('notifyAllStaff', () => {
   });
 
   it('does not call ne() when no excludeUserId is given', async () => {
-    const { ne } = await import('drizzle-orm') as any;
+    const { ne } = (await import('drizzle-orm')) as any;
 
     selectResult = [{ user_id: 'staff-a', email: 'a@r.ch', email_notifications: true }];
     insertReturningResult = [{ id: 'n1' }];

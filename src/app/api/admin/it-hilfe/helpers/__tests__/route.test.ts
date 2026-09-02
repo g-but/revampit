@@ -166,7 +166,7 @@ beforeEach(async () => {
   mockLimit.mockReturnValue({ offset: mockOffset });
   mockOffset.mockResolvedValue(MOCK_ROWS);
 
-  const helpers = await import('@/lib/api/helpers') as any;
+  const helpers = (await import('@/lib/api/helpers')) as any;
   helpers.parsePagination.mockReturnValue({ limit: 20, offset: 0 });
 });
 

@@ -125,7 +125,7 @@ describe('loadProviderRuntimeConfig', () => {
   });
 
   it('caches config and reuses on second call', async () => {
-    const { db } = await import('@/db') as unknown as { db: { selectDistinctOn: Mock } };
+    const { db } = (await import('@/db')) as unknown as { db: { selectDistinctOn: Mock } };
 
     await __loadProviderRuntimeConfig();
     await __loadProviderRuntimeConfig();

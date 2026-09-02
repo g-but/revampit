@@ -191,7 +191,7 @@ describe('POST /api/inquiry — resolved-failure swallow lock', () => {
     // throwing. A bare `.catch()` would miss this — the route uses
     // `.then(r => if !r.success warn)` to detect resolved-failure. Without
     // this assertion a refactor could silently revert to bare-catch.
-    const { logger } = await import('@/lib/logger') as unknown as { logger: { warn: Mock } };
+    const { logger } = (await import('@/lib/logger')) as unknown as { logger: { warn: Mock } };
     mockSendCustomEmail.mockResolvedValue({ success: false, error: 'Listmonk 500' });
 
     const response = await POST(makeRequest(VALID_BODY));

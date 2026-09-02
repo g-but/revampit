@@ -40,7 +40,9 @@ function makeChain(result: unknown = []) {
 // Mocks
 // ---------------------------------------------------------------------------
 
-const mockDbInsert = vi.fn((..._args: unknown[]) => makeChain([{ id: 'inv-1', invoiceNumber: 'INV-2026-001' }]));
+const mockDbInsert = vi.fn((..._args: unknown[]) =>
+  makeChain([{ id: 'inv-1', invoiceNumber: 'INV-2026-001' }]),
+);
 
 vi.mock('@/db', () => ({
   db: {
@@ -70,7 +72,7 @@ vi.mock('@/db/schema', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   sql: Object.assign(vi.fn().mockReturnValue({ __sql: 'mocked' }), {
     raw: vi.fn().mockReturnValue({ __raw: true }),
   }),

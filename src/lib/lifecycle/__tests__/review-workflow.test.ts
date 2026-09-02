@@ -75,7 +75,9 @@ function setup(opts: { pre: unknown[]; locked?: unknown[] }) {
     transaction: vi.fn((cb: (t: unknown) => unknown) => cb(fakeTx)),
   };
   mockDb = {
-    execute: vi.fn((..._args: unknown[]) => Promise.resolve(preReadResults.shift() ?? { rows: [] })),
+    execute: vi.fn((..._args: unknown[]) =>
+      Promise.resolve(preReadResults.shift() ?? { rows: [] }),
+    ),
     transaction: vi.fn(async (cb: (t: unknown) => unknown) => cb(fakeTx)),
   };
 }

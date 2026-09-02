@@ -186,13 +186,13 @@ describe('POST /api/it-hilfe/requests/[id]/confirm-review', () => {
       return fn({ update: txUpdate, execute: txExecute });
     });
     // Re-establish default mocks that resetAllMocks clears
-    const reviews = await import('@/lib/reviews/create-review') as unknown as {
+    const reviews = (await import('@/lib/reviews/create-review')) as unknown as {
       createReview: Mock;
       findDuplicateReview: Mock;
     };
     reviews.createReview.mockResolvedValue({ reviewId: 'review-1' });
     reviews.findDuplicateReview.mockResolvedValue(null);
-    const notif = await import('@/lib/it-hilfe/notifications') as unknown as {
+    const notif = (await import('@/lib/it-hilfe/notifications')) as unknown as {
       notifyReviewReceived: Mock;
     };
     notif.notifyReviewReceived.mockImplementation(() => undefined);
@@ -300,7 +300,9 @@ describe('POST /api/it-hilfe/requests/[id]/confirm-review', () => {
     expect(body.error).toMatch(/bereits bewertet/i);
     // Critical assertions: the race-loser must not write
     expect(txUpdate).not.toHaveBeenCalled();
-    const reviews = await import('@/lib/reviews/create-review') as unknown as { createReview: Mock };
+    const reviews = (await import('@/lib/reviews/create-review')) as unknown as {
+      createReview: Mock;
+    };
     expect(reviews.createReview).not.toHaveBeenCalled();
   });
 });

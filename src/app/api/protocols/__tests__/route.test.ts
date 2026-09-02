@@ -159,7 +159,7 @@ beforeEach(async () => {
   mockCreateProtocol.mockResolvedValue(MOCK_CREATED);
 
   // Re-apply isSuperAdmin default after resetAllMocks
-  const permissions = await import('@/lib/permissions') as any;
+  const permissions = (await import('@/lib/permissions')) as any;
   permissions.isSuperAdmin.mockReturnValue(false);
 });
 
@@ -200,7 +200,7 @@ describe('GET /api/protocols — authenticated', () => {
 
   it('passes isAdmin=true for super admin user', async () => {
     mockAuth.mockResolvedValueOnce(makeSession(true));
-    const permissions = await import('@/lib/permissions') as any;
+    const permissions = (await import('@/lib/permissions')) as any;
     permissions.isSuperAdmin.mockReturnValue(true);
     await GET(makeGetRequest());
     expect(mockGetProtocols).toHaveBeenCalledWith('db-user-1', true, expect.any(Object));

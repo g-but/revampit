@@ -245,7 +245,7 @@ describe('POST /api/admin/workshops/proposals/[id]/approve — success', () => {
     );
     expect(response.status).toBe(200); // The decision still applies; we just log the email failure
 
-    const loggerMod = await import('@/lib/logger') as any;
+    const loggerMod = (await import('@/lib/logger')) as any;
     expect(loggerMod.logger.warn).toHaveBeenCalledWith(
       'Workshop proposal notification email failed (resolved)',
       expect.objectContaining({ action: 'reject', error: 'SMTP rejected' }),

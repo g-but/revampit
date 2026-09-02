@@ -21,7 +21,7 @@ import PublicVoteClient from '../../../app/vote/[id]/PublicVoteClient';
 // Spread the real module — replacing it wholesale breaks defineRouting, which
 // button.tsx pulls in transitively via src/i18n/navigation.
 vi.mock('next-intl', async () => ({
-  ...await vi.importActual('next-intl'),
+  ...(await vi.importActual('next-intl')),
   useTranslations: () => (key: string) => key,
 }));
 

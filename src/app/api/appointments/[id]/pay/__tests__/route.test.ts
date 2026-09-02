@@ -190,9 +190,8 @@ beforeEach(async () => {
   mockSet.mockReturnValue({ where: mockUpdateWhere });
   mockUpdateWhere.mockResolvedValue(undefined);
 
-  const { processPaymentWithoutInvoice, centsToDisplay } = await import(
-    '@/lib/payments/payment-flow',
-  ) as any;
+  const { processPaymentWithoutInvoice, centsToDisplay } =
+    (await import('@/lib/payments/payment-flow')) as any;
   processPaymentWithoutInvoice.mockResolvedValue({
     paymentUrl: 'https://pay.example.com/abc',
     transactionId: 'txn-1',
@@ -327,7 +326,7 @@ describe('POST /api/appointments/[id]/pay — success', () => {
     });
     const response = await POST(req);
     expect(response.status).toBe(200);
-    const { processPaymentWithoutInvoice } = await import('@/lib/payments/payment-flow') as any;
+    const { processPaymentWithoutInvoice } = (await import('@/lib/payments/payment-flow')) as any;
     const callArgs = processPaymentWithoutInvoice.mock.calls[0][0];
     // 30% of 5000 = 1500
     expect(callArgs.baseAmountCents).toBe(1500);
@@ -358,7 +357,7 @@ describe('POST /api/appointments/[id]/pay — success', () => {
     });
     await POST(req);
 
-    const { processPaymentWithoutInvoice } = await import('@/lib/payments/payment-flow') as any;
+    const { processPaymentWithoutInvoice } = (await import('@/lib/payments/payment-flow')) as any;
     const callArgs = processPaymentWithoutInvoice.mock.calls[0][0];
     expect(callArgs.successRedirectUrl).toMatch(
       /\/dashboard\/appointments\/appt-1\?payment=success$/,

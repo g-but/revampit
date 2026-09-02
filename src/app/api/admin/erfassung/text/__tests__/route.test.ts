@@ -44,8 +44,7 @@ vi.mock('@/lib/erfassung/ai-extraction', () => ({
 }));
 
 vi.mock('@/lib/schemas', () => ({
-  validateBody: vi.fn()
-    .mockReturnValue({ success: true, data: { text: 'Dell Latitude i5 8GB' } }),
+  validateBody: vi.fn().mockReturnValue({ success: true, data: { text: 'Dell Latitude i5 8GB' } }),
   ErfassungTextSchema: {},
 }));
 
@@ -107,7 +106,7 @@ beforeEach(async () => {
   mockAuth.mockResolvedValue(MOCK_SESSION);
   mockExtractProductFromText.mockResolvedValue(MOCK_EXTRACTION_RESULT);
 
-  const schemas = await import('@/lib/schemas') as any;
+  const schemas = (await import('@/lib/schemas')) as any;
   schemas.validateBody.mockReturnValue({ success: true, data: { text: 'Dell Latitude i5 8GB' } });
 });
 
@@ -125,7 +124,7 @@ describe('POST /api/admin/erfassung/text — unauthenticated', () => {
 
 describe('POST /api/admin/erfassung/text — validation', () => {
   it('returns 400 when body is invalid', async () => {
-    const schemas = await import('@/lib/schemas') as any;
+    const schemas = (await import('@/lib/schemas')) as any;
     schemas.validateBody.mockReturnValueOnce({
       success: false,
       error: NextResponse.json(

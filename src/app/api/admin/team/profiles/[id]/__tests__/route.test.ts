@@ -120,8 +120,7 @@ vi.mock('@/lib/permissions', () => ({
 }));
 
 vi.mock('@/lib/schemas/team', () => ({
-  validateUpdateTeamProfile: (...args: unknown[]) =>
-    mockValidateUpdateTeamProfile(...args),
+  validateUpdateTeamProfile: (...args: unknown[]) => mockValidateUpdateTeamProfile(...args),
 }));
 
 vi.mock('@/lib/api/helpers', async () => {

@@ -32,7 +32,8 @@ vi.mock('@/lib/auth/db', () => ({
 }));
 
 const mockSendCustomEmail = vi.fn().mockResolvedValue(undefined);
-const mockStaffWelcome = vi.fn()
+const mockStaffWelcome = vi
+  .fn()
   .mockReturnValue({ subject: 'Willkommen Staff', html: '', text: '' });
 const mockWelcome = vi.fn().mockReturnValue({ subject: 'Willkommen', html: '', text: '' });
 
@@ -61,7 +62,7 @@ vi.mock('@/db/schema', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
 }));
 

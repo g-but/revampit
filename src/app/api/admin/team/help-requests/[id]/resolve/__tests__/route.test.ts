@@ -94,8 +94,7 @@ vi.mock('@/config/activity', () => ({
 }));
 
 vi.mock('@/lib/schemas/activity', () => ({
-  validateResolveHelpRequest: (...args: unknown[]) =>
-    mockValidateResolveHelpRequest(...args),
+  validateResolveHelpRequest: (...args: unknown[]) => mockValidateResolveHelpRequest(...args),
 }));
 
 vi.mock('@/lib/api/helpers', async () => {

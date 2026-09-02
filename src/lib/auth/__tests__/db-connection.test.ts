@@ -54,7 +54,7 @@ beforeEach(async () => {
   mockQuery.mockReset();
   mockConnect.mockReset();
   mockPoolOn.mockReset();
-  dbConn = await import('../db-connection') as unknown as typeof import('../db-connection');
+  dbConn = (await import('../db-connection')) as unknown as typeof import('../db-connection');
 });
 
 afterEach(() => {
@@ -347,7 +347,8 @@ describe('transaction', () => {
   });
 
   it('always releases the client (even on COMMIT failure)', async () => {
-    const queryFn = vi.fn()
+    const queryFn = vi
+      .fn()
       .mockResolvedValueOnce({ rows: [], rowCount: 0 }) // BEGIN
       .mockResolvedValueOnce({ rows: [], rowCount: 0 }) // callback query
       .mockRejectedValueOnce(new Error('COMMIT failed: deadlock')) // COMMIT

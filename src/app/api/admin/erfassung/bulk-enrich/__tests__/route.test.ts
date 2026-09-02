@@ -131,7 +131,7 @@ beforeEach(async () => {
   mockAuth.mockResolvedValue(MOCK_SESSION);
   mockExtractMultipleProducts.mockResolvedValue(MOCK_ENRICHED);
 
-  const schemas = await import('@/lib/schemas') as any;
+  const schemas = (await import('@/lib/schemas')) as any;
   schemas.validateBody.mockReturnValue({ success: true, data: { items: MOCK_ITEMS } });
 });
 
@@ -149,7 +149,7 @@ describe('POST /api/admin/erfassung/bulk-enrich — unauthenticated', () => {
 
 describe('POST /api/admin/erfassung/bulk-enrich — validation', () => {
   it('returns 400 when body is invalid', async () => {
-    const schemas = await import('@/lib/schemas') as any;
+    const schemas = (await import('@/lib/schemas')) as any;
     schemas.validateBody.mockReturnValueOnce({
       success: false,
       error: NextResponse.json(
@@ -162,7 +162,7 @@ describe('POST /api/admin/erfassung/bulk-enrich — validation', () => {
   });
 
   it('returns 400 when item count exceeds limit', async () => {
-    const schemas = await import('@/lib/schemas') as any;
+    const schemas = (await import('@/lib/schemas')) as any;
     schemas.validateBody.mockReturnValueOnce({
       success: true,
       data: {

@@ -94,7 +94,7 @@ vi.mock('@/db/schema', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   eq: vi.fn().mockReturnValue({ __eq: true }),
   and: vi.fn().mockReturnValue({ __and: true }),
   sql: Object.assign(vi.fn().mockReturnValue({ __sql: 'mocked' }), {
@@ -282,7 +282,7 @@ describe('notifyRepairerOfReview', () => {
     );
     mockSendEmail.mockResolvedValueOnce({ success: false, error: 'SMTP down' });
 
-    const { logger } = await import('@/lib/logger') as any;
+    const { logger } = (await import('@/lib/logger')) as any;
 
     await notifyRepairerOfReview(TARGET_ID, REVIEW_ID, 'Bob', 4, 'OK');
 

@@ -189,8 +189,7 @@ function makeSelectChain(rows: unknown[]) {
   const offset = vi.fn().mockResolvedValue(rows);
   const limit = vi.fn().mockReturnValue({ offset });
   const orderBy = vi.fn().mockReturnValue({ limit });
-  const where = vi.fn()
-    .mockReturnValue({ orderBy, limit: vi.fn().mockReturnValue({ offset }) });
+  const where = vi.fn().mockReturnValue({ orderBy, limit: vi.fn().mockReturnValue({ offset }) });
   const leftJoin = vi.fn();
   leftJoin.mockReturnValue({ leftJoin, where });
   const from = vi.fn().mockReturnValue({ leftJoin, where });

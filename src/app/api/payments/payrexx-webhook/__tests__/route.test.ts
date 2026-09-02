@@ -44,9 +44,7 @@ import {
   handleGenericPayment,
 } from '@/lib/services/payment-webhook';
 
-const mockLookup = lookupPaymentByReferenceId as MockedFunction<
-  typeof lookupPaymentByReferenceId
->;
+const mockLookup = lookupPaymentByReferenceId as MockedFunction<typeof lookupPaymentByReferenceId>;
 const mockHandleMarketplace = handleMarketplacePayment as MockedFunction<
   typeof handleMarketplacePayment
 >;

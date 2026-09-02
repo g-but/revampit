@@ -7,7 +7,7 @@ vi.mock('@/lib/ai/providers', () => ({
   buildFailureMessage: vi.fn((..._args: unknown[]) => 'fallback used'),
 }));
 
-const { callWithFallback, extractJson } = await import('@/lib/ai/providers') as unknown as {
+const { callWithFallback, extractJson } = (await import('@/lib/ai/providers')) as unknown as {
   callWithFallback: Mock;
   extractJson: Mock;
 };

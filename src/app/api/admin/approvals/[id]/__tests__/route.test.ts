@@ -122,7 +122,7 @@ function makeContext(id = 'sub-1') {
 }
 
 async function setValidBody(data: Record<string, unknown>) {
-  const schemas = await import('@/lib/schemas') as unknown as { validateBody: Mock };
+  const schemas = (await import('@/lib/schemas')) as unknown as { validateBody: Mock };
   schemas.validateBody.mockReturnValue({ success: true, data });
 }
 
@@ -147,7 +147,7 @@ describe('PATCH /api/admin/approvals/[id] — auth + validation', () => {
   });
 
   it('returns 400 when body is invalid', async () => {
-    const schemas = await import('@/lib/schemas') as unknown as { validateBody: Mock };
+    const schemas = (await import('@/lib/schemas')) as unknown as { validateBody: Mock };
     schemas.validateBody.mockReturnValueOnce({
       success: false,
       error: NextResponse.json(

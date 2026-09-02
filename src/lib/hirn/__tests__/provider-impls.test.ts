@@ -229,7 +229,8 @@ describe('GroqProvider — isAvailable', () => {
 
 describe('OllamaProvider — chat', () => {
   it('reads content from data.message.content', async () => {
-    global.fetch = vi.fn()
+    global.fetch = vi
+      .fn()
       .mockReturnValue(okResponse({ message: { content: 'Hallo von Ollama' } }));
 
     const provider = new OllamaProvider();
@@ -298,7 +299,8 @@ describe('OllamaProvider — embed', () => {
   });
 
   it('makes one fetch per input for multiple inputs', async () => {
-    global.fetch = vi.fn()
+    global.fetch = vi
+      .fn()
       .mockReturnValueOnce(okResponse({ embedding: [0.1, 0.2] }))
       .mockReturnValueOnce(okResponse({ embedding: [0.3, 0.4] }));
 
@@ -352,7 +354,8 @@ describe('OllamaProvider — isAvailable', () => {
 
 describe('OllamaProvider — listModels', () => {
   it('returns array of model names', async () => {
-    global.fetch = vi.fn()
+    global.fetch = vi
+      .fn()
       .mockReturnValue(
         okResponse({ models: [{ name: 'llama3.2' }, { name: 'nomic-embed-text' }] }),
       );
@@ -402,8 +405,7 @@ describe('OpenRouterProvider — chat', () => {
   });
 
   it('includes HTTP-Referer and X-Title headers', async () => {
-    global.fetch = vi.fn()
-      .mockReturnValue(okResponse({ choices: [{ message: { content: '' } }] }));
+    global.fetch = vi.fn().mockReturnValue(okResponse({ choices: [{ message: { content: '' } }] }));
 
     const provider = new OpenRouterProvider({ apiKey: 'sk-or-test' });
     await provider.chat({ messages: MESSAGES });

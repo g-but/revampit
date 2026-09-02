@@ -26,9 +26,11 @@ vi.mock('@/lib/email', () => ({
 }));
 
 vi.mock('@/lib/email/templates/donation-dropoff', () => ({
-  donationDropoffNotification: vi.fn()
+  donationDropoffNotification: vi
+    .fn()
     .mockReturnValue({ subject: 'Notification', html: '', text: '' }),
-  donationDropoffConfirmation: vi.fn()
+  donationDropoffConfirmation: vi
+    .fn()
     .mockReturnValue({ subject: 'Confirmation', html: '', text: '' }),
 }));
 
@@ -158,7 +160,7 @@ describe('POST /api/donations/dropoff', () => {
     // `.then()` to detect resolved-failure and log it. Without this lock
     // a refactor could silently revert to the bare-catch shape (the bug
     // I just shipped in a8cc473c and fixed adjacent).
-    const { logger } = await import('@/lib/logger') as unknown as { logger: { warn: Mock } };
+    const { logger } = (await import('@/lib/logger')) as unknown as { logger: { warn: Mock } };
     mockSendCustomEmail.mockResolvedValue({ success: false, error: 'Listmonk 500' });
 
     const res = await POST(makeRequest(VALID_BODY));

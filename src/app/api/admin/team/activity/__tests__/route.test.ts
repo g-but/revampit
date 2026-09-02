@@ -70,8 +70,7 @@ vi.mock('@/config/activity', () => ({
 }));
 
 vi.mock('@/lib/schemas/activity', () => ({
-  validateActivityStreamFilter: (...args: unknown[]) =>
-    mockValidateActivityStreamFilter(...args),
+  validateActivityStreamFilter: (...args: unknown[]) => mockValidateActivityStreamFilter(...args),
 }));
 
 vi.mock('@/lib/api/helpers', async () => {

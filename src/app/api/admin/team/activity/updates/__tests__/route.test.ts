@@ -96,8 +96,7 @@ vi.mock('@/lib/schemas/activity', () => ({
   activityStreamFilterSchema: {
     safeParse: (...args: unknown[]) => mockSafeParse(...args),
   },
-  validateCreateActivityUpdate: (...args: unknown[]) =>
-    mockValidateCreateActivityUpdate(...args),
+  validateCreateActivityUpdate: (...args: unknown[]) => mockValidateCreateActivityUpdate(...args),
 }));
 
 vi.mock('@/lib/api/helpers', async () => {

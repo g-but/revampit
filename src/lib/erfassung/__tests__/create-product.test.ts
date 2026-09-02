@@ -83,7 +83,7 @@ vi.mock('@/db/schema/misc', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   sql: Object.assign(vi.fn().mockReturnValue({ __sql: 'mocked' }), {
     raw: vi.fn().mockReturnValue({ __raw: true }),
   }),
@@ -105,7 +105,7 @@ vi.mock('@/config/marketplace-status', () => ({
 // requiresQualityControl over the real CHECKLIST_ITEMS) — only pin the
 // device checklist to a stable two-item list.
 vi.mock('@/config/intake-checklist', async () => ({
-  ...await vi.importActual('@/config/intake-checklist'),
+  ...(await vi.importActual('@/config/intake-checklist')),
   getChecklistForDevice: vi.fn().mockReturnValue([{ id: 'check-1' }, { id: 'check-2' }]),
 }));
 

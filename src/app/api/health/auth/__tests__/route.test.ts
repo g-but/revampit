@@ -34,7 +34,7 @@ vi.mock('@/db', () => ({
 }));
 
 vi.mock('drizzle-orm', async () => ({
-  ...await vi.importActual('drizzle-orm'),
+  ...(await vi.importActual('drizzle-orm')),
   sql: Object.assign(vi.fn().mockReturnValue({ __sql: 'SELECT 1' }), { raw: vi.fn() }),
 }));
 

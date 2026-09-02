@@ -102,8 +102,7 @@ vi.mock('drizzle-orm', () => ({
 }));
 
 vi.mock('@/lib/schemas/activity', () => ({
-  validateUpdateActivityUpdate: (...args: unknown[]) =>
-    mockValidateUpdateActivityUpdate(...args),
+  validateUpdateActivityUpdate: (...args: unknown[]) => mockValidateUpdateActivityUpdate(...args),
 }));
 
 vi.mock('@/lib/api/helpers', async () => {
